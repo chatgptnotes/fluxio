@@ -1,7 +1,69 @@
-# robots.txt for FluxIO
+# robots.txt for FluxIO - Industrial IoT Flow Monitoring Platform
+
+# Default crawlers
 User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /dashboard/
+Disallow: /login
+Disallow: /signup
+Crawl-delay: 1
 
-Sitemap: https://fluxio-three.vercel.app/sitemap.xml
+# Google bot
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /signup
+
+# Bing bot
+User-agent: Bingbot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /signup
+
+# ChatGPT / OpenAI
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /signup
+
+# Claude AI (Anthropic)
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /signup
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /signup
+
+# Google Extended (for AI training)
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /signup
+
+# CCBot (Common Crawl)
+User-agent: CCBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /signup
+
+# Sitemaps
+Sitemap: https://www.fluxio.work/sitemap.xml

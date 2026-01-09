@@ -5,59 +5,95 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://fluxio-three.vercel.app'),
+  metadataBase: new URL('https://www.fluxio.work'),
   title: {
-    default: 'FluxIO - Real-Time Industrial IoT Flow Monitoring Platform',
-    template: '%s | FluxIO',
+    default:
+      'FluxIO - Industrial IoT Flow Monitoring | Real-Time Nivus Transmitter Analytics',
+    template: '%s | FluxIO Industrial IoT Platform',
   },
   description:
-    'Monitor Nivus flow transmitters in real-time with FluxIO. Cloud-based IIoT platform with intelligent alerts, historical analytics, and multi-device support. Get started free.',
+    'FluxIO is the leading Industrial IoT platform for real-time monitoring of Nivus flow transmitters. Get instant alerts, comprehensive analytics, and remote management for wastewater and industrial flow measurement. Compatible with NivuFlow 550, 600, 650, 750, 1000 series. Start monitoring today.',
   keywords: [
-    'flow monitoring',
-    'industrial iot',
-    'nivus transmitters',
-    'teltonika gateway',
-    'modbus monitoring',
-    'water flow monitoring',
-    'scada',
-    'real-time monitoring',
-    'cloud iot platform',
-    'industrial automation',
-    'flow meter',
-    'wastewater monitoring',
+    'industrial iot platform',
+    'flow monitoring system',
+    'nivus flow transmitter monitoring',
+    'real-time flow measurement',
+    'wastewater monitoring solution',
+    'industrial flow meter software',
+    'scada system',
+    'teltonika trb245 gateway',
+    'modbus rtu monitoring',
+    'remote flow monitoring',
+    'iiot dashboard',
+    'flow data analytics',
+    'industrial automation software',
+    'cloud-based monitoring',
+    'smart water management',
+    'nivuflow monitoring',
+    'flow transmitter alerts',
+    'industrial telemetry system',
+    'water treatment monitoring',
+    'sewage flow monitoring',
   ],
-  authors: [{ name: 'FluxIO Team' }],
-  creator: 'FluxIO',
+  authors: [{ name: 'FluxIO Team', url: 'https://www.fluxio.work' }],
+  creator: 'FluxIO Industrial IoT Solutions',
   publisher: 'FluxIO',
+  applicationName: 'FluxIO',
+  referrer: 'origin-when-cross-origin',
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
+  category: 'Industrial IoT',
+  classification: 'Industrial Monitoring Software',
   openGraph: {
-    title: 'FluxIO - Real-Time Industrial IoT Flow Monitoring',
+    title: 'FluxIO - Industrial IoT Flow Monitoring Platform',
     description:
-      'Monitor your Nivus flow transmitters in real-time. Intelligent alerts, powerful analytics, enterprise security.',
-    url: 'https://fluxio-three.vercel.app',
+      'Monitor Nivus flow transmitters in real-time with intelligent alerts, comprehensive analytics, and cloud-based dashboard. Perfect for wastewater and industrial applications.',
+    url: 'https://www.fluxio.work',
     siteName: 'FluxIO',
     locale: 'en_US',
     type: 'website',
+    images: [
+      {
+        url: 'https://www.fluxio.work/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'FluxIO Industrial IoT Flow Monitoring Platform',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FluxIO - Real-Time Industrial IoT Flow Monitoring',
+    title: 'FluxIO - Industrial IoT Flow Monitoring Platform',
     description:
-      'Monitor your Nivus flow transmitters in real-time with cloud-based IIoT platform.',
+      'Real-time monitoring of Nivus flow transmitters with instant alerts and comprehensive analytics.',
+    creator: '@fluxio',
+    site: '@fluxio',
+    images: ['https://www.fluxio.work/twitter-image.png'],
   },
   robots: {
     index: true,
     follow: true,
+    nocache: false,
     googleBot: {
       index: true,
       follow: true,
+      noimageindex: false,
       'max-video-preview': -1,
       'max-image-preview': 'large',
       'max-snippet': -1,
+    },
+  },
+  alternates: {
+    canonical: 'https://www.fluxio.work',
+  },
+  verification: {
+    google: 'google-site-verification-code',
+    yandex: 'yandex-verification-code',
+    other: {
+      'msvalidate.01': 'bing-verification-code',
     },
   },
 }
@@ -67,11 +103,53 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const organizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'FluxIO',
+    url: 'https://www.fluxio.work',
+    logo: 'https://www.fluxio.work/logo.png',
+    description:
+      'FluxIO provides industrial IoT solutions for real-time flow monitoring and management.',
+    sameAs: [
+      'https://twitter.com/fluxio',
+      'https://linkedin.com/company/fluxio',
+      'https://github.com/chatgptnotes/fluxio',
+    ],
+  }
+
+  const websiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'FluxIO',
+    url: 'https://www.fluxio.work',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: 'https://www.fluxio.work/search?q={search_term_string}',
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  }
+
   return (
     <html lang="en">
-      <body className={inter.className}>
-        {children}
-      </body>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteSchema),
+          }}
+        />
+      </head>
+      <body className={inter.className}>{children}</body>
     </html>
   )
 }
