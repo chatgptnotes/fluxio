@@ -26,6 +26,16 @@ export default function SignupPage() {
   const [success, setSuccess] = useState(false)
   const router = useRouter()
   const supabase = createClient()
+  const isDev = process.env.NODE_ENV === 'development'
+
+  const fillDevCredentials = () => {
+    setFormData({
+      fullName: 'Test User',
+      email: 'test@fluxio.dev',
+      password: 'test123456',
+      confirmPassword: 'test123456',
+    })
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -242,6 +252,16 @@ export default function SignupPage() {
                 </Link>
               </label>
             </div>
+
+            {isDev && (
+              <button
+                type="button"
+                onClick={fillDevCredentials}
+                className="w-full rounded-lg border-2 border-dashed border-yellow-400 bg-yellow-50 px-4 py-2 text-sm font-medium text-yellow-800 transition-colors hover:bg-yellow-100"
+              >
+                Fill Dev Credentials (Test User)
+              </button>
+            )}
 
             <button
               type="submit"
