@@ -76,54 +76,6 @@ export default function LandingPage() {
     { label: 'Data Retention', value: 'Unlimited' },
   ]
 
-  const pricingTiers = [
-    {
-      name: 'Starter',
-      price: 'Free',
-      description: 'Perfect for testing and small deployments',
-      features: [
-        'Up to 10 devices',
-        '500MB database storage',
-        'Basic alerts',
-        'Email support',
-        'API access',
-      ],
-      cta: 'Get Started',
-      highlighted: false,
-    },
-    {
-      name: 'Professional',
-      price: '$55',
-      period: '/month',
-      description: 'Ideal for small to medium operations',
-      features: [
-        'Up to 50 devices',
-        '8GB database storage',
-        'Advanced alerts',
-        'Priority support',
-        'Custom integrations',
-        'Data export',
-      ],
-      cta: 'Start Free Trial',
-      highlighted: true,
-    },
-    {
-      name: 'Enterprise',
-      price: 'Custom',
-      description: 'For large-scale industrial deployments',
-      features: [
-        'Unlimited devices',
-        'Unlimited storage',
-        'SLA guarantees',
-        '24/7 phone support',
-        'On-premise option',
-        'Custom development',
-      ],
-      cta: 'Contact Sales',
-      highlighted: false,
-    },
-  ]
-
   const faqs = [
     {
       question: 'What flow transmitters are supported?',
@@ -179,17 +131,11 @@ export default function LandingPage() {
               >
                 Dashboard
               </Link>
-              <Link
-                href="#pricing"
-                className="text-white/90 hover:text-white"
-              >
-                Pricing
-              </Link>
               <Link href="#faq" className="text-white/90 hover:text-white">
                 FAQ
               </Link>
               <Link
-                href="/dashboard"
+                href="/signup"
                 className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-primary-600 transition-colors hover:bg-gray-100"
               >
                 Get Started
@@ -217,10 +163,10 @@ export default function LandingPage() {
 
               <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
                 <Link
-                  href="/dashboard"
+                  href="/signup"
                   className="inline-flex items-center justify-center space-x-2 rounded-lg bg-white px-8 py-4 text-lg font-medium text-primary-600 transition-all hover:bg-gray-100 hover:shadow-xl"
                 >
-                  <span>Start Free Trial</span>
+                  <span>Get Started Free</span>
                   <ArrowRight className="h-5 w-5" />
                 </Link>
                 <a
@@ -418,73 +364,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="bg-gray-50 py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-16 text-center">
-            <h2 className="mb-4 text-4xl font-bold text-gray-900">
-              Simple, Transparent Pricing
-            </h2>
-            <p className="mx-auto max-w-2xl text-xl text-gray-600">
-              Start free, scale as you grow. No hidden fees.
-            </p>
-          </div>
-
-          <div className="grid gap-8 lg:grid-cols-3">
-            {pricingTiers.map((tier, index) => (
-              <div
-                key={index}
-                className={`relative rounded-2xl border-2 bg-white p-8 ${
-                  tier.highlighted
-                    ? 'border-primary-500 shadow-2xl'
-                    : 'border-gray-200'
-                }`}
-              >
-                {tier.highlighted && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-primary-500 px-4 py-1 text-sm font-medium text-white">
-                    Most Popular
-                  </div>
-                )}
-
-                <div className="mb-6">
-                  <h3 className="mb-2 text-2xl font-bold text-gray-900">
-                    {tier.name}
-                  </h3>
-                  <div className="mb-2">
-                    <span className="text-4xl font-bold text-gray-900">
-                      {tier.price}
-                    </span>
-                    {tier.period && (
-                      <span className="text-gray-600">{tier.period}</span>
-                    )}
-                  </div>
-                  <p className="text-sm text-gray-600">{tier.description}</p>
-                </div>
-
-                <ul className="mb-8 space-y-3">
-                  {tier.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-start">
-                      <CheckCircle2 className="mr-2 mt-0.5 h-5 w-5 flex-shrink-0 text-green-500" />
-                      <span className="text-gray-700">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <Link
-                  href="/dashboard"
-                  className={`block w-full rounded-lg px-6 py-3 text-center font-medium transition-colors ${
-                    tier.highlighted
-                      ? 'bg-primary-600 text-white hover:bg-primary-700'
-                      : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  {tier.cta}
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* FAQ Section */}
       <section id="faq" className="py-24">
@@ -540,10 +419,10 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-x-4 sm:space-y-0">
             <Link
-              href="/dashboard"
+              href="/signup"
               className="inline-flex items-center justify-center space-x-2 rounded-lg bg-white px-8 py-4 text-lg font-medium text-primary-600 transition-all hover:bg-gray-100"
             >
-              <span>Start Free Trial</span>
+              <span>Get Started Free</span>
               <ArrowRight className="h-5 w-5" />
             </Link>
             <a
@@ -581,11 +460,6 @@ export default function LandingPage() {
                 <li>
                   <Link href="/dashboard" className="hover:text-primary-600">
                     Dashboard
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#pricing" className="hover:text-primary-600">
-                    Pricing
                   </Link>
                 </li>
                 <li>

@@ -1,14 +1,17 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import {
   Activity,
   AlertTriangle,
   CheckCircle2,
   Droplet,
+  User,
 } from 'lucide-react'
 import { Card } from '@/components/ui/Card'
 import { StatsCard } from '@/components/dashboard/StatsCard'
+import { LogoutButton } from '@/components/auth/LogoutButton'
 import { createClient } from '@/lib/supabase/client'
 import { formatRelativeTime, isDeviceOnline } from '@/lib/utils'
 import type { Database } from '@/types/database'
@@ -130,11 +133,19 @@ export default function DashboardPage() {
                 Real-time Flow Monitoring Dashboard
               </p>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-1 rounded-full bg-green-100 px-3 py-1">
                 <div className="h-2 w-2 animate-pulse rounded-full bg-green-600"></div>
                 <span className="text-sm font-medium text-green-800">Live</span>
               </div>
+              <Link
+                href="/dashboard/profile"
+                className="inline-flex items-center space-x-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+              >
+                <User className="h-4 w-4" />
+                <span>Profile</span>
+              </Link>
+              <LogoutButton />
             </div>
           </div>
         </div>
