@@ -94,12 +94,17 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary-600 to-primary-800 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.2),transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(255,255,255,0.2),transparent_50%)]"></div>
+      </div>
+
+      <div className="relative w-full max-w-md animate-scale-in">
         {/* Logo */}
         <div className="mb-8 text-center">
-          <Link href="/" className="inline-flex items-center space-x-2">
-            <Droplet className="h-10 w-10 text-white" />
+          <Link href="/" className="group inline-flex items-center space-x-2 transition-transform hover:scale-105">
+            <Droplet className="h-10 w-10 text-white animate-float" />
             <span className="text-3xl font-bold text-white">FluxIO</span>
           </Link>
           <p className="mt-2 text-sm text-white/80">
@@ -108,7 +113,7 @@ export default function SignupPage() {
         </div>
 
         {/* Signup Card */}
-        <div className="rounded-2xl bg-white p-8 shadow-2xl">
+        <div className="rounded-3xl border border-white/20 bg-white/95 p-8 shadow-2xl backdrop-blur-md">
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-gray-900">
               Create an account

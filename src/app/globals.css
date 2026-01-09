@@ -208,12 +208,23 @@
 
   /* Feature Card */
   .feature-card {
-    @apply group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-all duration-300 hover:border-primary-300 hover:shadow-2xl hover:-translate-y-1;
+    @apply relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-all duration-300 hover:border-primary-300 hover:shadow-2xl hover:-translate-y-1;
   }
 
   .feature-card::before {
     content: '';
-    @apply absolute inset-0 bg-gradient-to-br from-primary-500/0 to-primary-600/0 transition-all duration-300 group-hover:from-primary-500/5 group-hover:to-primary-600/5;
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom right, transparent, transparent);
+    transition: all 300ms;
+  }
+
+  .feature-card:hover::before {
+    background: linear-gradient(
+      to bottom right,
+      rgba(14, 165, 233, 0.05),
+      rgba(14, 165, 233, 0.05)
+    );
   }
 }
 

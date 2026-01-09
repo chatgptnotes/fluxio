@@ -161,19 +161,19 @@ export default function LandingPage() {
                 powerful analytics for your industrial water monitoring systems.
               </p>
 
-              <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+              <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0 animate-slide-in-bottom">
                 <Link
                   href="/signup"
-                  className="inline-flex items-center justify-center space-x-2 rounded-lg bg-white px-8 py-4 text-lg font-medium text-primary-600 transition-all hover:bg-gray-100 hover:shadow-xl"
+                  className="group inline-flex items-center justify-center space-x-2 rounded-xl bg-white px-8 py-4 text-lg font-semibold text-primary-600 shadow-2xl transition-all duration-300 hover:bg-gray-50 hover:shadow-2xl hover:-translate-y-1 hover:scale-105"
                 >
                   <span>Get Started Free</span>
-                  <ArrowRight className="h-5 w-5" />
+                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <a
                   href="#demo"
-                  className="inline-flex items-center justify-center space-x-2 rounded-lg border-2 border-white/50 px-8 py-4 text-lg font-medium text-white backdrop-blur-sm transition-all hover:border-white hover:bg-white/10"
+                  className="group inline-flex items-center justify-center space-x-2 rounded-xl border-2 border-white/50 bg-white/10 px-8 py-4 text-lg font-semibold text-white backdrop-blur-md transition-all duration-300 hover:border-white hover:bg-white/20 hover:shadow-xl hover:-translate-y-1"
                 >
-                  <Radio className="h-5 w-5" />
+                  <Radio className="h-5 w-5 animate-pulse-slow" />
                   <span>Watch Demo</span>
                 </a>
               </div>
@@ -258,19 +258,20 @@ export default function LandingPage() {
               return (
                 <div
                   key={index}
-                  className="group rounded-2xl border border-gray-200 p-8 transition-all hover:border-primary-500 hover:shadow-xl"
+                  className="feature-card animate-scale-in"
+                  style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <div
-                    className={`mb-4 inline-flex rounded-lg bg-${feature.color}-50 p-3`}
+                    className={`relative z-10 mb-6 inline-flex rounded-xl bg-gradient-to-br from-primary-100 to-primary-200 p-4 shadow-lg hover-scale`}
                   >
                     <Icon
-                      className={`h-6 w-6 text-${feature.color}-600`}
+                      className={`h-7 w-7 text-primary-600`}
                     />
                   </div>
-                  <h3 className="mb-2 text-xl font-semibold text-gray-900">
+                  <h3 className="relative z-10 mb-3 text-xl font-bold text-gray-900">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600">{feature.description}</p>
+                  <p className="relative z-10 text-gray-600 leading-relaxed">{feature.description}</p>
                 </div>
               )
             })}
@@ -408,28 +409,31 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-gradient-to-r from-primary-600 to-primary-800 py-24">
-        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-          <h2 className="mb-6 text-4xl font-bold text-white">
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 py-24">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.3),transparent_50%)]"></div>
+        </div>
+        <div className="relative mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+          <h2 className="mb-6 text-5xl font-bold text-white animate-scale-in">
             Ready to Transform Your Monitoring?
           </h2>
-          <p className="mb-8 text-xl text-white/90">
+          <p className="mb-8 text-xl text-white/90 animate-slide-in-bottom">
             Join industrial operators worldwide who trust FluxIO for their
             critical infrastructure monitoring.
           </p>
-          <div className="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-x-4 sm:space-y-0">
+          <div className="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-x-4 sm:space-y-0 animate-slide-in-bottom">
             <Link
               href="/signup"
-              className="inline-flex items-center justify-center space-x-2 rounded-lg bg-white px-8 py-4 text-lg font-medium text-primary-600 transition-all hover:bg-gray-100"
+              className="group inline-flex items-center justify-center space-x-2 rounded-xl bg-white px-8 py-4 text-lg font-bold text-primary-600 shadow-2xl transition-all duration-300 hover:bg-gray-50 hover:shadow-2xl hover:-translate-y-1 hover:scale-105 animate-glow"
             >
               <span>Get Started Free</span>
-              <ArrowRight className="h-5 w-5" />
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
             <a
               href="https://github.com/chatgptnotes/fluxio"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center space-x-2 rounded-lg border-2 border-white px-8 py-4 text-lg font-medium text-white transition-all hover:bg-white/10"
+              className="inline-flex items-center justify-center space-x-2 rounded-xl border-2 border-white bg-white/10 px-8 py-4 text-lg font-bold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/20 hover:shadow-xl hover:-translate-y-1"
             >
               <span>View on GitHub</span>
             </a>
