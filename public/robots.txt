@@ -1,0 +1,7 @@
+# robots.txt for FluxIO
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+
+Sitemap: https://fluxio-three.vercel.app/sitemap.xml
