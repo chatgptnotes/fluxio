@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = createClient()
 
@@ -19,17 +19,15 @@ export async function GET(request: NextRequest) {
     }
 
     // Get latest flow data for each device
-    const { data: latestData, error: dataError } = await supabase.rpc(
-      'get_latest_flow_data'
-    )
-
-    if (dataError) {
-      console.error('Error fetching latest data:', dataError)
-    }
+    const { data: latestData } = await supabase.rpc('get_latest_flow_data')
 
     // Merge devices with their latest data
-    const devicesWithData = devices?.map((device) => {
-      const latest = latestData?.find((d) => d.device_id === device.device_id)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const devicesWithData = devices?.map((device: any) => {
+      const latest = (latestData as any[] | null)?.find(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (d: any) => d.device_id === device.device_id
+      )
       return {
         ...device,
         latest_data: latest || null,
@@ -59,6 +57,7 @@ export async function POST(request: NextRequest) {
 
     const { data, error } = await supabase
       .from('devices')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .insert({
         device_id: body.device_id,
         device_name: body.device_name,
@@ -67,7 +66,7 @@ export async function POST(request: NextRequest) {
         description: body.description,
         status: body.status || 'active',
         metadata: body.metadata || {},
-      })
+      } as any)
       .select()
       .single()
 

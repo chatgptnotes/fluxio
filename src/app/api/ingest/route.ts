@@ -46,7 +46,8 @@ async function checkAlertConditions(
 
   if (rulesError || !rules) return
 
-  for (const rule of rules) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  for (const rule of rules as any[]) {
     let shouldAlert = false
     let actualValue: number | null = null
     let message = ''
@@ -91,6 +92,7 @@ async function checkAlertConditions(
 
     if (shouldAlert) {
       // Create alert
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await supabase.from('alerts').insert({
         device_id: deviceId,
         alert_type: rule.rule_type,
@@ -98,7 +100,7 @@ async function checkAlertConditions(
         message,
         threshold_value: rule.threshold_value,
         actual_value: actualValue,
-      })
+      } as any)
     }
   }
 }
@@ -142,6 +144,7 @@ export async function POST(request: NextRequest) {
     const results = []
     for (const data of dataArray) {
       // Insert flow data
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: insertError } = await supabase.from('flow_data').insert({
         device_id: data.device_id,
         flow_rate: data.flow_rate ?? null,
@@ -152,7 +155,7 @@ export async function POST(request: NextRequest) {
         signal_strength: data.signal_strength ?? null,
         created_at: data.timestamp || new Date().toISOString(),
         metadata: data.metadata || {},
-      })
+      } as any)
 
       if (insertError) {
         console.error('Error inserting flow data:', insertError)

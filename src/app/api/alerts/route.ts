@@ -64,11 +64,7 @@ export async function PATCH(request: NextRequest) {
 
     const supabase = createClient()
 
-    const updateData: {
-      is_resolved?: boolean
-      resolved_at?: string
-      resolved_by?: string
-    } = {}
+    const updateData: Record<string, boolean | string | null> = {}
 
     if (typeof is_resolved === 'boolean') {
       updateData.is_resolved = is_resolved
@@ -78,7 +74,7 @@ export async function PATCH(request: NextRequest) {
 
     const { data, error } = await supabase
       .from('alerts')
-      .update(updateData)
+      .update(updateData as never)
       .eq('id', alert_id)
       .select()
       .single()

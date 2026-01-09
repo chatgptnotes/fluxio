@@ -6,7 +6,6 @@ import {
   AlertTriangle,
   CheckCircle2,
   Droplet,
-  TrendingUp,
 } from 'lucide-react'
 import { Card } from '@/components/ui/Card'
 import { StatsCard } from '@/components/dashboard/StatsCard'
