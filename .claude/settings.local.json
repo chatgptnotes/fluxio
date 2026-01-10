@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm build:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx next:*)",
+      "Bash(node node_modules/.bin/next build:*)",
+      "Bash(dir:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run lint)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git config:*)",
+      "Bash(git push:*)",
+      "Bash(npx vercel --prod --yes)"
+    ]
+  }
+}
