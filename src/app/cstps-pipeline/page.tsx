@@ -313,7 +313,7 @@ export default function CSTPSPipelinePage() {
                   {[0, 1, 2, 3, 4].map(i => (
                     <g key={i}>
                       <line x1="110" y1={80 + i * 70} x2="125" y2={80 + i * 70} stroke="#4b5563" strokeWidth="1" />
-                      <text x="130" y={84 + i * 70} fill="#6b7280" fontSize="9" fontFamily="monospace">
+                      <text x="130" y={84 + i * 70} fill="#ffffff" fontSize="9" fontFamily="monospace" fontWeight="bold">
                         {100 - i * 20}%
                       </text>
                     </g>
@@ -349,7 +349,7 @@ export default function CSTPSPipelinePage() {
                         <animate attributeName="opacity" values="1;0.5;1" dur="1.5s" repeatCount="indefinite" />
                       </circle>
                       {/* Unit label */}
-                      <text x="50" y={75 + i * 120} textAnchor="middle" fill="#6b7280" fontSize="10" fontFamily="monospace">
+                      <text x="50" y={75 + i * 120} textAnchor="middle" fill="#ffffff" fontSize="10" fontFamily="monospace" fontWeight="bold">
                         UNIT {i + 1}
                       </text>
                     </g>
@@ -558,7 +558,7 @@ export default function CSTPSPipelinePage() {
                           </g>
 
                           {/* Static "empty" text */}
-                          <text x="505" y={yPos + 28} textAnchor="middle" fill="#6b7280" fontSize="8" fontFamily="monospace">
+                          <text x="505" y={yPos + 28} textAnchor="middle" fill="#ffffff" fontSize="8" fontFamily="monospace" fontWeight="bold">
                             NO FLOW
                           </text>
                         </g>
@@ -624,12 +624,12 @@ export default function CSTPSPipelinePage() {
                         </text>
 
                         {/* Unit */}
-                        <text x="0" y="8" textAnchor="middle" fill="#4b5563" fontSize="8" fontFamily="monospace">
+                        <text x="0" y="8" textAnchor="middle" fill="#ffffff" fontSize="8" fontFamily="monospace" fontWeight="bold">
                           m³/h
                         </text>
 
                         {/* Meter ID */}
-                        <text x="0" y="22" textAnchor="middle" fill="#6b7280" fontSize="8" fontFamily="monospace">
+                        <text x="0" y="22" textAnchor="middle" fill="#ffffff" fontSize="8" fontFamily="monospace" fontWeight="bold">
                           FT-{String(index + 1).padStart(2, '0')}
                         </text>
                       </g>
@@ -658,7 +658,7 @@ export default function CSTPSPipelinePage() {
                       {/* Pipe label */}
                       <g transform={`translate(220, ${yPos - 22})`}>
                         <rect x="-25" y="-9" width="50" height="18" fill="#0d1520" stroke="#1e3a5f" strokeWidth="1" rx="2" />
-                        <text x="0" y="4" textAnchor="middle" fill="#94a3b8" fontSize="9" fontFamily="monospace">
+                        <text x="0" y="4" textAnchor="middle" fill="#ffffff" fontSize="9" fontFamily="monospace" fontWeight="bold">
                           PIPE-{String(index + 1).padStart(2, '0')}
                         </text>
                       </g>
@@ -694,24 +694,24 @@ export default function CSTPSPipelinePage() {
                 <g transform="translate(20, 475)">
                   <rect x="0" y="0" width="960" height="35" fill="#0d1520" stroke="#1e3a5f" strokeWidth="1" rx="2" />
 
-                  <text x="15" y="22" fill="#4b5563" fontSize="10" fontFamily="monospace" fontWeight="bold">LEGEND:</text>
+                  <text x="15" y="22" fill="#ffffff" fontSize="10" fontFamily="monospace" fontWeight="bold">LEGEND:</text>
 
                   <circle cx="100" cy="17" r="5" fill="#22c55e" filter="url(#glowGreen)" />
-                  <text x="112" y="21" fill="#9ca3af" fontSize="9" fontFamily="monospace">ONLINE</text>
+                  <text x="112" y="21" fill="#ffffff" fontSize="9" fontFamily="monospace" fontWeight="bold">ONLINE</text>
 
                   <circle cx="190" cy="17" r="5" fill="#eab308" />
-                  <text x="202" y="21" fill="#9ca3af" fontSize="9" fontFamily="monospace">WARNING</text>
+                  <text x="202" y="21" fill="#ffffff" fontSize="9" fontFamily="monospace" fontWeight="bold">WARNING</text>
 
                   <circle cx="290" cy="17" r="5" fill="#ef4444" />
-                  <text x="302" y="21" fill="#9ca3af" fontSize="9" fontFamily="monospace">OFFLINE</text>
+                  <text x="302" y="21" fill="#ffffff" fontSize="9" fontFamily="monospace" fontWeight="bold">OFFLINE</text>
 
                   <line x1="380" y1="10" x2="420" y2="10" stroke="#22d3ee" strokeWidth="4" filter="url(#glowCyan)" />
-                  <text x="430" y="14" fill="#9ca3af" fontSize="9" fontFamily="monospace">FLOW ACTIVE</text>
+                  <text x="430" y="14" fill="#ffffff" fontSize="9" fontFamily="monospace" fontWeight="bold">FLOW ACTIVE</text>
 
                   <line x1="540" y1="10" x2="580" y2="10" stroke="#374151" strokeWidth="4" />
-                  <text x="590" y="14" fill="#9ca3af" fontSize="9" fontFamily="monospace">NO FLOW</text>
+                  <text x="590" y="14" fill="#ffffff" fontSize="9" fontFamily="monospace" fontWeight="bold">NO FLOW</text>
 
-                  <text x="700" y="21" fill="#4b5563" fontSize="9" fontFamily="monospace">FT = FLOW TRANSMITTER (NIVUS 750)</text>
+                  <text x="700" y="21" fill="#ffffff" fontSize="9" fontFamily="monospace" fontWeight="bold">FT = FLOW TRANSMITTER (NIVUS 750)</text>
                 </g>
               </svg>
             </div>
