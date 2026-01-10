@@ -721,7 +721,7 @@ export default function CSTPSPipelinePage() {
           <div className="col-span-2 space-y-2">
             <div className="rounded-lg border border-cyan-900/50 bg-gradient-to-b from-[#0d1520] to-[#0a1018]">
               <div className="border-b border-cyan-900/50 bg-cyan-900/20 px-3 py-2">
-                <span className="text-xs font-bold tracking-wider text-cyan-400">
+                <span className="text-xs font-bold tracking-wider text-white">
                   SENSOR READINGS
                 </span>
               </div>
@@ -761,31 +761,31 @@ export default function CSTPSPipelinePage() {
                       </div>
                       <div className="grid grid-cols-2 gap-2 text-[10px]">
                         <div className="bg-black/30 rounded px-1.5 py-1">
-                          <span className="text-gray-500 block">FLOW</span>
+                          <span className="text-white block">FLOW</span>
                           <div className={`font-mono font-bold ${hasFlow ? 'text-cyan-400' : 'text-gray-600'}`}>
                             {pipe.parameters.flowRate.toFixed(1)}
-                            <span className="text-gray-600 font-normal ml-0.5">m³/h</span>
+                            <span className="text-white font-normal ml-0.5">m³/h</span>
                           </div>
                         </div>
                         <div className="bg-black/30 rounded px-1.5 py-1">
-                          <span className="text-gray-500 block">VEL</span>
+                          <span className="text-white block">VEL</span>
                           <div className={`font-mono font-bold ${hasFlow ? 'text-cyan-400' : 'text-gray-600'}`}>
                             {pipe.parameters.velocity.toFixed(2)}
-                            <span className="text-gray-600 font-normal ml-0.5">m/s</span>
+                            <span className="text-white font-normal ml-0.5">m/s</span>
                           </div>
                         </div>
                         <div className="bg-black/30 rounded px-1.5 py-1">
-                          <span className="text-gray-500 block">LEVEL</span>
+                          <span className="text-white block">LEVEL</span>
                           <div className="font-mono font-bold text-cyan-400">
                             {pipe.parameters.waterLevel}
-                            <span className="text-gray-600 font-normal ml-0.5">mm</span>
+                            <span className="text-white font-normal ml-0.5">mm</span>
                           </div>
                         </div>
                         <div className="bg-black/30 rounded px-1.5 py-1">
-                          <span className="text-gray-500 block">TEMP</span>
+                          <span className="text-white block">TEMP</span>
                           <div className="font-mono font-bold text-cyan-400">
                             {pipe.parameters.temperature.toFixed(1)}
-                            <span className="text-gray-600 font-normal ml-0.5">°C</span>
+                            <span className="text-white font-normal ml-0.5">°C</span>
                           </div>
                         </div>
                       </div>
