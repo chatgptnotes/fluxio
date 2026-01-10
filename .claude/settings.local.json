@@ -14,7 +14,10 @@
       "Bash(git push:*)",
       "Bash(npx vercel --prod --yes)",
       "Bash(npm install)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(npx vercel --prod)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)"
     ]
   }
 }
