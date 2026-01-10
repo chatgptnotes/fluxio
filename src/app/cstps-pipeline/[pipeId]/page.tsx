@@ -105,7 +105,7 @@ function TrendChart({
   const areaD = `${pathD} L 100 100 L 0 100 Z`
 
   return (
-    <div className="rounded-lg border border-cyan-900/50 bg-[#060a10] overflow-hidden">
+    <div className="rounded-lg border border-cyan-900/50 bg-[#151d2b] overflow-hidden">
       {/* Chart Header */}
       <div className="flex items-center justify-between border-b border-cyan-900/50 bg-cyan-900/20 px-3 py-2">
         <div className="flex items-center space-x-2">
@@ -400,7 +400,7 @@ export default function PipeDetailPage() {
 
   if (!pipe) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0f]">
+      <div className="flex min-h-screen items-center justify-center bg-[#1e2939]">
         <div className="text-center">
           <AlertTriangle className="mx-auto h-16 w-16 text-yellow-500" />
           <h2 className="mt-4 text-2xl font-bold text-white">Pipe Not Found</h2>
@@ -433,7 +433,7 @@ export default function PipeDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
+    <div className="min-h-screen bg-[#1e2939]">
       {/* Header */}
       <header className="border-b-2 border-cyan-900/50 bg-gradient-to-r from-[#0d1520] via-[#0f1a2a] to-[#0d1520]">
         <div className="flex items-center justify-between px-4 py-2">
@@ -742,7 +742,7 @@ export default function PipeDetailPage() {
                   const avg = values.reduce((a, b) => a + b, 0) / values.length
 
                   return (
-                    <div key={stat.label} className="rounded-lg bg-[#060a10] border border-cyan-900/30 p-3">
+                    <div key={stat.label} className="rounded-lg bg-[#151d2b] border border-cyan-900/30 p-3">
                       <div className="text-[10px] text-gray-500 uppercase tracking-wider mb-2">
                         {stat.label}
                       </div>
