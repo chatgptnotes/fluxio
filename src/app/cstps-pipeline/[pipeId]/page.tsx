@@ -112,7 +112,7 @@ function TrendChart({
           <TrendingUp className="h-4 w-4 text-cyan-400" />
           <span className="text-xs font-bold tracking-wider text-cyan-400">{label}</span>
         </div>
-        <div className="flex items-center space-x-3 text-[10px] text-gray-500">
+        <div className="flex items-center space-x-3 text-[10px] text-white font-bold">
           <span>5 MIN INTERVAL</span>
           <span>|</span>
           <span>5 HOUR HISTORY</span>
@@ -124,7 +124,7 @@ function TrendChart({
         {/* Y-axis labels */}
         <div className="absolute left-0 top-4 bottom-12 w-12 flex flex-col justify-between text-right pr-2">
           {yLabels.map((label, i) => (
-            <span key={i} className="text-[10px] font-mono text-gray-500">
+            <span key={i} className="text-[10px] font-mono text-white font-bold">
               {label.toFixed(1)}
             </span>
           ))}
@@ -241,7 +241,7 @@ function TrendChart({
             {timeLabels.map((t, i) => (
               <span
                 key={i}
-                className="absolute text-[10px] font-mono text-gray-500 transform -translate-x-1/2"
+                className="absolute text-[10px] font-mono text-white font-bold transform -translate-x-1/2"
                 style={{ left: `${t.x}%` }}
               >
                 {t.label}
@@ -262,7 +262,7 @@ function TrendChart({
             <div className="font-mono text-cyan-400 font-bold">
               {points[hoveredPoint].value.toFixed(2)} {unit}
             </div>
-            <div className="text-gray-500 text-[10px]">
+            <div className="text-white font-bold text-[10px]">
               {new Date(points[hoveredPoint].timestamp).toLocaleTimeString()}
             </div>
           </div>
@@ -270,10 +270,10 @@ function TrendChart({
 
         {/* Current value display */}
         <div className="absolute top-4 right-4 bg-[#0d1520] border border-cyan-800/50 rounded px-3 py-2">
-          <div className="text-[10px] text-gray-500 mb-1">CURRENT</div>
+          <div className="text-[10px] text-white font-bold mb-1">CURRENT</div>
           <div className="font-mono text-lg font-bold" style={{ color }}>
             {data[data.length - 1].value.toFixed(2)}
-            <span className="text-xs text-gray-500 ml-1">{unit}</span>
+            <span className="text-xs text-white font-bold ml-1">{unit}</span>
           </div>
         </div>
       </div>
@@ -319,10 +319,10 @@ function GaugeChart({
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className="text-lg font-bold text-white font-mono">{value.toFixed(1)}</span>
-          <span className="text-[10px] text-gray-500">{unit}</span>
+          <span className="text-[10px] text-white font-bold">{unit}</span>
         </div>
       </div>
-      <span className="mt-1 text-xs font-medium text-gray-400">{label}</span>
+      <span className="mt-1 text-xs font-medium text-white font-bold">{label}</span>
     </div>
   )
 }
@@ -351,7 +351,7 @@ function ParameterCard({
     <div className="rounded-lg border border-cyan-900/50 bg-[#0d1520] p-3 transition-all hover:border-cyan-800/50">
       <div className="mb-1.5 flex items-center space-x-2">
         <Icon className="h-4 w-4 text-cyan-500" />
-        <span className="text-[10px] text-gray-500 uppercase tracking-wider">{label}</span>
+        <span className="text-[10px] text-white font-bold uppercase tracking-wider">{label}</span>
       </div>
       <div className="flex items-baseline space-x-1">
         <span
@@ -359,7 +359,7 @@ function ParameterCard({
         >
           {value}
         </span>
-        {unit && <span className="text-xs text-gray-500">{unit}</span>}
+        {unit && <span className="text-xs text-white font-bold">{unit}</span>}
       </div>
     </div>
   )
@@ -404,7 +404,7 @@ export default function PipeDetailPage() {
         <div className="text-center">
           <AlertTriangle className="mx-auto h-16 w-16 text-yellow-500" />
           <h2 className="mt-4 text-2xl font-bold text-white">Pipe Not Found</h2>
-          <p className="mt-2 text-gray-400">The requested pipe could not be found.</p>
+          <p className="mt-2 text-white font-bold">The requested pipe could not be found.</p>
           <Link
             href="/cstps-pipeline"
             className="mt-6 inline-flex items-center space-x-2 rounded-lg bg-cyan-600 px-6 py-3 font-semibold text-white transition-all hover:bg-cyan-700"
@@ -447,10 +447,10 @@ export default function PipeDetailPage() {
             </Link>
             <div className="h-6 w-px bg-cyan-900/50"></div>
             <div className="flex items-center space-x-2">
-              <span className="text-sm font-bold tracking-wider text-gray-400">
+              <span className="text-sm font-bold tracking-wider text-white font-bold">
                 FT-{String(pipe.pipeNumber).padStart(2, '0')}
               </span>
-              <span className="text-gray-600">|</span>
+              <span className="text-white font-bold">|</span>
               <span className="text-sm text-cyan-400">{pipe.deviceName}</span>
             </div>
           </div>
@@ -512,19 +512,19 @@ export default function PipeDetailPage() {
                   </div>
                   <div>
                     <div className="text-sm font-bold text-white">{pipe.deviceId}</div>
-                    <div className="text-[10px] text-gray-500">NIVUS 750 Flow Transmitter</div>
+                    <div className="text-[10px] text-white font-bold">NIVUS 750 Flow Transmitter</div>
                   </div>
                 </div>
                 <div className="space-y-2 text-xs">
-                  <div className="flex items-center space-x-2 text-gray-400">
+                  <div className="flex items-center space-x-2 text-white font-bold">
                     <MapPin className="h-3 w-3" />
                     <span>{pipe.location}</span>
                   </div>
-                  <div className="flex items-center space-x-2 text-gray-400">
+                  <div className="flex items-center space-x-2 text-white font-bold">
                     <Calendar className="h-3 w-3" />
                     <span>Installed: {pipe.installationDate}</span>
                   </div>
-                  <div className="flex items-center space-x-2 text-gray-400">
+                  <div className="flex items-center space-x-2 text-white font-bold">
                     <Clock className="h-3 w-3" />
                     <span>Last Update: {new Date(pipe.lastUpdated).toLocaleTimeString()}</span>
                   </div>
@@ -627,14 +627,14 @@ export default function PipeDetailPage() {
                   ) : parameters.flowDirection === 'reverse' ? (
                     <ArrowRightLeft className="h-6 w-6 rotate-180 text-yellow-400" />
                   ) : (
-                    <Activity className="h-6 w-6 text-gray-500" />
+                    <Activity className="h-6 w-6 text-white font-bold" />
                   )}
                 </div>
                 <div>
                   <div className="text-sm font-bold text-white">
                     {getFlowDirectionLabel(parameters.flowDirection)}
                   </div>
-                  <div className="text-[10px] text-gray-500">
+                  <div className="text-[10px] text-white font-bold">
                     {parameters.flowDirection === 'forward'
                       ? 'Normal operation'
                       : parameters.flowDirection === 'reverse'
@@ -658,12 +658,12 @@ export default function PipeDetailPage() {
                   </span>
                 </div>
                 <div className="flex items-center space-x-4 text-xs">
-                  <div className="flex items-center space-x-2 text-gray-400">
+                  <div className="flex items-center space-x-2 text-white font-bold">
                     <RefreshCw className="h-3 w-3" />
                     <span>UPDATE INTERVAL: 5 MIN</span>
                   </div>
-                  <div className="text-gray-600">|</div>
-                  <div className="text-gray-400">
+                  <div className="text-white font-bold">|</div>
+                  <div className="text-white font-bold">
                     NEXT UPDATE: {lastUpdate ? new Date(lastUpdate.getTime() + 5 * 60 * 1000).toLocaleTimeString('en-GB') : '--:--:--'}
                   </div>
                 </div>
@@ -743,24 +743,24 @@ export default function PipeDetailPage() {
 
                   return (
                     <div key={stat.label} className="rounded-lg bg-slate-100 border border-cyan-900/30 p-3">
-                      <div className="text-[10px] text-gray-500 uppercase tracking-wider mb-2">
+                      <div className="text-[10px] text-white font-bold uppercase tracking-wider mb-2">
                         {stat.label}
                       </div>
                       <div className="space-y-1.5">
                         <div className="flex justify-between text-xs">
-                          <span className="text-gray-500">MIN</span>
+                          <span className="text-white font-bold">MIN</span>
                           <span className="font-mono" style={{ color: stat.color }}>
                             {min.toFixed(2)} {stat.unit}
                           </span>
                         </div>
                         <div className="flex justify-between text-xs">
-                          <span className="text-gray-500">MAX</span>
+                          <span className="text-white font-bold">MAX</span>
                           <span className="font-mono" style={{ color: stat.color }}>
                             {max.toFixed(2)} {stat.unit}
                           </span>
                         </div>
                         <div className="flex justify-between text-xs">
-                          <span className="text-gray-500">AVG</span>
+                          <span className="text-white font-bold">AVG</span>
                           <span className="font-mono font-bold" style={{ color: stat.color }}>
                             {avg.toFixed(2)} {stat.unit}
                           </span>
@@ -780,25 +780,25 @@ export default function PipeDetailPage() {
         <div className="flex items-center justify-between px-4 py-2">
           <div className="flex items-center space-x-6 text-xs font-mono">
             <div className="flex items-center space-x-2">
-              <span className="text-gray-500">DEVICE:</span>
+              <span className="text-white font-bold">DEVICE:</span>
               <span className="text-cyan-400">{pipe.deviceId}</span>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="text-gray-500">COMM:</span>
+              <span className="text-white font-bold">COMM:</span>
               <span className={pipe.status === 'offline' ? 'text-red-400' : 'text-green-400'}>
                 {pipe.status === 'offline' ? 'FAILED' : 'OK'}
               </span>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="text-gray-500">MODBUS ADDR:</span>
+              <span className="text-white font-bold">MODBUS ADDR:</span>
               <span className="text-cyan-400">{pipe.pipeNumber}</span>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="text-gray-500">SCAN TIME:</span>
+              <span className="text-white font-bold">SCAN TIME:</span>
               <span className="text-cyan-400">{currentTime ? currentTime.toLocaleTimeString('en-GB') : '--:--:--'}</span>
             </div>
           </div>
-          <div className="text-xs text-gray-600 font-mono">
+          <div className="text-xs text-white font-bold font-mono">
             FluxIO SCADA v1.5 | NIVUS 750 Detail View
           </div>
         </div>

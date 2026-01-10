@@ -94,7 +94,7 @@ export default function CSTPSPipelinePage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_6px_#22c55e]"></div>
-                    <span className="text-xs text-gray-400">ONLINE</span>
+                    <span className="text-xs text-white font-bold">ONLINE</span>
                   </div>
                   <span className="rounded bg-green-900/30 px-2 py-0.5 font-mono text-sm font-bold text-green-400">
                     {onlineCount}
@@ -103,7 +103,7 @@ export default function CSTPSPipelinePage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <div className="h-2 w-2 rounded-full bg-yellow-500 shadow-[0_0_6px_#eab308]"></div>
-                    <span className="text-xs text-gray-400">WARNING</span>
+                    <span className="text-xs text-white font-bold">WARNING</span>
                   </div>
                   <span className="rounded bg-yellow-900/30 px-2 py-0.5 font-mono text-sm font-bold text-yellow-400">
                     {warningCount}
@@ -112,7 +112,7 @@ export default function CSTPSPipelinePage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <div className="h-2 w-2 rounded-full bg-red-500 shadow-[0_0_6px_#ef4444]"></div>
-                    <span className="text-xs text-gray-400">OFFLINE</span>
+                    <span className="text-xs text-white font-bold">OFFLINE</span>
                   </div>
                   <span className="rounded bg-red-900/30 px-2 py-0.5 font-mono text-sm font-bold text-red-400">
                     {offlineCount}
@@ -132,7 +132,7 @@ export default function CSTPSPipelinePage() {
                 <div className="font-mono text-3xl font-bold text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">
                   {totalFlow.toFixed(1)}
                 </div>
-                <div className="text-xs text-gray-500 mt-1">m³/h</div>
+                <div className="text-xs text-white font-bold mt-1">m³/h</div>
                 <div className="mt-2 h-1 w-full rounded-full bg-gray-800 overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-cyan-600 to-cyan-400 rounded-full transition-all duration-500"
@@ -171,7 +171,7 @@ export default function CSTPSPipelinePage() {
                   </div>
                 ))}
                 {cstpsPipes.filter(p => p.status !== 'online').length === 0 && (
-                  <div className="text-center text-xs text-gray-600 py-4">
+                  <div className="text-center text-xs text-white font-bold py-4">
                     NO ACTIVE ALARMS
                   </div>
                 )}
@@ -187,7 +187,7 @@ export default function CSTPSPipelinePage() {
                   PROCESS FLOW DIAGRAM - DAM TO CSTPS GENERATION PLANT
                 </span>
                 <div className="flex items-center space-x-3">
-                  <span className="text-[10px] text-gray-500">SCAN RATE: 1000ms</span>
+                  <span className="text-[10px] text-white font-bold">SCAN RATE: 1000ms</span>
                   <div className="flex items-center space-x-1">
                     <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></div>
                     <span className="text-[10px] text-green-400">LIVE</span>
@@ -741,7 +741,7 @@ export default function CSTPSPipelinePage() {
                       onMouseLeave={() => setHoveredPipe(null)}
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-bold text-gray-300 font-mono">
+                        <span className="text-xs font-bold text-white font-bold font-mono">
                           FT-{String(pipe.pipeNumber).padStart(2, '0')}
                         </span>
                         <div className="flex items-center space-x-1">
@@ -762,14 +762,14 @@ export default function CSTPSPipelinePage() {
                       <div className="grid grid-cols-2 gap-2 text-[10px]">
                         <div className="bg-black/30 rounded px-1.5 py-1">
                           <span className="text-white block">FLOW</span>
-                          <div className={`font-mono font-bold ${hasFlow ? 'text-cyan-400' : 'text-gray-600'}`}>
+                          <div className={`font-mono font-bold ${hasFlow ? 'text-cyan-400' : 'text-white font-bold'}`}>
                             {pipe.parameters.flowRate.toFixed(1)}
                             <span className="text-white font-normal ml-0.5">m³/h</span>
                           </div>
                         </div>
                         <div className="bg-black/30 rounded px-1.5 py-1">
                           <span className="text-white block">VEL</span>
-                          <div className={`font-mono font-bold ${hasFlow ? 'text-cyan-400' : 'text-gray-600'}`}>
+                          <div className={`font-mono font-bold ${hasFlow ? 'text-cyan-400' : 'text-white font-bold'}`}>
                             {pipe.parameters.velocity.toFixed(2)}
                             <span className="text-white font-normal ml-0.5">m/s</span>
                           </div>
@@ -802,26 +802,26 @@ export default function CSTPSPipelinePage() {
           <div className="flex items-center justify-between px-4 py-2">
             <div className="flex items-center space-x-6 text-xs font-mono">
               <div className="flex items-center space-x-2">
-                <span className="text-gray-500">PLC:</span>
+                <span className="text-white font-bold">PLC:</span>
                 <span className="text-green-400 flex items-center">
                   <span className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1 animate-pulse"></span>
                   CONNECTED
                 </span>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="text-gray-500">MODBUS RTU:</span>
+                <span className="text-white font-bold">MODBUS RTU:</span>
                 <span className="text-green-400">OK</span>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="text-gray-500">DB SYNC:</span>
+                <span className="text-white font-bold">DB SYNC:</span>
                 <span className="text-green-400">OK</span>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="text-gray-500">LAST SCAN:</span>
+                <span className="text-white font-bold">LAST SCAN:</span>
                 <span className="text-cyan-400">{currentTime ? currentTime.toLocaleTimeString('en-GB') : '--:--:--'}</span>
               </div>
             </div>
-            <div className="text-xs text-gray-600 font-mono">
+            <div className="text-xs text-white font-bold font-mono">
               FluxIO SCADA v1.5 | CSTPS Water Supply System
             </div>
           </div>
