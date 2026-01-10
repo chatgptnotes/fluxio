@@ -223,13 +223,13 @@ export default function LandingPage() {
                   <span>Start Free Trial</span>
                   <ArrowRight className="h-5 w-5" />
                 </Link>
-                <a
-                  href="#demo"
+                <Link
+                  href="/cstps-pipeline"
                   className="inline-flex items-center justify-center space-x-2 rounded-lg border-2 border-white/50 px-8 py-4 text-lg font-medium text-white backdrop-blur-sm transition-all hover:border-white hover:bg-white/10"
                 >
                   <Radio className="h-5 w-5" />
-                  <span>Watch Demo</span>
-                </a>
+                  <span>View CSTPS Pipeline</span>
+                </Link>
               </div>
 
               <div className="mt-12 grid grid-cols-3 gap-8 border-t border-white/20 pt-8">
