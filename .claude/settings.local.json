@@ -12,7 +12,9 @@
       "Bash(git commit:*)",
       "Bash(git config:*)",
       "Bash(git push:*)",
-      "Bash(npx vercel --prod --yes)"
+      "Bash(npx vercel --prod --yes)",
+      "Bash(npm install)",
+      "Bash(npm run dev:*)"
     ]
   }
 }
