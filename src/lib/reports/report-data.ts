@@ -44,6 +44,7 @@ export interface ReportData {
     totalFlowVolume: number
     avgFlowRate: number
     activeDevices: number
+    totalDevices: number
     offlineDevices: number
     alertsTriggered: number
   }
@@ -298,7 +299,9 @@ export function generateReportData(
     pipeStatistics.length > 0
       ? pipeStatistics.reduce((sum, p) => sum + p.avgFlowRate, 0) / pipeStatistics.length
       : 0
-  const activeDevices = pipes.filter((p) => p.status === 'online').length
+  // Count devices: 'online' and 'warning' are considered active/operational
+  const activeDevices = pipes.filter((p) => p.status === 'online' || p.status === 'warning').length
+  const totalDevices = pipes.length
   const offlineDevices = pipes.filter((p) => p.status === 'offline').length
 
   // Generate hourly data
@@ -325,6 +328,7 @@ export function generateReportData(
       totalFlowVolume: Math.round(totalFlowVolume * 100) / 100,
       avgFlowRate: Math.round(avgFlowRate * 100) / 100,
       activeDevices,
+      totalDevices,
       offlineDevices,
       alertsTriggered: alerts.length,
     },

@@ -95,7 +95,7 @@ export function generatePDFReport(reportData: ReportData): string {
   const cards = [
     { label: 'Total Flow Volume', value: `${reportData.summary.totalFlowVolume.toLocaleString()} m³`, color: COLORS.primary },
     { label: 'Avg Flow Rate', value: `${reportData.summary.avgFlowRate.toFixed(1)} m³/h`, color: COLORS.primary },
-    { label: 'Active Devices', value: `${reportData.summary.activeDevices}/${reportData.summary.activeDevices + reportData.summary.offlineDevices}`, color: COLORS.success },
+    { label: 'Active Devices', value: `${reportData.summary.activeDevices}/${reportData.summary.totalDevices}`, color: COLORS.success },
     { label: 'Alerts Triggered', value: `${reportData.summary.alertsTriggered}`, color: reportData.summary.alertsTriggered > 0 ? COLORS.warning : COLORS.success },
   ]
 
@@ -502,7 +502,7 @@ export function downloadPDFReport(reportData: ReportData): void {
   const cards = [
     { label: 'Total Flow Volume', value: `${reportData.summary.totalFlowVolume.toLocaleString()} m³`, color: COLORS.primary },
     { label: 'Avg Flow Rate', value: `${reportData.summary.avgFlowRate.toFixed(1)} m³/h`, color: COLORS.primary },
-    { label: 'Active Devices', value: `${reportData.summary.activeDevices}/${reportData.summary.activeDevices + reportData.summary.offlineDevices}`, color: COLORS.success },
+    { label: 'Active Devices', value: `${reportData.summary.activeDevices}/${reportData.summary.totalDevices}`, color: COLORS.success },
     { label: 'Alerts Triggered', value: `${reportData.summary.alertsTriggered}`, color: reportData.summary.alertsTriggered > 0 ? COLORS.warning : COLORS.success },
   ]
 
