@@ -183,11 +183,11 @@ export default function CSTPSPipelinePage() {
           <div className="col-span-8">
             <div className="rounded-lg border border-slate-300 bg-slate-100 overflow-hidden">
               <div className="border-b border-cyan-900/50 bg-cyan-900/20 px-3 py-2 flex items-center justify-between">
-                <span className="text-xs font-bold tracking-wider text-cyan-400">
+                <span className="text-xs font-bold tracking-wider text-black">
                   PROCESS FLOW DIAGRAM - DAM TO CSTPS GENERATION PLANT
                 </span>
                 <div className="flex items-center space-x-3">
-                  <span className="text-[10px] text-white font-bold">SCAN RATE: 1000ms</span>
+                  <span className="text-[10px] text-black font-bold">SCAN RATE: 1000ms</span>
                   <div className="flex items-center space-x-1">
                     <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></div>
                     <span className="text-[10px] text-green-400">LIVE</span>
