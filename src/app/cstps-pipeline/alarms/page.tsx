@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import { cstpsPipes } from '@/lib/cstps-data'
 
 // Alarm severity types
 type AlarmSeverity = 'critical' | 'warning' | 'info'
@@ -29,8 +30,7 @@ const generateAlarmHistory = (): Alarm[] => {
     { type: 'COMM_FAIL', desc: 'Communication Failure', severity: 'critical' as AlarmSeverity },
     { type: 'LOW_BATTERY', desc: 'Low Battery Warning', severity: 'warning' as AlarmSeverity },
     { type: 'HIGH_FLOW', desc: 'High Flow Rate Detected', severity: 'warning' as AlarmSeverity },
-    { type: 'LOW_FLOW', desc: 'Low Flow Rate Detected', severity: 'warning' as AlarmSeverity },
-    { type: 'NO_FLOW', desc: 'No Flow Detected', severity: 'critical' as AlarmSeverity },
+    { type: 'ZERO_FLOW', desc: 'Pipeline Flow Zero', severity: 'warning' as AlarmSeverity },
     { type: 'SENSOR_FAULT', desc: 'Sensor Malfunction', severity: 'critical' as AlarmSeverity },
     { type: 'TEMP_HIGH', desc: 'High Temperature', severity: 'warning' as AlarmSeverity },
     { type: 'LEVEL_HIGH', desc: 'High Water Level', severity: 'info' as AlarmSeverity },
@@ -41,11 +41,30 @@ const generateAlarmHistory = (): Alarm[] => {
   const alarms: Alarm[] = []
   const now = new Date()
 
-  // Generate 50 historical alarms
+  // First, add active alarms for pipes with zero flow (real-time detection)
+  cstpsPipes.forEach((pipe) => {
+    if (pipe.parameters.flowRate === 0) {
+      alarms.push({
+        id: `ALM-ZERO-${pipe.pipeNumber}`,
+        timestamp: new Date(), // Current time - active now
+        deviceId: `Nivus-750-${pipe.pipeNumber}`,
+        pipeNumber: pipe.pipeNumber,
+        alarmType: 'ZERO_FLOW',
+        description: 'Pipeline Flow Zero',
+        severity: 'warning',
+        status: 'active',
+        value: 0,
+        threshold: 0,
+      })
+    }
+  })
+
+  // Generate 50 historical alarms (excluding ZERO_FLOW for variety)
+  const historicalAlarmTypes = alarmTypes.filter(a => a.type !== 'ZERO_FLOW')
   for (let i = 0; i < 50; i++) {
-    const alarmDef = alarmTypes[Math.floor(Math.random() * alarmTypes.length)]
+    const alarmDef = historicalAlarmTypes[Math.floor(Math.random() * historicalAlarmTypes.length)]
     const pipeNumber = Math.floor(Math.random() * 6) + 1
-    const hoursAgo = Math.floor(Math.random() * 168) // Up to 7 days ago
+    const hoursAgo = Math.floor(Math.random() * 168) + 1 // 1 hour to 7 days ago
     const timestamp = new Date(now.getTime() - hoursAgo * 60 * 60 * 1000)
 
     // Determine status based on age
@@ -72,7 +91,7 @@ const generateAlarmHistory = (): Alarm[] => {
       severity: alarmDef.severity,
       status,
       value: alarmDef.type.includes('FLOW') ? Math.random() * 100 : undefined,
-      threshold: alarmDef.type.includes('FLOW') ? (alarmDef.type === 'HIGH_FLOW' ? 80 : 10) : undefined,
+      threshold: alarmDef.type.includes('FLOW') ? 80 : undefined,
       acknowledgedAt,
       acknowledgedBy: acknowledgedAt ? 'Operator' : undefined,
       clearedAt,
