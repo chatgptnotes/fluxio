@@ -565,25 +565,25 @@ export default function CSTPSPipelinePage() {
                     </div>
                   </div>
 
-                  {/* FT Value Overlays - Positioned on pipeline flow meter locations */}
+                  {/* FT Value Overlays - Compact and spread out along pipelines */}
                   {cstpsPipes.map((pipe, index) => {
                     const hasFlow = pipe.status !== 'offline' && pipe.parameters.flowRate > 0
                     const statusColor = pipe.status === 'online' ? '#4CAF50' : pipe.status === 'warning' ? '#FFC107' : '#F44336'
-                    // FT positions for 2D bird eye view - matching the cyan circles in template
+                    // FT positions spread out along diagonal pipelines - alternating left/right offset
                     const ftPositions2D = [
-                      { left: 47, top: 35 },   // FT-001 - top pipeline
-                      { left: 44, top: 41 },   // FT-002
-                      { left: 41, top: 47 },   // FT-003
-                      { left: 38, top: 53 },   // FT-004
-                      { left: 35, top: 59 },   // FT-005
-                      { left: 32, top: 65 },   // FT-006 - bottom pipeline
+                      { left: 52, top: 30, offsetX: 5 },    // FT-001 - top pipeline (right offset)
+                      { left: 42, top: 36, offsetX: -5 },   // FT-002 (left offset)
+                      { left: 48, top: 44, offsetX: 5 },    // FT-003 (right offset)
+                      { left: 38, top: 52, offsetX: -5 },   // FT-004 (left offset)
+                      { left: 44, top: 60, offsetX: 5 },    // FT-005 (right offset)
+                      { left: 34, top: 68, offsetX: -5 },   // FT-006 - bottom pipeline (left offset)
                     ]
                     const pos = ftPositions2D[index]
 
                     return (
                       <div
                         key={`ft-2d-${pipe.id}`}
-                        className="absolute z-10 transition-all cursor-pointer hover:scale-110"
+                        className="absolute z-10 transition-all cursor-pointer hover:scale-105"
                         style={{
                           left: `${pos.left}%`,
                           top: `${pos.top}%`,
@@ -593,37 +593,36 @@ export default function CSTPSPipelinePage() {
                         onMouseEnter={() => setHoveredPipe(pipe.id)}
                         onMouseLeave={() => setHoveredPipe(null)}
                       >
-                        <div className={`relative bg-[#0D1B2A]/95 rounded px-2 py-1 border-2 ${
+                        <div className={`relative bg-[#0D1B2A]/90 rounded px-1.5 py-0.5 border ${
                           hoveredPipe === pipe.id
-                            ? 'border-[#00E5FF] shadow-[0_0_12px_#00E5FF]'
+                            ? 'border-[#00E5FF] shadow-[0_0_8px_#00E5FF]'
                             : 'border-[#00ACC1]'
                         } transition-all`}>
-                          {/* Status LED */}
+                          {/* Status LED - smaller */}
                           <div
-                            className="absolute -top-1.5 -right-1.5 h-3 w-3 rounded-full border border-white"
+                            className="absolute -top-1 -right-1 h-2 w-2 rounded-full border border-white"
                             style={{
                               backgroundColor: statusColor,
-                              boxShadow: hasFlow ? `0 0 8px ${statusColor}` : 'none',
+                              boxShadow: hasFlow ? `0 0 4px ${statusColor}` : 'none',
                               animation: hasFlow ? 'pulse 1.5s infinite' : 'none'
                             }}
                           />
-                          {/* FT Label */}
-                          <div className="text-[9px] text-[#90CAF9] font-mono font-bold">FT-{String(pipe.pipeNumber).padStart(3, '0')}</div>
-                          {/* Flow Value */}
-                          <div className={`text-base font-bold font-mono ${hasFlow ? 'text-[#00E5FF]' : 'text-[#546E7A]'}`}>
-                            {pipe.parameters.flowRate.toFixed(1)}
-                            <span className="text-[9px] text-[#4FC3F7] ml-0.5">m3/h</span>
+                          {/* FT Label - smaller */}
+                          <div className="text-[7px] text-[#90CAF9] font-mono font-bold leading-tight">FT-{String(pipe.pipeNumber).padStart(3, '0')}</div>
+                          {/* Flow Value - compact */}
+                          <div className={`text-[11px] font-bold font-mono leading-tight ${hasFlow ? 'text-[#00E5FF]' : 'text-[#546E7A]'}`}>
+                            {pipe.parameters.flowRate.toFixed(1)}<span className="text-[7px] text-[#4FC3F7]">m3/h</span>
                           </div>
                         </div>
                         {/* Tooltip on hover */}
                         {hoveredPipe === pipe.id && (
                           <div
-                            className="absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl border border-[#E0E0E0] p-2.5 z-20 whitespace-nowrap"
+                            className="absolute left-full ml-1 top-1/2 -translate-y-1/2 bg-white rounded shadow-lg border border-[#E0E0E0] p-1.5 z-20 whitespace-nowrap"
                           >
-                            <div className="text-xs font-bold text-[#1565C0]">{pipe.deviceId}</div>
-                            <div className="text-[10px] text-[#757575] mt-0.5">Velocity: {pipe.parameters.velocity.toFixed(2)} m/s</div>
-                            <div className="text-[10px] text-[#757575]">Level: {pipe.parameters.waterLevel} mm</div>
-                            <div className="text-[10px] text-[#1565C0] mt-1 font-medium">Click to view details</div>
+                            <div className="text-[10px] font-bold text-[#1565C0]">{pipe.deviceId}</div>
+                            <div className="text-[8px] text-[#757575]">Vel: {pipe.parameters.velocity.toFixed(2)} m/s</div>
+                            <div className="text-[8px] text-[#757575]">Level: {pipe.parameters.waterLevel} mm</div>
+                            <div className="text-[8px] text-[#1565C0] mt-0.5 font-medium">Click for details</div>
                           </div>
                         )}
                       </div>
