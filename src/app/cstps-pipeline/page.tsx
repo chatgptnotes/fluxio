@@ -642,9 +642,6 @@ export default function CSTPSPipelinePage() {
                           transition: isDragging ? 'none' : 'transform 0.15s ease'
                         }}
                         onMouseDown={(e) => handle2DMouseDown(e, index)}
-                        onClick={(e) => {
-                          if (!isDragging) router.push(`/cstps-pipeline/${pipe.id}`)
-                        }}
                         onMouseEnter={() => !dragging2DIndex && setHoveredPipe(pipe.id)}
                         onMouseLeave={() => setHoveredPipe(null)}
                       >
@@ -677,7 +674,7 @@ export default function CSTPSPipelinePage() {
                             <div className="text-[10px] font-bold text-[#1565C0]">{pipe.deviceId}</div>
                             <div className="text-[8px] text-[#757575]">Vel: {pipe.parameters.velocity.toFixed(2)} m/s</div>
                             <div className="text-[8px] text-[#757575]">Level: {pipe.parameters.waterLevel} mm</div>
-                            <div className="text-[8px] text-[#1565C0] mt-0.5 font-medium">Click for details</div>
+                            <div className="text-[8px] text-[#1565C0] mt-0.5 font-medium">Drag to reposition</div>
                           </div>
                         )}
                       </div>
