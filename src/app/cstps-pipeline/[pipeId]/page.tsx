@@ -742,25 +742,25 @@ export default function PipeDetailPage() {
                   const avg = values.reduce((a, b) => a + b, 0) / values.length
 
                   return (
-                    <div key={stat.label} className="rounded-lg bg-slate-100 border border-cyan-900/30 p-3">
-                      <div className="text-[10px] text-white font-bold uppercase tracking-wider mb-2">
+                    <div key={stat.label} className="rounded-lg bg-[#0d1520] border border-cyan-900/30 p-3">
+                      <div className="text-[10px] text-cyan-400 font-bold uppercase tracking-wider mb-2">
                         {stat.label}
                       </div>
                       <div className="space-y-1.5">
                         <div className="flex justify-between text-xs">
-                          <span className="text-white font-bold">MIN</span>
+                          <span className="text-slate-400 font-bold">MIN</span>
                           <span className="font-mono" style={{ color: stat.color }}>
                             {min.toFixed(2)} {stat.unit}
                           </span>
                         </div>
                         <div className="flex justify-between text-xs">
-                          <span className="text-white font-bold">MAX</span>
+                          <span className="text-slate-400 font-bold">MAX</span>
                           <span className="font-mono" style={{ color: stat.color }}>
                             {max.toFixed(2)} {stat.unit}
                           </span>
                         </div>
                         <div className="flex justify-between text-xs">
-                          <span className="text-white font-bold">AVG</span>
+                          <span className="text-slate-400 font-bold">AVG</span>
                           <span className="font-mono font-bold" style={{ color: stat.color }}>
                             {avg.toFixed(2)} {stat.unit}
                           </span>
