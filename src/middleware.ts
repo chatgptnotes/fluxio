@@ -69,7 +69,9 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   // Protected routes that require authentication
-  if (request.nextUrl.pathname.startsWith('/dashboard')) {
+  // Exclude /dashboard/reports from authentication (public access)
+  if (request.nextUrl.pathname.startsWith('/dashboard') &&
+      !request.nextUrl.pathname.startsWith('/dashboard/reports')) {
     if (!user) {
       const redirectUrl = new URL('/login', request.url)
       redirectUrl.searchParams.set('redirect', request.nextUrl.pathname)
