@@ -2,6 +2,7 @@
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { ReportData, formatDate, formatDateTime } from './report-data'
+import { LOGO_BASE64, LogoKey } from './logo-data'
 
 // Extend jsPDF type for autoTable
 interface jsPDFWithAutoTable extends jsPDF {
@@ -24,17 +25,33 @@ const COLORS = {
   sterling: [255, 153, 0] as [number, number, number], // Sterling orange
 }
 
-// Helper function to draw company logo placeholder
-function drawCompanyLogo(doc: jsPDF, name: string, x: number, y: number, color: [number, number, number]): void {
-  // Draw a rounded rectangle as logo background
-  doc.setFillColor(...color)
-  doc.roundedRect(x, y, 25, 12, 2, 2, 'F')
-
-  // Add company initial/abbreviation
-  doc.setTextColor(255, 255, 255)
-  doc.setFontSize(6)
-  doc.setFont('helvetica', 'bold')
-  doc.text(name, x + 12.5, y + 7.5, { align: 'center' })
+// Helper function to draw company logo with actual image
+function drawCompanyLogo(
+  doc: jsPDF,
+  logoKey: LogoKey,
+  x: number,
+  y: number,
+  width: number = 25,
+  height: number = 12
+): void {
+  try {
+    const logoBase64 = LOGO_BASE64[logoKey]
+    if (logoBase64) {
+      doc.addImage(logoBase64, 'PNG', x, y, width, height)
+    }
+  } catch (error) {
+    // Fallback to text badge if image fails
+    const colors: Record<LogoKey, [number, number, number]> = {
+      mahagenco: [0, 102, 153],
+      sterling: [255, 153, 0]
+    }
+    doc.setFillColor(...colors[logoKey])
+    doc.roundedRect(x, y, width, height, 2, 2, 'F')
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(6)
+    doc.setFont('helvetica', 'bold')
+    doc.text(logoKey.toUpperCase(), x + width / 2, y + height / 2 + 2, { align: 'center' })
+  }
 }
 
 export function generatePDFReport(reportData: ReportData): string {
@@ -55,32 +72,36 @@ export function generatePDFReport(reportData: ReportData): string {
   // HEADER SECTION
   // ===================
 
-  // Header background
-  doc.setFillColor(...COLORS.secondary)
-  doc.rect(0, 0, pageWidth, 45, 'F')
+  // White strip at top for logos
+  doc.setFillColor(255, 255, 255)
+  doc.rect(0, 0, pageWidth, 18, 'F')
 
-  // Company Logos Row (top of header)
-  drawCompanyLogo(doc, 'MAHAGENCO', margin, 4, COLORS.mahagenco)
-  drawCompanyLogo(doc, 'STERLING', margin + 28, 4, COLORS.sterling)
+  // Header background (below logo strip)
+  doc.setFillColor(...COLORS.secondary)
+  doc.rect(0, 18, pageWidth, 32, 'F')
+
+  // Company Logos Row (on white background)
+  drawCompanyLogo(doc, 'mahagenco', margin, 3, 28, 13)
+  drawCompanyLogo(doc, 'sterling', margin + 32, 3, 28, 13)
 
   // Logo/Title
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(22)
   doc.setFont('helvetica', 'bold')
-  doc.text('FluxIO SCADA', margin, 28)
+  doc.text('FluxIO SCADA', margin, 33)
 
   // Subtitle
   doc.setFontSize(9)
   doc.setFont('helvetica', 'normal')
-  doc.text('Flow Monitoring System Report', margin, 35)
+  doc.text('Flow Monitoring System Report', margin, 41)
 
   // Report type badge
   const reportTypeLabel = reportData.reportType.charAt(0).toUpperCase() + reportData.reportType.slice(1) + ' Report'
   doc.setFillColor(...COLORS.primary)
-  doc.roundedRect(pageWidth - margin - 50, 15, 50, 10, 2, 2, 'F')
+  doc.roundedRect(pageWidth - margin - 50, 23, 50, 10, 2, 2, 'F')
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(9)
-  doc.text(reportTypeLabel, pageWidth - margin - 25, 21.5, { align: 'center' })
+  doc.text(reportTypeLabel, pageWidth - margin - 25, 29.5, { align: 'center' })
 
   // Date range info
   doc.setTextColor(200, 200, 200)
@@ -88,17 +109,17 @@ export function generatePDFReport(reportData: ReportData): string {
   doc.text(
     `Period: ${formatDate(reportData.dateRange.startDate)} - ${formatDate(reportData.dateRange.endDate)}`,
     pageWidth - margin,
-    32,
+    38,
     { align: 'right' }
   )
   doc.text(
     `Generated: ${formatDateTime(reportData.generatedAt)}`,
     pageWidth - margin,
-    38,
+    45,
     { align: 'right' }
   )
 
-  yPos = 55
+  yPos = 58
 
   // ===================
   // EXECUTIVE SUMMARY
@@ -483,38 +504,42 @@ export function generatePDFBuffer(reportData: ReportData): Uint8Array {
     }
   }
 
-  // Header
-  doc.setFillColor(...COLORS.secondary)
-  doc.rect(0, 0, pageWidth, 45, 'F')
+  // White strip at top for logos
+  doc.setFillColor(255, 255, 255)
+  doc.rect(0, 0, pageWidth, 18, 'F')
 
-  // Company Logos
-  drawCompanyLogo(doc, 'MAHAGENCO', margin, 4, COLORS.mahagenco)
-  drawCompanyLogo(doc, 'STERLING', margin + 28, 4, COLORS.sterling)
+  // Header background (below logo strip)
+  doc.setFillColor(...COLORS.secondary)
+  doc.rect(0, 18, pageWidth, 32, 'F')
+
+  // Company Logos (on white background)
+  drawCompanyLogo(doc, 'mahagenco', margin, 3, 28, 13)
+  drawCompanyLogo(doc, 'sterling', margin + 32, 3, 28, 13)
 
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(22)
   doc.setFont('helvetica', 'bold')
-  doc.text('FluxIO SCADA', margin, 28)
+  doc.text('FluxIO SCADA', margin, 33)
   doc.setFontSize(9)
   doc.setFont('helvetica', 'normal')
-  doc.text('Flow Monitoring System Report', margin, 35)
+  doc.text('Flow Monitoring System Report', margin, 41)
 
   const reportTypeLabel = reportData.reportType.charAt(0).toUpperCase() + reportData.reportType.slice(1) + ' Report'
   doc.setFillColor(...COLORS.primary)
-  doc.roundedRect(pageWidth - margin - 50, 15, 50, 10, 2, 2, 'F')
+  doc.roundedRect(pageWidth - margin - 50, 23, 50, 10, 2, 2, 'F')
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(9)
-  doc.text(reportTypeLabel, pageWidth - margin - 25, 21.5, { align: 'center' })
+  doc.text(reportTypeLabel, pageWidth - margin - 25, 29.5, { align: 'center' })
 
   doc.setTextColor(200, 200, 200)
   doc.setFontSize(8)
   doc.text(
     `Period: ${formatDate(reportData.dateRange.startDate)} - ${formatDate(reportData.dateRange.endDate)}`,
-    pageWidth - margin, 32, { align: 'right' }
+    pageWidth - margin, 38, { align: 'right' }
   )
-  doc.text(`Generated: ${formatDateTime(reportData.generatedAt)}`, pageWidth - margin, 38, { align: 'right' })
+  doc.text(`Generated: ${formatDateTime(reportData.generatedAt)}`, pageWidth - margin, 45, { align: 'right' })
 
-  yPos = 55
+  yPos = 58
 
   // Summary
   doc.setTextColor(...COLORS.text)
@@ -764,45 +789,49 @@ export function downloadPDFReport(reportData: ReportData): void {
   }
 
   // Build the PDF (same content as generatePDFReport)
-  // Header
-  doc.setFillColor(...COLORS.secondary)
-  doc.rect(0, 0, pageWidth, 45, 'F')
+  // White strip at top for logos
+  doc.setFillColor(255, 255, 255)
+  doc.rect(0, 0, pageWidth, 18, 'F')
 
-  // Company Logos
-  drawCompanyLogo(doc, 'MAHAGENCO', margin, 4, COLORS.mahagenco)
-  drawCompanyLogo(doc, 'STERLING', margin + 28, 4, COLORS.sterling)
+  // Header background (below logo strip)
+  doc.setFillColor(...COLORS.secondary)
+  doc.rect(0, 18, pageWidth, 32, 'F')
+
+  // Company Logos (on white background)
+  drawCompanyLogo(doc, 'mahagenco', margin, 3, 28, 13)
+  drawCompanyLogo(doc, 'sterling', margin + 32, 3, 28, 13)
 
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(22)
   doc.setFont('helvetica', 'bold')
-  doc.text('FluxIO SCADA', margin, 28)
+  doc.text('FluxIO SCADA', margin, 33)
   doc.setFontSize(9)
   doc.setFont('helvetica', 'normal')
-  doc.text('Flow Monitoring System Report', margin, 35)
+  doc.text('Flow Monitoring System Report', margin, 41)
 
   const reportTypeLabel = reportData.reportType.charAt(0).toUpperCase() + reportData.reportType.slice(1) + ' Report'
   doc.setFillColor(...COLORS.primary)
-  doc.roundedRect(pageWidth - margin - 50, 15, 50, 10, 2, 2, 'F')
+  doc.roundedRect(pageWidth - margin - 50, 23, 50, 10, 2, 2, 'F')
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(9)
-  doc.text(reportTypeLabel, pageWidth - margin - 25, 21.5, { align: 'center' })
+  doc.text(reportTypeLabel, pageWidth - margin - 25, 29.5, { align: 'center' })
 
   doc.setTextColor(200, 200, 200)
   doc.setFontSize(8)
   doc.text(
     `Period: ${formatDate(reportData.dateRange.startDate)} - ${formatDate(reportData.dateRange.endDate)}`,
     pageWidth - margin,
-    32,
+    38,
     { align: 'right' }
   )
   doc.text(
     `Generated: ${formatDateTime(reportData.generatedAt)}`,
     pageWidth - margin,
-    38,
+    45,
     { align: 'right' }
   )
 
-  yPos = 55
+  yPos = 58
 
   // Summary
   doc.setTextColor(...COLORS.text)
