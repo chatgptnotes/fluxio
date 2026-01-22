@@ -78,13 +78,13 @@ function TrendChart({
       yLabels.push(yMax - i * yStep)
     }
 
-    // Generate time labels (every 15 minutes = 3 data points)
+    // Generate time labels (every 15 minutes = 3 data points) in IST
     const timeLabels: { x: number; label: string }[] = []
     for (let i = 0; i < data.length; i += 12) {
       const date = new Date(data[i].timestamp)
       timeLabels.push({
         x: (i / (data.length - 1)) * 100,
-        label: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        label: date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata' }),
       })
     }
 
@@ -263,7 +263,7 @@ function TrendChart({
               {points[hoveredPoint].value.toFixed(2)} {unit}
             </div>
             <div className="text-white font-bold text-[10px]">
-              {new Date(points[hoveredPoint].timestamp).toLocaleTimeString()}
+              {new Date(points[hoveredPoint].timestamp).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })}
             </div>
           </div>
         )}
@@ -487,7 +487,7 @@ export default function PipeDetailPage() {
               </span>
             </div>
             <div className="rounded bg-[#0d1520] px-2 md:px-3 py-1 font-mono text-xs md:text-sm text-cyan-300 border border-cyan-900/50">
-              {currentTime ? currentTime.toLocaleTimeString('en-GB') : '--:--:--'}
+              {currentTime ? currentTime.toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata' }) : '--:--:--'}
             </div>
           </div>
         </div>
@@ -527,7 +527,7 @@ export default function PipeDetailPage() {
                   </div>
                   <div className="flex items-center space-x-2 text-white font-bold">
                     <Clock className="h-3 w-3" />
-                    <span>Last Update: {new Date(pipe.lastUpdated).toLocaleTimeString()}</span>
+                    <span>Last Update: {new Date(pipe.lastUpdated).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })}</span>
                   </div>
                 </div>
               </div>
@@ -665,7 +665,7 @@ export default function PipeDetailPage() {
                   </div>
                   <div className="text-white font-bold hidden sm:block">|</div>
                   <div className="text-white font-bold hidden md:block">
-                    NEXT: {lastUpdate ? new Date(lastUpdate.getTime() + 5 * 60 * 1000).toLocaleTimeString('en-GB') : '--:--:--'}
+                    NEXT: {lastUpdate ? new Date(lastUpdate.getTime() + 5 * 60 * 1000).toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata' }) : '--:--:--'}
                   </div>
                 </div>
               </div>
@@ -796,7 +796,7 @@ export default function PipeDetailPage() {
             </div>
             <div className="flex items-center space-x-1 md:space-x-2 hidden md:flex">
               <span className="text-white font-bold">SCAN TIME:</span>
-              <span className="text-cyan-400">{currentTime ? currentTime.toLocaleTimeString('en-GB') : '--:--:--'}</span>
+              <span className="text-cyan-400">{currentTime ? currentTime.toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata' }) : '--:--:--'}</span>
             </div>
           </div>
           <div className="text-[10px] md:text-xs text-white font-bold font-mono hidden sm:block">

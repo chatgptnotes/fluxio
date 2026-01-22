@@ -61,10 +61,11 @@ export default function ReportsPage() {
           dateRange: {
             start: report.report_date,
             end: report.report_date,
-            label: new Date(report.report_date).toLocaleDateString('en-US', {
+            label: new Date(report.report_date).toLocaleDateString('en-IN', {
               month: 'short',
               day: 'numeric',
               year: 'numeric',
+              timeZone: 'Asia/Kolkata',
             }),
           },
           generatedAt: report.generated_at,
@@ -210,8 +211,9 @@ export default function ReportsPage() {
                   weekday: 'short',
                   month: 'short',
                   day: 'numeric',
-                  year: 'numeric'
-                })} ${currentTime.toLocaleTimeString('en-GB')}` : '-- --- --, ---- --:--:--'}
+                  year: 'numeric',
+                  timeZone: 'Asia/Kolkata'
+                })} ${currentTime.toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata' })}` : '-- --- --, ---- --:--:--'}
               </span>
             </div>
             <div className="flex items-center space-x-2">
@@ -434,7 +436,7 @@ export default function ReportsPage() {
                           {report.reportType} Report
                         </span>
                         <span className="text-xs text-slate-500">
-                          {new Date(report.generatedAt).toLocaleTimeString()}
+                          {new Date(report.generatedAt).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })}
                         </span>
                       </div>
                       <p className="text-sm text-slate-300 mb-2">
@@ -485,7 +487,7 @@ export default function ReportsPage() {
                           {report.reportType}
                         </span>
                         <span className="text-xs text-slate-500">
-                          {new Date(report.generatedAt).toLocaleDateString()}
+                          {new Date(report.generatedAt).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}
                         </span>
                       </div>
                       <p className="text-sm text-slate-300 mb-1">

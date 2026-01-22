@@ -121,12 +121,12 @@ export default function CSTPSPipelinePage() {
             <span className="text-[8px] md:text-xs text-white/80 hidden sm:block">Process Flow Diagram - Gravity Fed System</span>
           </div>
           <div className="flex items-center space-x-1 md:space-x-2 text-xs md:text-sm">
-            {/* Date/Time - Hidden on mobile, shown on tablet+ */}
+            {/* Date/Time - Hidden on mobile, shown on tablet+ (IST) */}
             <div className="hidden lg:block rounded bg-white/20 px-2 md:px-3 py-1 font-mono text-white border border-white/30 text-xs">
-              {currentTime ? currentTime.toLocaleDateString('en-GB') : '--/--/----'}
+              {currentTime ? currentTime.toLocaleDateString('en-GB', { timeZone: 'Asia/Kolkata' }) : '--/--/----'}
             </div>
             <div className="hidden md:block rounded bg-white/20 px-2 md:px-3 py-1 font-mono text-white border border-white/30 text-xs">
-              {currentTime ? currentTime.toLocaleTimeString('en-GB') : '--:--:--'}
+              {currentTime ? currentTime.toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata' }) : '--:--:--'}
             </div>
             <Link
               href="/dashboard/reports"
@@ -1212,7 +1212,7 @@ export default function CSTPSPipelinePage() {
               </div>
               <div className="flex items-center space-x-1 md:space-x-2">
                 <span className="text-[#37474F] font-semibold">SCAN:</span>
-                <span className="text-[#1565C0]">{currentTime ? currentTime.toLocaleTimeString('en-GB') : '--:--:--'}</span>
+                <span className="text-[#1565C0]">{currentTime ? currentTime.toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata' }) : '--:--:--'}</span>
               </div>
             </div>
             <div className="text-[9px] md:text-xs text-[#78909C] font-mono">

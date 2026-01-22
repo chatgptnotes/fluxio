@@ -340,22 +340,24 @@ export function generateReportData(
   }
 }
 
-// Format date for display
+// Format date for display in IST (Indian Standard Time)
 export function formatDate(date: Date): string {
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('en-IN', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
+    timeZone: 'Asia/Kolkata'
   })
 }
 
-// Format datetime for display
+// Format datetime for display in IST (Indian Standard Time)
 export function formatDateTime(date: Date): string {
-  return date.toLocaleString('en-US', {
+  return date.toLocaleString('en-IN', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    timeZone: 'Asia/Kolkata'
   })
 }
