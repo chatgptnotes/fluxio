@@ -549,34 +549,6 @@ export default function CSTPSPipelinePage() {
                     </div>
                   </div>
 
-                  {/* Water Ripple Animation - CSTPS Circular Reservoir */}
-                  <div className="absolute" style={{ left: '52%', top: '28%', width: '14%', height: '28%' }}>
-                    <div className="absolute inset-0 overflow-hidden rounded-full">
-                      <div
-                        className="absolute w-full h-2 bg-gradient-to-r from-transparent via-cyan-300/30 to-transparent"
-                        style={{
-                          top: '40%',
-                          animation: 'wave 2s ease-in-out infinite'
-                        }}
-                      />
-                      {/* Circular ripples */}
-                      {[0, 1, 2].map(i => (
-                        <div
-                          key={i}
-                          className="absolute rounded-full border border-white/25"
-                          style={{
-                            left: '20%',
-                            top: '20%',
-                            width: '60%',
-                            height: '60%',
-                            animation: `ripple 4s ease-out infinite`,
-                            animationDelay: `${i * 1.3}s`
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
                   {/* FT Value Overlays - Click to view details */}
                   {cstpsPipes.map((pipe, index) => {
                     const hasFlow = pipe.status !== 'offline' && pipe.parameters.flowRate > 0
