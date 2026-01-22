@@ -569,14 +569,14 @@ export default function CSTPSPipelinePage() {
                   {cstpsPipes.map((pipe, index) => {
                     const hasFlow = pipe.status !== 'offline' && pipe.parameters.flowRate > 0
                     const statusColor = pipe.status === 'online' ? '#4CAF50' : pipe.status === 'warning' ? '#FFC107' : '#F44336'
-                    // FT positions along the converging pipelines from dam to reservoir
+                    // FT positions aligned with cyan flow transmitter circles on each pipeline
                     const ftPositions2D = [
-                      { left: 40, top: 35 },    // FT-001 - top pipeline
-                      { left: 38, top: 40 },    // FT-002
-                      { left: 36, top: 45 },    // FT-003
-                      { left: 34, top: 50 },    // FT-004
-                      { left: 32, top: 55 },    // FT-005
-                      { left: 30, top: 61 },    // FT-006 - bottom pipeline
+                      { left: 48, top: 27 },    // FT-001 - top pipeline
+                      { left: 46, top: 32 },    // FT-002
+                      { left: 44, top: 38 },    // FT-003
+                      { left: 42, top: 44 },    // FT-004
+                      { left: 40, top: 50 },    // FT-005
+                      { left: 38, top: 56 },    // FT-006 - bottom pipeline
                     ]
                     const pos = ftPositions2D[index]
 
