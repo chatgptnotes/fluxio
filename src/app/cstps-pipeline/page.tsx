@@ -414,14 +414,14 @@ export default function CSTPSPipelinePage() {
                         onMouseEnter={() => setHoveredPipe(pipe.id)}
                         onMouseLeave={() => setHoveredPipe(null)}
                       >
-                        <div className={`relative bg-[#0D1B2A] rounded px-2 py-1 border ${
+                        <div className={`relative bg-[#0D1B2A] rounded px-1 py-0.5 md:px-2 md:py-1 border ${
                           hoveredPipe === pipe.id
                             ? 'border-[#00E5FF] shadow-[0_0_10px_#00E5FF]'
                             : 'border-[#1565C0]'
                         } transition-all`}>
                           {/* Status LED */}
                           <div
-                            className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full"
+                            className="absolute -top-1 -right-1 h-1.5 w-1.5 md:h-2.5 md:w-2.5 rounded-full"
                             style={{
                               backgroundColor: statusColor,
                               boxShadow: hasFlow ? `0 0 6px ${statusColor}` : 'none',
@@ -429,11 +429,11 @@ export default function CSTPSPipelinePage() {
                             }}
                           />
                           {/* FT Label */}
-                          <div className="text-[8px] text-[#90CAF9] font-mono">FT-{String(pipe.pipeNumber).padStart(3, '0')}</div>
+                          <div className="text-[6px] md:text-[8px] text-[#90CAF9] font-mono">FT-{String(pipe.pipeNumber).padStart(3, '0')}</div>
                           {/* Flow Value */}
-                          <div className={`text-sm font-bold font-mono ${hasFlow ? 'text-[#00E5FF]' : 'text-[#546E7A]'}`}>
+                          <div className={`text-[10px] md:text-sm font-bold font-mono ${hasFlow ? 'text-[#00E5FF]' : 'text-[#546E7A]'}`}>
                             {pipe.parameters.flowRate.toFixed(1)}
-                            <span className="text-[8px] text-[#4FC3F7] ml-0.5">m3/h</span>
+                            <span className="text-[6px] md:text-[8px] text-[#4FC3F7] ml-0.5">m3/h</span>
                           </div>
                         </div>
                         {/* Tooltip on hover */}
@@ -495,10 +495,10 @@ export default function CSTPSPipelinePage() {
                   })}
 
                   {/* Total Flow Display */}
-                  <div className="absolute bottom-4 left-4 bg-[#0D1B2A]/90 rounded-lg px-4 py-2 border border-[#1565C0]">
-                    <div className="text-[10px] text-[#90CAF9] font-mono">TOTAL FLOW</div>
-                    <div className="text-xl font-bold text-[#00E5FF] font-mono">
-                      {totalFlow.toFixed(1)} <span className="text-sm text-[#4FC3F7]">m3/h</span>
+                  <div className="absolute bottom-2 left-2 md:bottom-4 md:left-4 bg-[#0D1B2A]/90 rounded md:rounded-lg px-2 py-1 md:px-4 md:py-2 border border-[#1565C0]">
+                    <div className="text-[8px] md:text-[10px] text-[#90CAF9] font-mono">TOTAL FLOW</div>
+                    <div className="text-sm md:text-xl font-bold text-[#00E5FF] font-mono">
+                      {totalFlow.toFixed(1)} <span className="text-xs md:text-sm text-[#4FC3F7]">m3/h</span>
                     </div>
                   </div>
 
@@ -1224,7 +1224,7 @@ export default function CSTPSPipelinePage() {
 
       {/* Version Footer */}
       <footer className="text-center py-2 text-[9px] md:text-[10px] text-[#90A4AE]">
-        Version 2.9 | January 22, 2026 | github.com/chatgptnotes/fluxio
+        Version 3.0 | January 22, 2026 | github.com/chatgptnotes/fluxio
       </footer>
 
       {/* CSS Animations */}
