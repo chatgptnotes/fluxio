@@ -913,28 +913,8 @@ export default function CSTPSPipelinePage() {
                   const flowSpeed = Math.max(0.5, Math.min(3, pipe.parameters.flowRate / 30))
 
                   return (
-                    <g
-                      key={pipe.id}
-                      onClick={() => handlePipeClick(pipe.id)}
-                      onMouseEnter={() => setHoveredPipe(pipe.id)}
-                      onMouseLeave={() => setHoveredPipe(null)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {/* Hover highlight box */}
-                      {isHovered && (
-                        <rect
-                          x="138"
-                          y={yPos - 30}
-                          width="742"
-                          height="60"
-                          fill="#E3F2FD"
-                          stroke="#1565C0"
-                          strokeWidth="2"
-                          strokeDasharray="5 3"
-                          rx="4"
-                          opacity="0.6"
-                        />
-                      )}
+                    <g key={pipe.id}>
+                      {/* Pipeline elements - not clickable */}
 
                       {/* CONTINUOUS PIPE - Full length from Dam to CSTPS */}
                       {/* Pipe outline (dark border) - CONTINUOUS */}
@@ -1016,10 +996,20 @@ export default function CSTPSPipelinePage() {
                         </text>
                       </g>
 
-                      {/* FLOW TRANSMITTER (FT) - After control valve */}
-                      <g transform={`translate(420, ${yPos})`}>
+                      {/* FLOW TRANSMITTER (FT) - After control valve - CLICKABLE */}
+                      <g
+                        transform={`translate(420, ${yPos})`}
+                        onClick={() => handlePipeClick(pipe.id)}
+                        onMouseEnter={() => setHoveredPipe(pipe.id)}
+                        onMouseLeave={() => setHoveredPipe(null)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {/* Hover highlight for FT block */}
+                        {isHovered && (
+                          <rect x="-25" y="-25" width="155" height="50" fill="#E3F2FD" stroke="#1565C0" strokeWidth="2" strokeDasharray="4 2" rx="6" opacity="0.7"/>
+                        )}
                         {/* Instrument circle */}
-                        <circle r="20" fill="white" stroke="#1565C0" strokeWidth="3"/>
+                        <circle r="20" fill="white" stroke={isHovered ? '#0D47A1' : '#1565C0'} strokeWidth={isHovered ? 4 : 3}/>
                         <text y="-5" textAnchor="middle" fill="#1565C0" fontSize="10" fontWeight="bold">FT</text>
                         <text y="8" textAnchor="middle" fill="#37474F" fontSize="9" fontWeight="bold">{String(index + 1).padStart(3, '0')}</text>
 
@@ -1032,7 +1022,7 @@ export default function CSTPSPipelinePage() {
 
                         {/* Digital Display - positioned to the right of FT */}
                         <g transform="translate(55, 0)">
-                          <rect x="-5" y="-16" width="70" height="32" fill="#0D1B2A" stroke="#1565C0" strokeWidth="1.5" rx="4"/>
+                          <rect x="-5" y="-16" width="70" height="32" fill={isHovered ? '#0A1929' : '#0D1B2A'} stroke={isHovered ? '#00E5FF' : '#1565C0'} strokeWidth={isHovered ? 2 : 1.5} rx="4"/>
                           <text x="30" y="0" textAnchor="middle" fill="#00E5FF" fontSize="15" fontFamily="monospace" fontWeight="bold" filter={hasFlow ? 'url(#glowBlue)' : ''}>
                             {pipe.parameters.flowRate.toFixed(1)}
                           </text>
