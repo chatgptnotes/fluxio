@@ -285,7 +285,7 @@ export default function ReportsPage() {
                 <option value="all">All Pipes (6 Devices)</option>
                 {cstpsPipes.map((pipe) => (
                   <option key={pipe.id} value={pipe.id}>
-                    Pipe {pipe.pipeNumber} - {pipe.deviceName.split(' - ')[1]}
+                    Pipe {pipe.pipeNumber}
                   </option>
                 ))}
               </select>
