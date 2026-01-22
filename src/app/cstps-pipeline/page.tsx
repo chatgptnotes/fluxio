@@ -29,6 +29,16 @@ const fixedFtPositions = [
   { left: 25.90, top: 70.10 },  // FT-006
 ]
 
+// Initial 2D FT positions - adjust these after dragging
+const initial2DPositions = [
+  { left: 48, top: 27 },    // FT-001
+  { left: 46, top: 32 },    // FT-002
+  { left: 44, top: 38 },    // FT-003
+  { left: 42, top: 44 },    // FT-004
+  { left: 40, top: 50 },    // FT-005
+  { left: 38, top: 56 },    // FT-006
+]
+
 export default function CSTPSPipelinePage() {
   const router = useRouter()
   const [hoveredPipe, setHoveredPipe] = useState<string | null>(null)
@@ -37,6 +47,11 @@ export default function CSTPSPipelinePage() {
   const [sensorOrder, setSensorOrder] = useState<PipeData[]>(cstpsPipes as PipeData[])
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+
+  // Draggable 2D FT positions
+  const [ft2DPositions, setFt2DPositions] = useState(initial2DPositions)
+  const [dragging2DIndex, setDragging2DIndex] = useState<number | null>(null)
+  const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null)
 
   // Container ref for 3D view
   const containerRef = useRef<HTMLDivElement>(null)
@@ -71,6 +86,47 @@ export default function CSTPSPipelinePage() {
   const handlePipeClick = (pipeId: string) => {
     router.push(`/cstps-pipeline/${pipeId}`)
   }
+
+  // 2D FT drag handlers
+  const handle2DMouseDown = useCallback((e: React.MouseEvent, index: number) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragging2DIndex(index)
+    setDragStart({ x: e.clientX, y: e.clientY })
+  }, [])
+
+  const handle2DMouseMove = useCallback((e: React.MouseEvent) => {
+    if (dragging2DIndex === null || !dragStart || !containerRef.current) return
+
+    const container = containerRef.current.getBoundingClientRect()
+    const deltaX = ((e.clientX - dragStart.x) / container.width) * 100
+    const deltaY = ((e.clientY - dragStart.y) / container.height) * 100
+
+    setFt2DPositions(prev => {
+      const newPositions = [...prev]
+      newPositions[dragging2DIndex] = {
+        left: Math.max(0, Math.min(100, initial2DPositions[dragging2DIndex].left + deltaX)),
+        top: Math.max(0, Math.min(100, initial2DPositions[dragging2DIndex].top + deltaY))
+      }
+      return newPositions
+    })
+  }, [dragging2DIndex, dragStart])
+
+  const handle2DMouseUp = useCallback(() => {
+    if (dragging2DIndex !== null) {
+      // Log positions to console for hardcoding
+      console.log('=== 2D FT POSITIONS ===')
+      console.log('Copy this to hardcode:')
+      console.log('const ftPositions2D = [')
+      ft2DPositions.forEach((pos, i) => {
+        console.log(`  { left: ${pos.left.toFixed(1)}, top: ${pos.top.toFixed(1)} },    // FT-${String(i + 1).padStart(3, '0')}`)
+      })
+      console.log(']')
+      console.log('=======================')
+    }
+    setDragging2DIndex(null)
+    setDragStart(null)
+  }, [dragging2DIndex, ft2DPositions])
 
   // Calculate totals
   const totalFlow = cstpsPipes.reduce((sum, p) => sum + p.parameters.flowRate, 0)
@@ -497,8 +553,11 @@ export default function CSTPSPipelinePage() {
               {viewMode === '2d' && (
                 <div
                   ref={containerRef}
-                  className="relative w-full"
+                  className="relative w-full select-none"
                   style={{ paddingBottom: '56.25%' }}
+                  onMouseMove={handle2DMouseMove}
+                  onMouseUp={handle2DMouseUp}
+                  onMouseLeave={handle2DMouseUp}
                 >
                   {/* Background Template Image */}
                   <img
@@ -565,32 +624,28 @@ export default function CSTPSPipelinePage() {
                     </div>
                   </div>
 
-                  {/* FT Value Overlays - Compact and spread out along pipelines */}
+                  {/* FT Value Overlays - Draggable for position adjustment */}
                   {cstpsPipes.map((pipe, index) => {
                     const hasFlow = pipe.status !== 'offline' && pipe.parameters.flowRate > 0
                     const statusColor = pipe.status === 'online' ? '#4CAF50' : pipe.status === 'warning' ? '#FFC107' : '#F44336'
-                    // FT positions aligned with cyan flow transmitter circles on each pipeline
-                    const ftPositions2D = [
-                      { left: 48, top: 27 },    // FT-001 - top pipeline
-                      { left: 46, top: 32 },    // FT-002
-                      { left: 44, top: 38 },    // FT-003
-                      { left: 42, top: 44 },    // FT-004
-                      { left: 40, top: 50 },    // FT-005
-                      { left: 38, top: 56 },    // FT-006 - bottom pipeline
-                    ]
-                    const pos = ftPositions2D[index]
+                    const pos = ft2DPositions[index]
+                    const isDragging = dragging2DIndex === index
 
                     return (
                       <div
                         key={`ft-2d-${pipe.id}`}
-                        className="absolute z-10 transition-all cursor-pointer hover:scale-105"
+                        className={`absolute z-10 cursor-grab active:cursor-grabbing ${isDragging ? 'scale-110 z-20' : 'hover:scale-105'}`}
                         style={{
                           left: `${pos.left}%`,
                           top: `${pos.top}%`,
-                          transform: 'translate(-50%, -50%)'
+                          transform: 'translate(-50%, -50%)',
+                          transition: isDragging ? 'none' : 'transform 0.15s ease'
                         }}
-                        onClick={() => router.push(`/cstps-pipeline/${pipe.id}`)}
-                        onMouseEnter={() => setHoveredPipe(pipe.id)}
+                        onMouseDown={(e) => handle2DMouseDown(e, index)}
+                        onClick={(e) => {
+                          if (!isDragging) router.push(`/cstps-pipeline/${pipe.id}`)
+                        }}
+                        onMouseEnter={() => !dragging2DIndex && setHoveredPipe(pipe.id)}
                         onMouseLeave={() => setHoveredPipe(null)}
                       >
                         <div className={`relative bg-[#0D1B2A]/90 rounded px-1.5 py-0.5 border ${
