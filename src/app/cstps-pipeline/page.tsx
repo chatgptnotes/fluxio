@@ -29,14 +29,14 @@ const fixedFtPositions = [
   { left: 25.90, top: 70.10 },  // FT-006
 ]
 
-// Initial 2D FT positions - adjust these after dragging
+// Initial 2D FT positions - hardcoded after visual alignment
 const initial2DPositions = [
-  { left: 48, top: 27 },    // FT-001
-  { left: 46, top: 32 },    // FT-002
-  { left: 44, top: 38 },    // FT-003
-  { left: 42, top: 44 },    // FT-004
-  { left: 40, top: 50 },    // FT-005
-  { left: 38, top: 56 },    // FT-006
+  { left: 55.5, top: 37.6 },    // FT-001
+  { left: 47.4, top: 43.5 },    // FT-002
+  { left: 55.3, top: 49.0 },    // FT-003
+  { left: 47.6, top: 55.2 },    // FT-004
+  { left: 55.2, top: 60.3 },    // FT-005
+  { left: 47.4, top: 66.3 },    // FT-006
 ]
 
 export default function CSTPSPipelinePage() {
