@@ -316,6 +316,16 @@ export default function CSTPSPipelinePage() {
                   </div>
                 )}
               </div>
+              {/* View All Alarms Button */}
+              <div className="p-2 border-t border-[#E0E0E0]">
+                <Link
+                  href="/cstps-pipeline/alarms"
+                  className="w-full flex items-center justify-center space-x-1 py-2 rounded bg-[#1565C0] text-white text-xs font-medium hover:bg-[#0D47A1] transition-colors"
+                >
+                  <span className="material-icons text-sm">list_alt</span>
+                  <span>View All Alarms</span>
+                </Link>
+              </div>
             </div>
           </div>
 
