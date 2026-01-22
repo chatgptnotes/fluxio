@@ -436,27 +436,28 @@ export default function PipeDetailPage() {
     <div className="min-h-screen bg-white">
       {/* Header */}
       <header className="border-b-2 border-cyan-900/50 bg-gradient-to-r from-[#0d1520] via-[#0f1a2a] to-[#0d1520]">
-        <div className="flex items-center justify-between px-4 py-2">
-          <div className="flex items-center space-x-4">
+        <div className="flex flex-wrap items-center justify-between px-2 md:px-4 py-2 gap-2">
+          <div className="flex items-center space-x-2 md:space-x-4">
             <Link
               href="/cstps-pipeline"
-              className="flex items-center space-x-2 rounded bg-cyan-900/30 px-3 py-1.5 text-sm text-cyan-400 transition-all hover:bg-cyan-800/40 hover:text-cyan-300 border border-cyan-800/50"
+              className="flex items-center space-x-1 md:space-x-2 rounded bg-cyan-900/30 px-2 md:px-3 py-1 md:py-1.5 text-xs md:text-sm text-cyan-400 transition-all hover:bg-cyan-800/40 hover:text-cyan-300 border border-cyan-800/50"
             >
-              <ArrowLeft className="h-4 w-4" />
-              <span>BACK TO OVERVIEW</span>
+              <ArrowLeft className="h-3 w-3 md:h-4 md:w-4" />
+              <span className="hidden sm:inline">BACK TO OVERVIEW</span>
+              <span className="sm:hidden">BACK</span>
             </Link>
-            <div className="h-6 w-px bg-cyan-900/50"></div>
-            <div className="flex items-center space-x-2">
-              <span className="text-sm font-bold tracking-wider text-white font-bold">
+            <div className="h-6 w-px bg-cyan-900/50 hidden md:block"></div>
+            <div className="flex items-center space-x-1 md:space-x-2">
+              <span className="text-xs md:text-sm font-bold tracking-wider text-white">
                 FT-{String(pipe.pipeNumber).padStart(2, '0')}
               </span>
-              <span className="text-white font-bold">|</span>
-              <span className="text-sm text-cyan-400">{pipe.deviceName}</span>
+              <span className="text-white font-bold hidden sm:inline">|</span>
+              <span className="text-xs md:text-sm text-cyan-400 hidden sm:inline">{pipe.deviceName}</span>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
             <div
-              className={`flex items-center space-x-2 rounded-full px-3 py-1 ${
+              className={`flex items-center space-x-1 md:space-x-2 rounded-full px-2 md:px-3 py-1 ${
                 pipe.status === 'online'
                   ? 'bg-green-900/30'
                   : pipe.status === 'warning'
@@ -474,7 +475,7 @@ export default function PipeDetailPage() {
                 }`}
               ></div>
               <span
-                className={`text-xs font-bold ${
+                className={`text-[10px] md:text-xs font-bold ${
                   pipe.status === 'online'
                     ? 'text-green-400'
                     : pipe.status === 'warning'
@@ -485,7 +486,7 @@ export default function PipeDetailPage() {
                 {pipe.status.toUpperCase()}
               </span>
             </div>
-            <div className="rounded bg-[#0d1520] px-3 py-1 font-mono text-sm text-cyan-300 border border-cyan-900/50">
+            <div className="rounded bg-[#0d1520] px-2 md:px-3 py-1 font-mono text-xs md:text-sm text-cyan-300 border border-cyan-900/50">
               {currentTime ? currentTime.toLocaleTimeString('en-GB') : '--:--:--'}
             </div>
           </div>
@@ -493,10 +494,10 @@ export default function PipeDetailPage() {
       </header>
 
       {/* Main Content */}
-      <main className="p-4">
-        <div className="grid grid-cols-12 gap-4">
+      <main className="p-2 md:p-4 pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 md:gap-4">
           {/* Left Column - Device Info & Parameters */}
-          <div className="col-span-3 space-y-4">
+          <div className="lg:col-span-3 grid grid-cols-2 lg:grid-cols-1 gap-3 md:gap-4">
             {/* Device Info */}
             <div className="rounded-lg border border-cyan-900/50 bg-gradient-to-b from-[#0d1520] to-[#0a1018]">
               <div className="border-b border-cyan-900/50 bg-cyan-900/20 px-3 py-2">
@@ -647,31 +648,31 @@ export default function PipeDetailPage() {
           </div>
 
           {/* Right Column - Trends */}
-          <div className="col-span-9 space-y-4">
+          <div className="lg:col-span-9 space-y-3 md:space-y-4">
             {/* Trend Header */}
-            <div className="rounded-lg border border-cyan-900/50 bg-gradient-to-r from-[#0d1520] via-[#0f1a2a] to-[#0d1520] px-4 py-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <TrendingUp className="h-5 w-5 text-cyan-400" />
-                  <span className="text-sm font-bold tracking-wider text-cyan-400">
+            <div className="rounded-lg border border-cyan-900/50 bg-gradient-to-r from-[#0d1520] via-[#0f1a2a] to-[#0d1520] px-3 md:px-4 py-2 md:py-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                <div className="flex items-center space-x-2 md:space-x-3">
+                  <TrendingUp className="h-4 w-4 md:h-5 md:w-5 text-cyan-400" />
+                  <span className="text-xs md:text-sm font-bold tracking-wider text-cyan-400">
                     HISTORICAL TRENDS - PIPE {String(pipe.pipeNumber).padStart(2, '0')}
                   </span>
                 </div>
-                <div className="flex items-center space-x-4 text-xs">
-                  <div className="flex items-center space-x-2 text-white font-bold">
+                <div className="flex items-center space-x-2 md:space-x-4 text-[10px] md:text-xs">
+                  <div className="flex items-center space-x-1 md:space-x-2 text-white font-bold">
                     <RefreshCw className="h-3 w-3" />
-                    <span>UPDATE INTERVAL: 5 MIN</span>
+                    <span className="hidden sm:inline">UPDATE INTERVAL:</span> 5 MIN
                   </div>
-                  <div className="text-white font-bold">|</div>
-                  <div className="text-white font-bold">
-                    NEXT UPDATE: {lastUpdate ? new Date(lastUpdate.getTime() + 5 * 60 * 1000).toLocaleTimeString('en-GB') : '--:--:--'}
+                  <div className="text-white font-bold hidden sm:block">|</div>
+                  <div className="text-white font-bold hidden md:block">
+                    NEXT: {lastUpdate ? new Date(lastUpdate.getTime() + 5 * 60 * 1000).toLocaleTimeString('en-GB') : '--:--:--'}
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Trend Charts Grid */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
               <TrendChart
                 data={flowHistory}
                 label="FLOW RATE TREND"
@@ -709,7 +710,7 @@ export default function PipeDetailPage() {
                   STATISTICS (LAST 5 HOURS)
                 </span>
               </div>
-              <div className="p-4 grid grid-cols-4 gap-4">
+              <div className="p-3 md:p-4 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 {[
                   {
                     label: 'Flow Rate',
@@ -777,29 +778,29 @@ export default function PipeDetailPage() {
 
       {/* Footer Status Bar */}
       <footer className="fixed bottom-0 left-0 right-0 border-t border-cyan-900/50 bg-gradient-to-r from-[#0d1520] via-[#0f1a2a] to-[#0d1520]">
-        <div className="flex items-center justify-between px-4 py-2">
-          <div className="flex items-center space-x-6 text-xs font-mono">
-            <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center justify-between px-2 md:px-4 py-1.5 md:py-2 gap-1">
+          <div className="flex flex-wrap items-center gap-2 md:gap-4 lg:space-x-6 text-[10px] md:text-xs font-mono">
+            <div className="flex items-center space-x-1 md:space-x-2">
               <span className="text-white font-bold">DEVICE:</span>
               <span className="text-cyan-400">{pipe.deviceId}</span>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 md:space-x-2">
               <span className="text-white font-bold">COMM:</span>
               <span className={pipe.status === 'offline' ? 'text-red-400' : 'text-green-400'}>
                 {pipe.status === 'offline' ? 'FAILED' : 'OK'}
               </span>
             </div>
-            <div className="flex items-center space-x-2">
-              <span className="text-white font-bold">MODBUS ADDR:</span>
+            <div className="flex items-center space-x-1 md:space-x-2 hidden sm:flex">
+              <span className="text-white font-bold">MODBUS<span className="hidden md:inline"> ADDR</span>:</span>
               <span className="text-cyan-400">{pipe.pipeNumber}</span>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 md:space-x-2 hidden md:flex">
               <span className="text-white font-bold">SCAN TIME:</span>
               <span className="text-cyan-400">{currentTime ? currentTime.toLocaleTimeString('en-GB') : '--:--:--'}</span>
             </div>
           </div>
-          <div className="text-xs text-white font-bold font-mono">
-            FluxIO SCADA v1.5 | NIVUS 750 Detail View
+          <div className="text-[10px] md:text-xs text-white font-bold font-mono hidden sm:block">
+            FluxIO v3.0
           </div>
         </div>
       </footer>
