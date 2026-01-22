@@ -311,16 +311,11 @@ export default function CSTPSPipelinePage() {
           <div className="lg:col-span-8 order-first lg:order-none">
             <div className="rounded-lg border border-[#BDBDBD] bg-white shadow-sm overflow-hidden">
               <div className="border-b border-[#E0E0E0] bg-[#EEEEEE] px-2 md:px-3 py-2 flex items-center justify-between">
-                <div className="flex items-center space-x-1 md:space-x-2">
-                  <span className="material-icons text-[#0288D1] text-sm md:text-base">
-                    {viewMode === 'pid' ? 'water_drop' : viewMode === '3d' ? 'view_in_ar' : 'satellite_alt'}
-                  </span>
-                  <span className="text-[10px] md:text-xs font-bold tracking-wider text-[#424242]">
-                    {viewMode === 'pid' ? 'P&ID - GRAVITY FED WATER TRANSMISSION' :
-                     viewMode === '3d' ? '3D ISOMETRIC VIEW - IRAI DAM TO CSTPS' :
-                     '2D AERIAL VIEW - WATER SUPPLY SYSTEM'}
-                  </span>
-                </div>
+                <span className="text-[10px] md:text-xs font-bold tracking-wider text-[#424242]">
+                  {viewMode === 'pid' ? 'P&ID - GRAVITY FED WATER TRANSMISSION' :
+                   viewMode === '3d' ? '3D ISOMETRIC VIEW - IRAI DAM TO CSTPS' :
+                   '2D AERIAL VIEW - WATER SUPPLY SYSTEM'}
+                </span>
                 <div className="flex items-center space-x-3">
                   <span className="text-[10px] text-[#757575] font-mono">SCAN: 1000ms</span>
                   <div className="flex items-center space-x-1">
@@ -1035,13 +1030,13 @@ export default function CSTPSPipelinePage() {
                           )}
                         </circle>
 
-                        {/* Digital Display */}
-                        <g transform="translate(0, 42)">
-                          <rect x="-38" y="-14" width="76" height="32" fill="#0D1B2A" stroke="#1565C0" strokeWidth="1.5" rx="4"/>
-                          <text y="2" textAnchor="middle" fill="#00E5FF" fontSize="16" fontFamily="monospace" fontWeight="bold" filter={hasFlow ? 'url(#glowBlue)' : ''}>
+                        {/* Digital Display - positioned to the right of FT */}
+                        <g transform="translate(55, 0)">
+                          <rect x="-5" y="-16" width="70" height="32" fill="#0D1B2A" stroke="#1565C0" strokeWidth="1.5" rx="4"/>
+                          <text x="30" y="0" textAnchor="middle" fill="#00E5FF" fontSize="15" fontFamily="monospace" fontWeight="bold" filter={hasFlow ? 'url(#glowBlue)' : ''}>
                             {pipe.parameters.flowRate.toFixed(1)}
                           </text>
-                          <text y="14" textAnchor="middle" fill="#4FC3F7" fontSize="9" fontFamily="monospace">m3/h</text>
+                          <text x="30" y="12" textAnchor="middle" fill="#4FC3F7" fontSize="8" fontFamily="monospace">m3/h</text>
                         </g>
                       </g>
 
