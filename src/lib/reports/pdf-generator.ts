@@ -80,9 +80,9 @@ export function generatePDFReport(reportData: ReportData): string {
   doc.setFillColor(...COLORS.secondary)
   doc.rect(0, 18, pageWidth, 32, 'F')
 
-  // Company Logos Row (on white background)
+  // Company Logos Row (on white background) - MAHAGENCO left, Sterling right
   drawCompanyLogo(doc, 'mahagenco', margin, 3, 28, 13)
-  drawCompanyLogo(doc, 'sterling', margin + 32, 3, 28, 13)
+  drawCompanyLogo(doc, 'sterling', pageWidth - margin - 40, 3, 40, 13)
 
   // Logo/Title
   doc.setTextColor(255, 255, 255)
@@ -512,9 +512,9 @@ export function generatePDFBuffer(reportData: ReportData): Uint8Array {
   doc.setFillColor(...COLORS.secondary)
   doc.rect(0, 18, pageWidth, 32, 'F')
 
-  // Company Logos (on white background)
+  // Company Logos (on white background) - MAHAGENCO left, Sterling right
   drawCompanyLogo(doc, 'mahagenco', margin, 3, 28, 13)
-  drawCompanyLogo(doc, 'sterling', margin + 32, 3, 28, 13)
+  drawCompanyLogo(doc, 'sterling', pageWidth - margin - 40, 3, 40, 13)
 
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(22)
@@ -797,9 +797,9 @@ export function downloadPDFReport(reportData: ReportData): void {
   doc.setFillColor(...COLORS.secondary)
   doc.rect(0, 18, pageWidth, 32, 'F')
 
-  // Company Logos (on white background)
+  // Company Logos (on white background) - MAHAGENCO left, Sterling right
   drawCompanyLogo(doc, 'mahagenco', margin, 3, 28, 13)
-  drawCompanyLogo(doc, 'sterling', margin + 32, 3, 28, 13)
+  drawCompanyLogo(doc, 'sterling', pageWidth - margin - 40, 3, 40, 13)
 
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(22)
