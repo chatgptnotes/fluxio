@@ -87,10 +87,9 @@ export default function CSTPSPipelinePage() {
           <div className="flex items-center space-x-2 md:space-x-4">
             <Link
               href="/"
-              className="flex items-center space-x-1 md:space-x-2 rounded bg-white/20 px-2 py-1 md:px-3 md:py-1.5 text-xs md:text-sm text-white transition-all hover:bg-white/30 border border-white/30"
+              className="flex items-center rounded bg-white/20 px-3 py-1 md:px-4 md:py-1.5 text-xs md:text-sm text-white transition-all hover:bg-white/30 border border-white/30"
             >
-              <span className="material-icons text-sm md:text-base">arrow_back</span>
-              <span className="font-medium hidden sm:inline">EXIT</span>
+              <span className="font-medium">Back</span>
             </Link>
             <div className="h-6 w-px bg-white/30 hidden sm:block"></div>
             <div className="flex items-center space-x-1 md:space-x-2">
@@ -119,13 +118,12 @@ export default function CSTPSPipelinePage() {
             </div>
             <Link
               href="/dashboard/reports"
-              className="hidden sm:flex items-center space-x-1 rounded bg-white/20 px-2 py-1 text-white hover:bg-white/30 border border-white/30"
+              className="hidden sm:flex items-center rounded bg-white/20 px-3 py-1 text-white hover:bg-white/30 border border-white/30"
             >
-              <span className="material-icons text-sm md:text-base">description</span>
-              <span className="text-xs hidden md:inline">REPORTS</span>
+              <span className="text-xs font-medium">Reports</span>
             </Link>
-            <button className="flex items-center rounded bg-white/20 px-2 py-1 text-white hover:bg-white/30 border border-white/30">
-              <span className="material-icons text-sm md:text-base">refresh</span>
+            <button className="flex items-center rounded bg-white/20 px-3 py-1 text-white hover:bg-white/30 border border-white/30">
+              <span className="text-xs font-medium">Refresh</span>
             </button>
           </div>
         </div>
