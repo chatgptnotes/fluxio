@@ -43,7 +43,7 @@ export default function CSTPSPipelinePage() {
   const router = useRouter()
   const [hoveredPipe, setHoveredPipe] = useState<string | null>(null)
   const [currentTime, setCurrentTime] = useState<Date | null>(null)
-  const [viewMode, setViewMode] = useState<'pid' | '3d' | '2d'>('pid')
+  const [viewMode, setViewMode] = useState<'pid' | '3d' | '2d'>('3d')
   const [sensorOrder, setSensorOrder] = useState<PipeData[]>(cstpsPipes as PipeData[])
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
