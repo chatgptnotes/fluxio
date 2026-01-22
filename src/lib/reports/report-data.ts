@@ -122,7 +122,7 @@ function calculatePipeStatistics(
 
   return {
     pipeId: pipe.id,
-    deviceName: pipe.deviceName,
+    deviceName: `Nivus-750-${pipe.pipeNumber}`,
     location: pipe.location,
     status: pipe.status,
     minFlowRate: Math.round(minFlowRate * 100) / 100,
@@ -166,11 +166,12 @@ function generateAlerts(
   const alerts: AlertSummary[] = []
 
   pipes.forEach((pipe) => {
+    const simpleName = `Nivus-750-${pipe.pipeNumber}`
     if (pipe.status === 'offline') {
       alerts.push({
         type: 'critical',
         count: 1,
-        description: `${pipe.deviceName} - Device Offline`,
+        description: `${simpleName} - Device Offline`,
         timestamp: new Date(dateRange.startDate.getTime() + Math.random() * (dateRange.endDate.getTime() - dateRange.startDate.getTime())),
       })
     }
@@ -179,7 +180,7 @@ function generateAlerts(
       alerts.push({
         type: 'warning',
         count: 1,
-        description: `${pipe.deviceName} - Low Battery (${pipe.parameters.batteryLevel}%)`,
+        description: `${simpleName} - Low Battery (${pipe.parameters.batteryLevel}%)`,
         timestamp: new Date(dateRange.startDate.getTime() + Math.random() * (dateRange.endDate.getTime() - dateRange.startDate.getTime())),
       })
     }
@@ -188,7 +189,7 @@ function generateAlerts(
       alerts.push({
         type: 'warning',
         count: 1,
-        description: `${pipe.deviceName} - Weak Signal (${pipe.parameters.signalStrength} dBm)`,
+        description: `${simpleName} - Weak Signal (${pipe.parameters.signalStrength} dBm)`,
         timestamp: new Date(dateRange.startDate.getTime() + Math.random() * (dateRange.endDate.getTime() - dateRange.startDate.getTime())),
       })
     }
@@ -198,7 +199,7 @@ function generateAlerts(
       alerts.push({
         type: 'info',
         count: 1,
-        description: `${pipe.deviceName} - High Flow Rate Detected`,
+        description: `${simpleName} - High Flow Rate Detected`,
         timestamp: new Date(dateRange.startDate.getTime() + Math.random() * (dateRange.endDate.getTime() - dateRange.startDate.getTime())),
       })
     }
@@ -313,7 +314,7 @@ export function generateReportData(
   // Device health
   const deviceHealth = pipes.map((pipe) => ({
     pipeId: pipe.id,
-    deviceName: pipe.deviceName,
+    deviceName: `Nivus-750-${pipe.pipeNumber}`,
     batteryLevel: pipe.parameters.batteryLevel,
     signalStrength: pipe.parameters.signalStrength,
     status: pipe.status,
