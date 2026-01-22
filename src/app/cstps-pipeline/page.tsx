@@ -48,10 +48,6 @@ export default function CSTPSPipelinePage() {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
 
-  // Draggable 2D FT positions
-  const [ft2DPositions, setFt2DPositions] = useState(initial2DPositions)
-  const [dragging2DIndex, setDragging2DIndex] = useState<number | null>(null)
-  const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null)
 
   // Container ref for 3D view
   const containerRef = useRef<HTMLDivElement>(null)
@@ -87,46 +83,6 @@ export default function CSTPSPipelinePage() {
     router.push(`/cstps-pipeline/${pipeId}`)
   }
 
-  // 2D FT drag handlers
-  const handle2DMouseDown = useCallback((e: React.MouseEvent, index: number) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragging2DIndex(index)
-    setDragStart({ x: e.clientX, y: e.clientY })
-  }, [])
-
-  const handle2DMouseMove = useCallback((e: React.MouseEvent) => {
-    if (dragging2DIndex === null || !dragStart || !containerRef.current) return
-
-    const container = containerRef.current.getBoundingClientRect()
-    const deltaX = ((e.clientX - dragStart.x) / container.width) * 100
-    const deltaY = ((e.clientY - dragStart.y) / container.height) * 100
-
-    setFt2DPositions(prev => {
-      const newPositions = [...prev]
-      newPositions[dragging2DIndex] = {
-        left: Math.max(0, Math.min(100, initial2DPositions[dragging2DIndex].left + deltaX)),
-        top: Math.max(0, Math.min(100, initial2DPositions[dragging2DIndex].top + deltaY))
-      }
-      return newPositions
-    })
-  }, [dragging2DIndex, dragStart])
-
-  const handle2DMouseUp = useCallback(() => {
-    if (dragging2DIndex !== null) {
-      // Log positions to console for hardcoding
-      console.log('=== 2D FT POSITIONS ===')
-      console.log('Copy this to hardcode:')
-      console.log('const ftPositions2D = [')
-      ft2DPositions.forEach((pos, i) => {
-        console.log(`  { left: ${pos.left.toFixed(1)}, top: ${pos.top.toFixed(1)} },    // FT-${String(i + 1).padStart(3, '0')}`)
-      })
-      console.log(']')
-      console.log('=======================')
-    }
-    setDragging2DIndex(null)
-    setDragStart(null)
-  }, [dragging2DIndex, ft2DPositions])
 
   // Calculate totals
   const totalFlow = cstpsPipes.reduce((sum, p) => sum + p.parameters.flowRate, 0)
@@ -553,11 +509,8 @@ export default function CSTPSPipelinePage() {
               {viewMode === '2d' && (
                 <div
                   ref={containerRef}
-                  className="relative w-full select-none"
+                  className="relative w-full"
                   style={{ paddingBottom: '56.25%' }}
-                  onMouseMove={handle2DMouseMove}
-                  onMouseUp={handle2DMouseUp}
-                  onMouseLeave={handle2DMouseUp}
                 >
                   {/* Background Template Image */}
                   <img
@@ -624,25 +577,23 @@ export default function CSTPSPipelinePage() {
                     </div>
                   </div>
 
-                  {/* FT Value Overlays - Draggable for position adjustment */}
+                  {/* FT Value Overlays - Click to view details */}
                   {cstpsPipes.map((pipe, index) => {
                     const hasFlow = pipe.status !== 'offline' && pipe.parameters.flowRate > 0
                     const statusColor = pipe.status === 'online' ? '#4CAF50' : pipe.status === 'warning' ? '#FFC107' : '#F44336'
-                    const pos = ft2DPositions[index]
-                    const isDragging = dragging2DIndex === index
+                    const pos = initial2DPositions[index]
 
                     return (
                       <div
                         key={`ft-2d-${pipe.id}`}
-                        className={`absolute z-10 cursor-grab active:cursor-grabbing ${isDragging ? 'scale-110 z-20' : 'hover:scale-105'}`}
+                        className="absolute z-10 cursor-pointer hover:scale-105 transition-transform"
                         style={{
                           left: `${pos.left}%`,
                           top: `${pos.top}%`,
-                          transform: 'translate(-50%, -50%)',
-                          transition: isDragging ? 'none' : 'transform 0.15s ease'
+                          transform: 'translate(-50%, -50%)'
                         }}
-                        onMouseDown={(e) => handle2DMouseDown(e, index)}
-                        onMouseEnter={() => !dragging2DIndex && setHoveredPipe(pipe.id)}
+                        onClick={() => router.push(`/cstps-pipeline/${pipe.id}`)}
+                        onMouseEnter={() => setHoveredPipe(pipe.id)}
                         onMouseLeave={() => setHoveredPipe(null)}
                       >
                         <div className={`relative bg-[#0D1B2A]/90 rounded px-1.5 py-0.5 border ${
@@ -674,7 +625,7 @@ export default function CSTPSPipelinePage() {
                             <div className="text-[10px] font-bold text-[#1565C0]">{pipe.deviceId}</div>
                             <div className="text-[8px] text-[#757575]">Vel: {pipe.parameters.velocity.toFixed(2)} m/s</div>
                             <div className="text-[8px] text-[#757575]">Level: {pipe.parameters.waterLevel} mm</div>
-                            <div className="text-[8px] text-[#1565C0] mt-0.5 font-medium">Drag to reposition</div>
+                            <div className="text-[8px] text-[#1565C0] mt-0.5 font-medium">Click to view details</div>
                           </div>
                         )}
                       </div>
