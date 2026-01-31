@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { cstpsPipes } from '@/lib/cstps-data'
+import { createClient } from '@/lib/supabase/client'
+import { cstpsPipes as staticCstpsPipes, NivusSensor } from '@/lib/cstps-data'
 
 // Define pipe type for drag and drop
 interface PipeData {
@@ -16,6 +17,64 @@ interface PipeData {
     velocity: number
     waterLevel: number
     temperature: number
+    totalizer: number
+  }
+}
+
+// Map device_id to pipe number and static data
+const deviceToPipeMap: Record<string, { pipeNumber: number; staticIndex: number }> = {
+  'NIVUS_750_001': { pipeNumber: 1, staticIndex: 0 },
+  'NIVUS_750_002': { pipeNumber: 2, staticIndex: 1 },
+  'NIVUS_750_003': { pipeNumber: 3, staticIndex: 2 },
+  'NIVUS_750_004': { pipeNumber: 4, staticIndex: 3 },
+  'NIVUS_750_005': { pipeNumber: 5, staticIndex: 4 },
+  'NIVUS_750_006': { pipeNumber: 6, staticIndex: 5 },
+}
+
+// Convert database flow_data record to PipeData
+interface FlowDataRecord {
+  device_id: string
+  flow_rate: number | null
+  totalizer: number | null
+  temperature: number | null
+  battery_level: number | null
+  signal_strength: number | null
+  created_at: string
+  metadata?: {
+    velocity?: number
+    water_level?: number
+    [key: string]: unknown
+  }
+}
+
+function convertToPipeData(record: FlowDataRecord, staticPipe: NivusSensor): PipeData {
+  const flowRate = record.flow_rate ?? 0
+  const batteryLevel = record.battery_level ?? 100
+
+  // Determine status based on data
+  let status: 'online' | 'warning' | 'offline' = 'online'
+  const lastUpdate = new Date(record.created_at)
+  const now = new Date()
+  const minutesSinceUpdate = (now.getTime() - lastUpdate.getTime()) / (1000 * 60)
+
+  if (minutesSinceUpdate > 15) {
+    status = 'offline'
+  } else if (batteryLevel < 30 || flowRate === 0) {
+    status = batteryLevel < 30 ? 'warning' : 'online'
+  }
+
+  return {
+    id: staticPipe.id,
+    pipeNumber: staticPipe.pipeNumber,
+    deviceId: staticPipe.deviceId,
+    status,
+    parameters: {
+      flowRate,
+      velocity: record.metadata?.velocity ?? staticPipe.parameters.velocity,
+      waterLevel: record.metadata?.water_level ?? staticPipe.parameters.waterLevel,
+      temperature: record.temperature ?? staticPipe.parameters.temperature,
+      totalizer: record.totalizer ?? staticPipe.parameters.totalizer,
+    },
   }
 }
 
@@ -44,13 +103,124 @@ export default function CSTPSPipelinePage() {
   const [hoveredPipe, setHoveredPipe] = useState<string | null>(null)
   const [currentTime, setCurrentTime] = useState<Date | null>(null)
   const [viewMode, setViewMode] = useState<'pid' | '3d' | '2d'>('3d')
-  const [sensorOrder, setSensorOrder] = useState<PipeData[]>(cstpsPipes as PipeData[])
+  const [cstpsPipes, setCstpsPipes] = useState<PipeData[]>(staticCstpsPipes as PipeData[])
+  const [sensorOrder, setSensorOrder] = useState<PipeData[]>(staticCstpsPipes as PipeData[])
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
-
+  const [isLiveData, setIsLiveData] = useState(false)
+  const [lastDataUpdate, setLastDataUpdate] = useState<Date | null>(null)
 
   // Container ref for 3D view
   const containerRef = useRef<HTMLDivElement>(null)
+
+  // Fetch initial data and subscribe to real-time updates
+  useEffect(() => {
+    const supabase = createClient()
+    let subscription: ReturnType<typeof supabase.channel> | null = null
+
+    // Fetch latest flow data for each CSTPS device via API (bypasses RLS)
+    async function fetchLatestData() {
+      try {
+        const deviceIds = Object.keys(deviceToPipeMap)
+
+        // Fetch from API endpoint which uses admin client
+        const response = await fetch(`/api/flow-data?limit=100`)
+        if (!response.ok) {
+          console.warn('Error fetching flow data:', response.statusText)
+          return
+        }
+
+        const result = await response.json()
+        if (!result.success || !result.data) {
+          console.warn('API returned no data')
+          return
+        }
+
+        // Filter to only CSTPS devices and cast to expected type
+        const flowDataRecords = (result.data as FlowDataRecord[]).filter(
+          (record) => deviceIds.includes(record.device_id)
+        )
+
+        if (flowDataRecords && flowDataRecords.length > 0) {
+          // Get the latest record for each device
+          const latestByDevice: Record<string, FlowDataRecord> = {}
+          for (const record of flowDataRecords) {
+            if (!latestByDevice[record.device_id]) {
+              latestByDevice[record.device_id] = record
+            }
+          }
+
+          // Convert to PipeData array
+          const updatedPipes: PipeData[] = staticCstpsPipes.map((staticPipe) => {
+            const latestRecord = latestByDevice[staticPipe.deviceId]
+            if (latestRecord) {
+              return convertToPipeData(latestRecord, staticPipe)
+            }
+            return staticPipe as PipeData
+          })
+
+          setCstpsPipes(updatedPipes)
+          setSensorOrder(updatedPipes)
+          setIsLiveData(true)
+          setLastDataUpdate(new Date())
+        }
+      } catch (err) {
+        console.warn('Failed to fetch flow data:', err)
+      }
+    }
+
+    // Subscribe to real-time updates
+    function subscribeToUpdates() {
+      const deviceIds = Object.keys(deviceToPipeMap)
+
+      subscription = supabase
+        .channel('cstps-flow-updates')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'flow_data',
+            filter: `device_id=in.(${deviceIds.join(',')})`,
+          },
+          (payload) => {
+            const newRecord = payload.new as FlowDataRecord
+            const mapping = deviceToPipeMap[newRecord.device_id]
+
+            if (mapping) {
+              const staticPipe = staticCstpsPipes[mapping.staticIndex]
+              const updatedPipe = convertToPipeData(newRecord, staticPipe)
+
+              setCstpsPipes((prev) =>
+                prev.map((pipe) =>
+                  pipe.deviceId === newRecord.device_id ? updatedPipe : pipe
+                )
+              )
+              setSensorOrder((prev) =>
+                prev.map((pipe) =>
+                  pipe.deviceId === newRecord.device_id ? updatedPipe : pipe
+                )
+              )
+              setLastDataUpdate(new Date())
+            }
+          }
+        )
+        .subscribe()
+    }
+
+    fetchLatestData()
+    subscribeToUpdates()
+
+    // Refresh data every 30 seconds as a fallback
+    const refreshInterval = setInterval(fetchLatestData, 30000)
+
+    return () => {
+      if (subscription) {
+        supabase.removeChannel(subscription)
+      }
+      clearInterval(refreshInterval)
+    }
+  }, [])
 
   useEffect(() => {
     setCurrentTime(new Date())
@@ -86,9 +256,17 @@ export default function CSTPSPipelinePage() {
 
   // Calculate totals
   const totalFlow = cstpsPipes.reduce((sum, p) => sum + p.parameters.flowRate, 0)
+  const totalConsumption = cstpsPipes.reduce((sum, p) => sum + p.parameters.totalizer, 0)
   const onlineCount = cstpsPipes.filter((p) => p.status === 'online').length
   const warningCount = cstpsPipes.filter((p) => p.status === 'warning').length
   const offlineCount = cstpsPipes.filter((p) => p.status === 'offline').length
+
+  // Reservoir hover state
+  const [reservoirHovered, setReservoirHovered] = useState(false)
+
+  // Fixed totalizer block positions (hardcoded after visual alignment)
+  const totalizer3DPos = { left: 67.02, top: 57.76 }
+  const totalizer2DPos = { left: 69.41, top: 63.39 }
 
   return (
     <div className="min-h-screen bg-[#F5F5F5]">
@@ -284,6 +462,26 @@ export default function CSTPSPipelinePage() {
               </div>
             </div>
 
+            {/* Total Consumption */}
+            <div className="rounded-lg border border-[#BDBDBD] bg-white shadow-sm">
+              <div className="border-b border-[#E0E0E0] bg-[#EEEEEE] px-3 py-2">
+                <span className="text-xs font-bold tracking-wider text-[#424242]">
+                  TOTAL CONSUMPTION
+                </span>
+              </div>
+              <div className="p-4 text-center">
+                <div className="rounded bg-[#1a1a2e] px-4 py-3 border border-[#0288D1]">
+                  <div className="font-mono text-2xl font-bold text-[#00E5FF] drop-shadow-[0_0_10px_rgba(0,229,255,0.5)]">
+                    {totalConsumption.toLocaleString('en-IN')}
+                  </div>
+                  <div className="text-xs text-[#4FC3F7] mt-1 font-mono">m3 total</div>
+                </div>
+                <div className="mt-2 text-[10px] text-[#757575] font-mono">
+                  Cumulative from all 6 pipelines
+                </div>
+              </div>
+            </div>
+
             {/* Alarms Panel */}
             <div className="rounded-lg border border-[#BDBDBD] bg-white shadow-sm">
               <div className="border-b border-[#E0E0E0] bg-[#EEEEEE] px-3 py-2 flex items-center justify-between">
@@ -341,8 +539,10 @@ export default function CSTPSPipelinePage() {
                 <div className="flex items-center space-x-3">
                   <span className="text-[10px] text-[#757575] font-mono">SCAN: 1000ms</span>
                   <div className="flex items-center space-x-1">
-                    <div className="h-2 w-2 rounded-full bg-[#4CAF50] animate-pulse"></div>
-                    <span className="text-[10px] text-[#4CAF50] font-bold">LIVE</span>
+                    <div className={`h-2 w-2 rounded-full ${isLiveData ? 'bg-[#4CAF50]' : 'bg-[#FFC107]'} animate-pulse`}></div>
+                    <span className={`text-[10px] font-bold ${isLiveData ? 'text-[#4CAF50]' : 'text-[#FFC107]'}`}>
+                      {isLiveData ? 'LIVE' : 'STATIC'}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -392,7 +592,10 @@ export default function CSTPSPipelinePage() {
                   </div>
 
                   {/* Water Ripple Animation - CSTPS Reservoir */}
-                  <div className="absolute" style={{ left: '52%', top: '58%', width: '18%', height: '20%' }}>
+                  <div
+                    className="absolute z-10"
+                    style={{ left: '52%', top: '58%', width: '18%', height: '20%' }}
+                  >
                     <div className="absolute inset-0 overflow-hidden">
                       <div
                         className="absolute w-full h-2 bg-gradient-to-r from-transparent via-cyan-300/40 to-transparent"
@@ -401,6 +604,19 @@ export default function CSTPSPipelinePage() {
                           animation: 'wave 2s ease-in-out infinite'
                         }}
                       />
+                    </div>
+                  </div>
+
+                  {/* CSTPS Reservoir Total Consumption Display */}
+                  <div
+                    className="absolute z-20"
+                    style={{ left: `${totalizer3DPos.left}%`, top: `${totalizer3DPos.top}%`, transform: 'translateX(-50%)' }}
+                  >
+                    <div className="bg-[#0D1B2A] rounded-lg px-2 py-1.5 md:px-3 md:py-2 border border-[#2E7D32] shadow-lg">
+                      <div className="text-[8px] md:text-[10px] text-[#90CAF9] font-mono font-bold text-center">TOTAL RECEIVED</div>
+                      <div className="text-[10px] md:text-sm text-[#00E5FF] font-mono font-bold text-center mt-0.5">
+                        {totalConsumption.toLocaleString('en-IN')} m3
+                      </div>
                     </div>
                   </div>
 
@@ -655,6 +871,19 @@ export default function CSTPSPipelinePage() {
                     )
                   })}
 
+                  {/* CSTPS Reservoir (2D) - Total Consumption Display */}
+                  <div
+                    className="absolute z-20"
+                    style={{ left: `${totalizer2DPos.left}%`, top: `${totalizer2DPos.top}%`, transform: 'translateX(-50%)' }}
+                  >
+                    <div className="bg-[#0D1B2A] rounded-lg px-2 py-1.5 md:px-3 md:py-2 border border-[#2E7D32] shadow-lg">
+                      <div className="text-[8px] md:text-[10px] text-[#90CAF9] font-mono font-bold text-center">TOTAL RECEIVED</div>
+                      <div className="text-[10px] md:text-sm text-[#00E5FF] font-mono font-bold text-center mt-0.5">
+                        {totalConsumption.toLocaleString('en-IN')} m3
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Total Flow Display */}
                   <div className="absolute bottom-4 left-4 bg-[#0D1B2A]/95 rounded-lg px-4 py-2 border-2 border-[#00ACC1] shadow-lg">
                     <div className="text-[10px] text-[#90CAF9] font-mono font-bold">TOTAL FLOW</div>
@@ -837,7 +1066,19 @@ export default function CSTPSPipelinePage() {
                 </g>
 
                 {/* CSTPS RESERVOIR */}
-                <g transform="translate(880, 80)">
+                <g
+                  transform="translate(880, 80)"
+                  style={{ cursor: 'pointer' }}
+                  onMouseEnter={() => setReservoirHovered(true)}
+                  onMouseLeave={() => setReservoirHovered(false)}
+                >
+                  {/* Hover highlight */}
+                  {reservoirHovered && (
+                    <rect x="-5" y="-5" width="100" height="360" fill="none" stroke="#00E5FF" strokeWidth="3" strokeDasharray="5,3" rx="5" opacity="0.8">
+                      <animate attributeName="stroke-dashoffset" values="0;16" dur="1s" repeatCount="indefinite"/>
+                    </rect>
+                  )}
+
                   {/* Reservoir tank */}
                   <rect x="0" y="0" width="90" height="350" fill="#E8F5E9" stroke="#2E7D32" strokeWidth="3" rx="3" filter="url(#pipeShadow)"/>
 
@@ -879,6 +1120,15 @@ export default function CSTPSPipelinePage() {
                       {totalFlow.toFixed(1)}
                     </text>
                     <text y="14" textAnchor="middle" fill="#4FC3F7" fontSize="9" fontFamily="monospace">m3/h IN</text>
+                  </g>
+
+                  {/* Total Consumption Display - always visible */}
+                  <g transform="translate(45, 280)">
+                    <rect x="-42" y="-14" width="84" height="36" fill="#0D1B2A" stroke="#2E7D32" strokeWidth="1.5" rx="4"/>
+                    <text y="-2" textAnchor="middle" fill="#90CAF9" fontSize="8" fontFamily="monospace">TOTAL RECEIVED</text>
+                    <text y="12" textAnchor="middle" fill="#00E5FF" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                      {totalConsumption.toLocaleString('en-IN')} m3
+                    </text>
                   </g>
 
                   {/* Reservoir label */}
@@ -1190,6 +1440,13 @@ export default function CSTPSPipelinePage() {
                               <span className="text-[#4FC3F7] font-normal ml-0.5">C</span>
                             </div>
                           </div>
+                          <div className="bg-[#0D1B2A] rounded px-1.5 py-1 col-span-2">
+                            <span className="text-[#90CAF9] block">TOTAL</span>
+                            <div className="font-mono font-bold text-[#00E5FF]">
+                              {pipe.parameters.totalizer.toLocaleString('en-IN')}
+                              <span className="text-[#4FC3F7] font-normal ml-0.5">m3</span>
+                            </div>
+                          </div>
                         </div>
                       </Link>
                     </div>
@@ -1224,6 +1481,12 @@ export default function CSTPSPipelinePage() {
                 <span className="text-[#37474F] font-semibold">SCAN:</span>
                 <span className="text-[#1565C0]">{currentTime ? currentTime.toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata' }) : '--:--:--'}</span>
               </div>
+              {lastDataUpdate && (
+                <div className="flex items-center space-x-1 md:space-x-2">
+                  <span className="text-[#37474F] font-semibold">DATA:</span>
+                  <span className="text-[#4CAF50]">{lastDataUpdate.toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata' })}</span>
+                </div>
+              )}
             </div>
             <div className="text-[9px] md:text-xs text-[#78909C] font-mono">
               <span className="hidden md:inline">FluxIO SCADA v1.7 | Gravity Fed System | </span>CSTPS Water Supply
@@ -1234,7 +1497,7 @@ export default function CSTPSPipelinePage() {
 
       {/* Version Footer */}
       <footer className="text-center py-2 text-[9px] md:text-[10px] text-[#90A4AE]">
-        Version 3.0 | January 22, 2026 | github.com/chatgptnotes/fluxio
+        Version 3.1 | January 26, 2026 | github.com/chatgptnotes/fluxio
       </footer>
 
       {/* CSS Animations */}
