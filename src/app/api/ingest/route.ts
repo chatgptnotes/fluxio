@@ -1,6 +1,63 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
+// Map TRB246 Modbus register addresses to field names
+// Based on Nivus 750 register layout (32-bit float values, 2 registers each)
+const MODBUS_REGISTER_MAP: Record<string, string> = {
+  // Hex format
+  '0x0000': 'flow_rate',
+  '0x0002': 'totalizer',
+  '0x0004': 'temperature',
+  '0x0006': 'level',
+  '0x0008': 'velocity',
+  // Decimal format (string)
+  '0': 'flow_rate',
+  '2': 'totalizer',
+  '4': 'temperature',
+  '6': 'level',
+  '8': 'velocity',
+}
+
+// Interface for TRB246 Modbus data format
+interface ModbusRegisterData {
+  full_addr?: string
+  address?: string | number
+  data: number
+}
+
+// Convert TRB246 Modbus register array format to FluxIO field format
+function convertModbusFormat(data: unknown): Record<string, unknown> | null {
+  // Check if data is an array
+  if (!Array.isArray(data)) return null
+
+  // Check if it's empty
+  if (data.length === 0) return null
+
+  // Check if all items have Modbus format (full_addr or address + data)
+  const hasModbusFormat = data.every(
+    (item): item is ModbusRegisterData =>
+      typeof item === 'object' &&
+      item !== null &&
+      ('full_addr' in item || 'address' in item) &&
+      'data' in item
+  )
+
+  if (!hasModbusFormat) return null
+
+  // Convert to FluxIO format
+  const converted: Record<string, unknown> = {}
+  for (const item of data as ModbusRegisterData[]) {
+    const addr = String(item.full_addr ?? item.address)
+    const fieldName = MODBUS_REGISTER_MAP[addr]
+    if (fieldName) {
+      converted[fieldName] = Number(item.data)
+    }
+  }
+
+  // Return converted object if we found any valid fields
+  return Object.keys(converted).length > 0 ? converted : null
+}
+
 // Interface for incoming data from Teltonika gateway
 interface IngestData {
   device_id: string
@@ -12,6 +69,44 @@ interface IngestData {
   signal_strength?: number
   timestamp?: string
   metadata?: Record<string, unknown>
+}
+
+// Normalize TRB246 Modbus data format to FluxIO format
+function normalizeData(data: Record<string, unknown>, defaultDeviceId: string): Record<string, unknown> {
+  const normalized: Record<string, unknown> = {}
+
+  // Handle device_id - use provided or default
+  normalized.device_id = data.device_id || data.Device_id || data.DEVICE_ID || defaultDeviceId
+
+  // Handle flow_rate (case-insensitive)
+  const flowRate = data.flow_rate ?? data.Flow_rate ?? data.FLOW_RATE ?? data.flowRate
+  if (flowRate !== undefined) normalized.flow_rate = Number(flowRate)
+
+  // Handle totalizer (case-insensitive)
+  const totalizer = data.totalizer ?? data.Totalizer ?? data.TOTALIZER
+  if (totalizer !== undefined) normalized.totalizer = Number(totalizer)
+
+  // Handle temperature (case-insensitive)
+  const temperature = data.temperature ?? data.Temperature ?? data.TEMPERATURE
+  if (temperature !== undefined) normalized.temperature = Number(temperature)
+
+  // Handle pressure (case-insensitive)
+  const pressure = data.pressure ?? data.Pressure ?? data.PRESSURE
+  if (pressure !== undefined) normalized.pressure = Number(pressure)
+
+  // Handle battery_level
+  const batteryLevel = data.battery_level ?? data.Battery_level ?? data.batteryLevel
+  if (batteryLevel !== undefined) normalized.battery_level = Number(batteryLevel)
+
+  // Handle signal_strength
+  const signalStrength = data.signal_strength ?? data.Signal_strength ?? data.signalStrength
+  if (signalStrength !== undefined) normalized.signal_strength = Number(signalStrength)
+
+  // Copy timestamp and metadata if present
+  if (data.timestamp) normalized.timestamp = data.timestamp
+  if (data.metadata) normalized.metadata = data.metadata
+
+  return normalized
 }
 
 // Validate incoming data
@@ -88,6 +183,17 @@ async function checkAlertConditions(
           message = `Battery level ${data.battery_level.toFixed(0)}% below threshold ${rule.threshold_value.toFixed(0)}%`
         }
         break
+
+      case 'zero_flow':
+        if (
+          data.flow_rate !== undefined &&
+          data.flow_rate === 0
+        ) {
+          shouldAlert = true
+          actualValue = data.flow_rate
+          message = `Zero flow detected - flow rate is 0`
+        }
+        break
     }
 
     if (shouldAlert) {
@@ -118,23 +224,41 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Get default device_id from header or query param (for TRB246 compatibility)
+    const defaultDeviceId = request.headers.get('x-device-id') ||
+                           request.nextUrl.searchParams.get('device_id') ||
+                           'NIVUS_750_01'
+
     // Parse request body
     const body = await request.json()
 
-    // Support both single object and array of objects
-    const dataArray = Array.isArray(body) ? body : [body]
+    // Check if body is TRB246 Modbus register format and convert if needed
+    const convertedModbus = convertModbusFormat(body)
 
-    // Validate all data
-    for (const data of dataArray) {
-      if (!validateData(data)) {
+    // Support both single object and array of objects
+    // If we converted from Modbus format, use the converted object
+    const rawDataArray = convertedModbus
+      ? [convertedModbus]
+      : Array.isArray(body) ? body : [body]
+
+    // Normalize and validate all data
+    const dataArray: IngestData[] = []
+    for (const rawData of rawDataArray) {
+      // Normalize the data format (handle TRB246 Modbus format)
+      const normalized = normalizeData(rawData as Record<string, unknown>, defaultDeviceId)
+
+      if (!validateData(normalized)) {
         return NextResponse.json(
           {
             error: 'Validation error',
             message: 'Invalid data format. Required: device_id and at least one measurement.',
+            received: rawData,
+            normalized: normalized,
           },
           { status: 400 }
         )
       }
+      dataArray.push(normalized as IngestData)
     }
 
     // Create Supabase admin client
