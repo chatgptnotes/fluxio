@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     const endTime = searchParams.get('end_time')
     const limit = parseInt(searchParams.get('limit') || '1000')
 
-    const supabase = createClient()
+    const supabase = createAdminClient()
 
     let query = supabase
       .from('flow_data')
