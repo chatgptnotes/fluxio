@@ -25,11 +25,10 @@ async function cleanDatabase() {
 
   // Step 1: Delete all alerts
   console.log('1. Deleting all alerts...')
-  const { error: alertsError, count: alertsCount } = await supabase
+  const { error: alertsError } = await supabase
     .from('alerts')
     .delete()
     .neq('id', '00000000-0000-0000-0000-000000000000')
-    .select('*', { count: 'exact', head: true })
 
   if (alertsError) {
     console.log(`   Error: ${alertsError.message}`)
