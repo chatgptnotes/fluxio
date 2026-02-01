@@ -1557,7 +1557,7 @@ export default function CSTPSPipelinePage() {
 
       {/* Version Footer */}
       <footer className="text-center py-2 text-[9px] md:text-[10px] text-[#90A4AE]">
-        Version 3.2 | February 1, 2026 | github.com/chatgptnotes/fluxio
+        Version 3.3-CLEAN | February 1, 2026 18:45 | NO MOCK DATA | github.com/chatgptnotes/fluxio
       </footer>
 
       {/* CSS Animations */}
