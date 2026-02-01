@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const fetchCache = 'force-no-store'
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,10 +15,11 @@ export async function GET(request: NextRequest) {
 
     const supabase = createAdminClient()
 
+    // Force fresh query by ordering by id desc (primary key)
     let query = supabase
       .from('flow_data')
       .select('*')
-      .order('created_at', { ascending: false })
+      .order('id', { ascending: false })
       .limit(limit)
 
     if (deviceId) {
@@ -40,11 +43,19 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       data,
       count: data?.length || 0,
+      timestamp: new Date().toISOString(),
     })
+
+    // Prevent any caching
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('Expires', '0')
+
+    return response
   } catch (error) {
     console.error('Error in flow-data endpoint:', error)
     return NextResponse.json(
