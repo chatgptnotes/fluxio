@@ -22,6 +22,7 @@ interface PipeData {
 }
 
 // Map device_id to pipe number and static data
+// FT-001 = NIVUS_750_001, FT-002 = NIVUS_750_002, etc.
 const deviceToPipeMap: Record<string, { pipeNumber: number; staticIndex: number }> = {
   'NIVUS_750_001': { pipeNumber: 1, staticIndex: 0 },
   'NIVUS_750_002': { pipeNumber: 2, staticIndex: 1 },
@@ -31,49 +32,99 @@ const deviceToPipeMap: Record<string, { pipeNumber: number; staticIndex: number 
   'NIVUS_750_006': { pipeNumber: 6, staticIndex: 5 },
 }
 
+// Timeout thresholds (in minutes)
+const OFFLINE_THRESHOLD_MINUTES = 5 // Mark as offline if no data for 5 minutes
+const WARNING_THRESHOLD_MINUTES = 3 // Mark as warning if no data for 3 minutes
+
 // Convert database flow_data record to PipeData
 interface FlowDataRecord {
   device_id: string
   flow_rate: number | null
   totalizer: number | null
   temperature: number | null
+  pressure: number | null
   battery_level: number | null
   signal_strength: number | null
   created_at: string
   metadata?: {
     velocity?: number
     water_level?: number
+    level?: number
     [key: string]: unknown
   }
 }
 
-function convertToPipeData(record: FlowDataRecord, staticPipe: NivusSensor): PipeData {
-  const flowRate = record.flow_rate ?? 0
+// Convert database record to PipeData with proper offline detection
+function convertToPipeData(record: FlowDataRecord | null, staticPipe: NivusSensor): PipeData {
+  // If no record exists, device has never sent data - show zeros and offline
+  if (!record) {
+    return {
+      id: staticPipe.id,
+      pipeNumber: staticPipe.pipeNumber,
+      deviceId: staticPipe.deviceId,
+      status: 'offline',
+      parameters: {
+        flowRate: 0,
+        velocity: 0,
+        waterLevel: 0,
+        temperature: 0,
+        totalizer: 0,
+      },
+    }
+  }
+
   const batteryLevel = record.battery_level ?? 100
 
-  // Determine status based on data
+  // Determine status based on time since last update
   let status: 'online' | 'warning' | 'offline' = 'online'
   const lastUpdate = new Date(record.created_at)
   const now = new Date()
   const minutesSinceUpdate = (now.getTime() - lastUpdate.getTime()) / (1000 * 60)
 
-  if (minutesSinceUpdate > 15) {
+  if (minutesSinceUpdate > OFFLINE_THRESHOLD_MINUTES) {
+    // Device is offline - show ZEROS, not old data
     status = 'offline'
-  } else if (batteryLevel < 30 || flowRate === 0) {
-    status = batteryLevel < 30 ? 'warning' : 'online'
+  } else if (minutesSinceUpdate > WARNING_THRESHOLD_MINUTES) {
+    // Device is stale - show last known values with warning
+    status = 'warning'
+  } else if (batteryLevel < 30) {
+    // Low battery warning
+    status = 'warning'
   }
 
+  // If offline, show zeros - don't show stale/old data
+  if (status === 'offline') {
+    return {
+      id: staticPipe.id,
+      pipeNumber: staticPipe.pipeNumber,
+      deviceId: staticPipe.deviceId,
+      status: 'offline',
+      parameters: {
+        flowRate: 0,
+        velocity: 0,
+        waterLevel: 0,
+        temperature: 0,
+        totalizer: 0,
+      },
+    }
+  }
+
+  // Extract velocity and water level from metadata
+  const velocity = record.metadata?.velocity ?? 0
+  const waterLevel = record.metadata?.water_level ?? record.metadata?.level ?? 0
+
+  // Return live data only when online or warning
   return {
     id: staticPipe.id,
     pipeNumber: staticPipe.pipeNumber,
     deviceId: staticPipe.deviceId,
     status,
     parameters: {
-      flowRate,
-      velocity: record.metadata?.velocity ?? staticPipe.parameters.velocity,
-      waterLevel: record.metadata?.water_level ?? staticPipe.parameters.waterLevel,
-      temperature: record.temperature ?? staticPipe.parameters.temperature,
-      totalizer: record.totalizer ?? staticPipe.parameters.totalizer,
+      flowRate: record.flow_rate ?? 0,
+      velocity,
+      waterLevel,
+      temperature: record.temperature ?? 0,
+      totalizer: record.totalizer ?? 0,
     },
   }
 }
@@ -127,45 +178,54 @@ export default function CSTPSPipelinePage() {
         const response = await fetch(`/api/flow-data?limit=100`)
         if (!response.ok) {
           console.warn('Error fetching flow data:', response.statusText)
+          // Even on error, show devices as offline with zeros
+          const offlinePipes: PipeData[] = staticCstpsPipes.map((staticPipe) =>
+            convertToPipeData(null, staticPipe)
+          )
+          setCstpsPipes(offlinePipes)
+          setSensorOrder(offlinePipes)
           return
         }
 
         const result = await response.json()
-        if (!result.success || !result.data) {
-          console.warn('API returned no data')
-          return
-        }
 
-        // Filter to only CSTPS devices and cast to expected type
-        const flowDataRecords = (result.data as FlowDataRecord[]).filter(
-          (record) => deviceIds.includes(record.device_id)
-        )
+        // Get the latest record for each device
+        const latestByDevice: Record<string, FlowDataRecord> = {}
 
-        if (flowDataRecords && flowDataRecords.length > 0) {
-          // Get the latest record for each device
-          const latestByDevice: Record<string, FlowDataRecord> = {}
+        if (result.success && result.data && result.data.length > 0) {
+          // Filter to only CSTPS devices and cast to expected type
+          const flowDataRecords = (result.data as FlowDataRecord[]).filter(
+            (record) => deviceIds.includes(record.device_id)
+          )
+
           for (const record of flowDataRecords) {
             if (!latestByDevice[record.device_id]) {
               latestByDevice[record.device_id] = record
             }
           }
-
-          // Convert to PipeData array
-          const updatedPipes: PipeData[] = staticCstpsPipes.map((staticPipe) => {
-            const latestRecord = latestByDevice[staticPipe.deviceId]
-            if (latestRecord) {
-              return convertToPipeData(latestRecord, staticPipe)
-            }
-            return staticPipe as PipeData
-          })
-
-          setCstpsPipes(updatedPipes)
-          setSensorOrder(updatedPipes)
-          setIsLiveData(true)
-          setLastDataUpdate(new Date())
         }
+
+        // Convert to PipeData array - ALL devices, even those without data
+        const updatedPipes: PipeData[] = staticCstpsPipes.map((staticPipe) => {
+          const latestRecord = latestByDevice[staticPipe.deviceId] || null
+          return convertToPipeData(latestRecord, staticPipe)
+        })
+
+        setCstpsPipes(updatedPipes)
+        setSensorOrder(updatedPipes)
+
+        // Check if we have any live data
+        const hasLiveData = updatedPipes.some(p => p.status === 'online')
+        setIsLiveData(hasLiveData)
+        setLastDataUpdate(new Date())
       } catch (err) {
         console.warn('Failed to fetch flow data:', err)
+        // On error, show all devices as offline with zeros
+        const offlinePipes: PipeData[] = staticCstpsPipes.map((staticPipe) =>
+          convertToPipeData(null, staticPipe)
+        )
+        setCstpsPipes(offlinePipes)
+        setSensorOrder(offlinePipes)
       }
     }
 
@@ -1497,7 +1557,7 @@ export default function CSTPSPipelinePage() {
 
       {/* Version Footer */}
       <footer className="text-center py-2 text-[9px] md:text-[10px] text-[#90A4AE]">
-        Version 3.1 | January 26, 2026 | github.com/chatgptnotes/fluxio
+        Version 3.2 | February 1, 2026 | github.com/chatgptnotes/fluxio
       </footer>
 
       {/* CSS Animations */}
