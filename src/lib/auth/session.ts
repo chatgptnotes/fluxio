@@ -4,7 +4,7 @@ import { generateSessionToken } from './password';
 import { buildSessionUser, type SessionUser } from './permissions';
 
 const SESSION_COOKIE_NAME = 'fluxio_session';
-const SESSION_DURATION_HOURS = 24;
+const SESSION_DURATION_MINUTES = 30; // Session expires after 30 minutes of inactivity
 
 export interface Session {
   token: string;
@@ -18,7 +18,7 @@ export interface Session {
 export async function createSession(userId: string): Promise<Session | null> {
   const supabase = createClient();
   const token = generateSessionToken();
-  const expiresAt = new Date(Date.now() + SESSION_DURATION_HOURS * 60 * 60 * 1000);
+  const expiresAt = new Date(Date.now() + SESSION_DURATION_MINUTES * 60 * 1000);
 
   // Get user data
   const { data: user, error: userError } = await supabase
@@ -53,14 +53,14 @@ export async function createSession(userId: string): Promise<Session | null> {
     .update({ last_login: new Date().toISOString() })
     .eq('id', userId);
 
-  // Set session cookie
+  // Set session cookie (no expires = deleted when browser closes)
   const cookieStore = cookies();
   cookieStore.set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    expires: expiresAt,
     path: '/',
+    // No 'expires' or 'maxAge' = session cookie (deleted when browser closes)
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -159,7 +159,7 @@ export async function refreshSession(): Promise<Session | null> {
   if (!session) return null;
 
   const supabase = createClient();
-  const newExpiresAt = new Date(Date.now() + SESSION_DURATION_HOURS * 60 * 60 * 1000);
+  const newExpiresAt = new Date(Date.now() + SESSION_DURATION_MINUTES * 60 * 1000);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase as any)
@@ -172,13 +172,12 @@ export async function refreshSession(): Promise<Session | null> {
     return session;
   }
 
-  // Update cookie expiry
+  // Update cookie (session cookie - no expires)
   const cookieStore = cookies();
   cookieStore.set(SESSION_COOKIE_NAME, session.token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    expires: newExpiresAt,
     path: '/',
   });
 

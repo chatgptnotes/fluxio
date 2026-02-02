@@ -13,6 +13,7 @@ const navItems = [
   { href: '/admin/companies', label: 'Companies', icon: 'business' },
   { href: '/admin/email-logs', label: 'Email Logs', icon: 'mail' },
   { href: '/admin/audit', label: 'Audit Logs', icon: 'history' },
+  { href: '/admin/infographics', label: 'Infographics', icon: 'auto_awesome' },
 ];
 
 function AdminNav() {
@@ -134,7 +135,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         {/* Footer */}
         <footer className="bg-white border-t py-4 px-6">
           <p className="text-center text-xs text-gray-400">
-            FluxIO v1.3 | February 1, 2026 | fluxio
+            FluxIO v1.4 | February 2, 2026 | fluxio
           </p>
         </footer>
       </div>

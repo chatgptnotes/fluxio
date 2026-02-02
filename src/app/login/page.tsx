@@ -15,6 +15,7 @@ function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirect') || '/dashboard'
+  const sessionExpired = searchParams.get('expired') === 'true'
   const isDev = process.env.NODE_ENV === 'development'
 
   const fillDevCredentials = () => {
@@ -85,6 +86,21 @@ function LoginContent() {
               Enter your credentials to continue
             </p>
           </div>
+
+          {/* Session Expired Warning */}
+          {sessionExpired && (
+            <div className="mb-6 rounded-lg bg-orange-50 p-4 border border-orange-200">
+              <div className="flex items-start space-x-3">
+                <span className="material-icons text-orange-600 flex-shrink-0">timer_off</span>
+                <div>
+                  <p className="font-medium text-orange-800">Session Expired</p>
+                  <p className="mt-1 text-sm text-orange-700">
+                    Your session has expired due to inactivity. Please log in again to continue.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Pending Verification Warning */}
           {isPendingVerification && (
