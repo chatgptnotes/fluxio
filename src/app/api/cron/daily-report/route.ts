@@ -5,6 +5,7 @@ import { createClient } from '@supabase/supabase-js'
 import { generateReportData, getDateRangePreset } from '@/lib/reports/report-data'
 import { generatePDFBuffer } from '@/lib/reports/pdf-generator'
 import { uploadReportPDF, getReportFilePath } from '@/lib/reports/storage'
+import { distributeCompanyReports } from '@/lib/reports/email-distribution'
 
 // Vercel cron secret for authentication
 const CRON_SECRET = process.env.CRON_SECRET
@@ -85,6 +86,11 @@ export async function GET(request: Request) {
 
     console.log('Daily report generation completed successfully')
 
+    // Distribute reports to companies with email reports enabled
+    console.log('Starting email distribution to enabled companies...')
+    const emailDistribution = await distributeCompanyReports(dateRange)
+    console.log(`Email distribution complete: ${emailDistribution.emailsSent} sent, ${emailDistribution.emailsFailed} failed`)
+
     return NextResponse.json({
       success: true,
       report_id: reportId,
@@ -95,6 +101,12 @@ export async function GET(request: Request) {
         totalFlowVolume: reportData.summary.totalFlowVolume,
         activeDevices: reportData.summary.activeDevices,
         alertsTriggered: reportData.summary.alertsTriggered,
+      },
+      emailDistribution: {
+        totalCompanies: emailDistribution.totalCompanies,
+        emailsSent: emailDistribution.emailsSent,
+        emailsFailed: emailDistribution.emailsFailed,
+        companiesSkipped: emailDistribution.companiesSkipped,
       },
     })
   } catch (error) {

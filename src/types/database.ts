@@ -6,6 +6,28 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
+// Company Settings for email reports
+export interface CompanySettings {
+  dailyReportEnabled?: boolean
+  reportRecipients?: 'operators' | 'admins' | 'all'
+}
+
+// Email Report Log Status
+export type EmailReportStatus = 'pending' | 'sent' | 'failed'
+
+// Email Report Log Row
+export interface EmailReportLog {
+  id: string
+  company_id: string
+  report_date: string
+  recipients: string[]
+  status: EmailReportStatus
+  error_message: string | null
+  file_path: string | null
+  sent_at: string | null
+  created_at: string
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -215,6 +237,12 @@ export interface Database {
           is_active: boolean
           created_at: string
           updated_at: string
+          username: string | null
+          password_hash: string | null
+          is_superadmin: boolean
+          company_id: string | null
+          permissions: Json
+          last_login: string | null
         }
         Insert: {
           id?: string
@@ -224,6 +252,12 @@ export interface Database {
           is_active?: boolean
           created_at?: string
           updated_at?: string
+          username?: string | null
+          password_hash?: string | null
+          is_superadmin?: boolean
+          company_id?: string | null
+          permissions?: Json
+          last_login?: string | null
         }
         Update: {
           id?: string
@@ -233,6 +267,153 @@ export interface Database {
           is_active?: boolean
           created_at?: string
           updated_at?: string
+          username?: string | null
+          password_hash?: string | null
+          is_superadmin?: boolean
+          company_id?: string | null
+          permissions?: Json
+          last_login?: string | null
+        }
+      }
+      companies: {
+        Row: {
+          id: string
+          name: string
+          code: string
+          description: string | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+          settings: CompanySettings
+        }
+        Insert: {
+          id?: string
+          name: string
+          code: string
+          description?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+          settings?: CompanySettings
+        }
+        Update: {
+          id?: string
+          name?: string
+          code?: string
+          description?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+          settings?: CompanySettings
+        }
+      }
+      email_report_logs: {
+        Row: EmailReportLog
+        Insert: {
+          id?: string
+          company_id: string
+          report_date: string
+          recipients: string[]
+          status?: EmailReportStatus
+          error_message?: string | null
+          file_path?: string | null
+          sent_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          report_date?: string
+          recipients?: string[]
+          status?: EmailReportStatus
+          error_message?: string | null
+          file_path?: string | null
+          sent_at?: string | null
+          created_at?: string
+        }
+      }
+      user_pipeline_access: {
+        Row: {
+          id: string
+          user_id: string
+          pipeline_id: string
+          permissions: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          pipeline_id: string
+          permissions?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          pipeline_id?: string
+          permissions?: Json
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      permission_templates: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          permissions: Json
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          description?: string | null
+          permissions: Json
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string | null
+          permissions?: Json
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      user_sessions: {
+        Row: {
+          id: string
+          user_id: string
+          session_token: string
+          expires_at: string
+          ip_address: string | null
+          user_agent: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          session_token: string
+          expires_at: string
+          ip_address?: string | null
+          user_agent?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          session_token?: string
+          expires_at?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          created_at?: string
         }
       }
       audit_logs: {
