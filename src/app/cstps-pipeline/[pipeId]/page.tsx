@@ -17,7 +17,6 @@ import {
   Calendar,
   Waves,
   AlertTriangle,
-  CheckCircle2,
   TrendingUp,
   RefreshCw,
 } from 'lucide-react'
@@ -26,6 +25,46 @@ import {
   getStatusColor,
   getFlowDirectionLabel,
 } from '@/lib/cstps-data'
+import { createClient } from '@/lib/supabase/client'
+
+// Map pipe IDs to device IDs for API filtering
+const pipeToDeviceMap: Record<string, string> = {
+  'pipe-1': 'NIVUS_750_001',
+  'pipe-2': 'NIVUS_750_002',
+  'pipe-3': 'NIVUS_750_003',
+  'pipe-4': 'NIVUS_750_004',
+  'pipe-5': 'NIVUS_750_005',
+  'pipe-6': 'NIVUS_750_006',
+}
+
+// Interface for flow data from API
+interface FlowDataRecord {
+  device_id: string
+  flow_rate: number | null
+  totalizer: number | null
+  temperature: number | null
+  battery_level: number | null
+  signal_strength: number | null
+  created_at: string
+  metadata?: {
+    velocity?: number
+    water_level?: number
+    [key: string]: unknown
+  }
+}
+
+// Interface for live data state
+interface LiveData {
+  flowRate: number
+  velocity: number
+  waterLevel: number
+  totalizer: number
+  temperature: number
+  batteryLevel: number
+  signalStrength: number
+  status: 'online' | 'warning' | 'offline'
+  lastUpdated: string
+}
 
 // Generate mock historical data for trends
 function generateHistoricalData(baseValue: number, variance: number, points: number = 60) {
@@ -61,7 +100,7 @@ function TrendChart({
 }) {
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null)
 
-  const { minValue, maxValue, points, yLabels, timeLabels } = useMemo(() => {
+  const { points, yLabels, timeLabels } = useMemo(() => {
     const values = data.map((d) => d.value)
     const min = Math.min(...values)
     const max = Math.max(...values)
@@ -95,7 +134,7 @@ function TrendChart({
       return { x, y, value: d.value, timestamp: d.timestamp }
     })
 
-    return { minValue: yMin, maxValue: yMax, points, yLabels, timeLabels }
+    return { points, yLabels, timeLabels }
   }, [data])
 
   const pathD = points
@@ -368,9 +407,110 @@ function ParameterCard({
 export default function PipeDetailPage() {
   const params = useParams()
   const pipeId = params.pipeId as string
-  const pipe = getPipeById(pipeId)
+  const staticPipe = getPipeById(pipeId)
   const [currentTime, setCurrentTime] = useState<Date | null>(null)
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
+  const [liveData, setLiveData] = useState<LiveData | null>(null)
+  const [isLiveData, setIsLiveData] = useState(false)
+
+  // Get device ID for this pipe
+  const deviceId = pipeToDeviceMap[pipeId]
+
+  // Fetch live data from API and subscribe to real-time updates
+  useEffect(() => {
+    if (!deviceId || !staticPipe) return
+
+    const supabase = createClient()
+    let subscription: ReturnType<typeof supabase.channel> | null = null
+
+    // Convert API record to LiveData
+    function convertToLiveData(record: FlowDataRecord): LiveData {
+      const flowRate = record.flow_rate ?? 0
+      const batteryLevel = record.battery_level ?? 100
+
+      // Determine status based on data
+      let status: 'online' | 'warning' | 'offline' = 'online'
+      const lastUpdateTime = new Date(record.created_at)
+      const now = new Date()
+      const minutesSinceUpdate = (now.getTime() - lastUpdateTime.getTime()) / (1000 * 60)
+
+      if (minutesSinceUpdate > 15) {
+        status = 'offline'
+      } else if (batteryLevel < 30) {
+        status = 'warning'
+      }
+
+      return {
+        flowRate,
+        velocity: record.metadata?.velocity ?? staticPipe!.parameters.velocity,
+        waterLevel: record.metadata?.water_level ?? staticPipe!.parameters.waterLevel,
+        totalizer: record.totalizer ?? staticPipe!.parameters.totalizer,
+        temperature: record.temperature ?? staticPipe!.parameters.temperature,
+        batteryLevel,
+        signalStrength: record.signal_strength ?? staticPipe!.parameters.signalStrength,
+        status,
+        lastUpdated: record.created_at,
+      }
+    }
+
+    // Fetch latest flow data for this device
+    async function fetchLatestData() {
+      try {
+        const response = await fetch(`/api/flow-data?device_id=${deviceId}&limit=1`)
+        if (!response.ok) {
+          console.warn('Error fetching flow data:', response.statusText)
+          return
+        }
+
+        const result = await response.json()
+        if (!result.success || !result.data || result.data.length === 0) {
+          console.warn('API returned no data for device:', deviceId)
+          return
+        }
+
+        const record = result.data[0] as FlowDataRecord
+        setLiveData(convertToLiveData(record))
+        setIsLiveData(true)
+        setLastUpdate(new Date())
+      } catch (err) {
+        console.warn('Failed to fetch flow data:', err)
+      }
+    }
+
+    // Subscribe to real-time updates for this specific device
+    function subscribeToUpdates() {
+      subscription = supabase
+        .channel(`pipe-detail-${deviceId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'flow_data',
+            filter: `device_id=eq.${deviceId}`,
+          },
+          (payload) => {
+            const newRecord = payload.new as FlowDataRecord
+            setLiveData(convertToLiveData(newRecord))
+            setLastUpdate(new Date())
+          }
+        )
+        .subscribe()
+    }
+
+    fetchLatestData()
+    subscribeToUpdates()
+
+    // Refresh data every 30 seconds as a fallback
+    const refreshInterval = setInterval(fetchLatestData, 30000)
+
+    return () => {
+      if (subscription) {
+        supabase.removeChannel(subscription)
+      }
+      clearInterval(refreshInterval)
+    }
+  }, [deviceId, staticPipe])
 
   useEffect(() => {
     // Set initial time on client only to avoid hydration mismatch
@@ -380,22 +520,69 @@ export default function PipeDetailPage() {
     return () => clearInterval(timer)
   }, [])
 
-  // Generate historical data for trends
+  // Merge live data with static pipe data
+  const pipe = useMemo(() => {
+    if (!staticPipe) return null
+
+    if (liveData) {
+      return {
+        ...staticPipe,
+        status: liveData.status,
+        lastUpdated: liveData.lastUpdated,
+        parameters: {
+          ...staticPipe.parameters,
+          flowRate: liveData.flowRate,
+          velocity: liveData.velocity,
+          waterLevel: liveData.waterLevel,
+          totalizer: liveData.totalizer,
+          temperature: liveData.temperature,
+          batteryLevel: liveData.batteryLevel,
+          signalStrength: liveData.signalStrength,
+          // Derive flow direction from flow rate
+          flowDirection: liveData.flowRate > 0 ? 'forward' as const : 'no-flow' as const,
+        },
+      }
+    }
+
+    return staticPipe
+  }, [staticPipe, liveData])
+
+  // Generate historical data for trends - use live values when available
   const flowHistory = useMemo(
-    () => (pipe ? generateHistoricalData(pipe.parameters.flowRate, pipe.parameters.flowRate * 0.15) : []),
-    [pipe]
+    () => {
+      if (!pipe) return []
+      const flowRate = pipe.parameters.flowRate
+      return generateHistoricalData(flowRate, Math.max(flowRate * 0.15, 1))
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [pipe?.parameters.flowRate]
   )
   const velocityHistory = useMemo(
-    () => (pipe ? generateHistoricalData(pipe.parameters.velocity, pipe.parameters.velocity * 0.1) : []),
-    [pipe]
+    () => {
+      if (!pipe) return []
+      const velocity = pipe.parameters.velocity
+      return generateHistoricalData(velocity, Math.max(velocity * 0.1, 0.1))
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [pipe?.parameters.velocity]
   )
   const levelHistory = useMemo(
-    () => (pipe ? generateHistoricalData(pipe.parameters.waterLevel, pipe.parameters.waterLevel * 0.05) : []),
-    [pipe]
+    () => {
+      if (!pipe) return []
+      const waterLevel = pipe.parameters.waterLevel
+      return generateHistoricalData(waterLevel, Math.max(waterLevel * 0.05, 10))
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [pipe?.parameters.waterLevel]
   )
   const tempHistory = useMemo(
-    () => (pipe ? generateHistoricalData(pipe.parameters.temperature, 2) : []),
-    [pipe]
+    () => {
+      if (!pipe) return []
+      const temperature = pipe.parameters.temperature
+      return generateHistoricalData(temperature, 2)
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [pipe?.parameters.temperature]
   )
 
   if (!pipe) {
@@ -486,6 +673,12 @@ export default function PipeDetailPage() {
                 {pipe.status.toUpperCase()}
               </span>
             </div>
+            <div className="flex items-center space-x-1 md:space-x-2 rounded bg-[#0d1520] px-2 md:px-3 py-1 border border-cyan-900/50">
+              <div className={`h-2 w-2 rounded-full ${isLiveData ? 'bg-green-500 animate-pulse' : 'bg-yellow-500'}`}></div>
+              <span className={`text-[10px] md:text-xs font-bold ${isLiveData ? 'text-green-400' : 'text-yellow-400'}`}>
+                {isLiveData ? 'LIVE' : 'STATIC'}
+              </span>
+            </div>
             <div className="rounded bg-[#0d1520] px-2 md:px-3 py-1 font-mono text-xs md:text-sm text-cyan-300 border border-cyan-900/50">
               {currentTime ? currentTime.toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata' }) : '--:--:--'}
             </div>
@@ -538,8 +731,10 @@ export default function PipeDetailPage() {
               <div className="border-b border-cyan-900/50 bg-cyan-900/20 px-3 py-2 flex items-center justify-between">
                 <span className="text-xs font-bold tracking-wider text-cyan-400">LIVE READINGS</span>
                 <div className="flex items-center space-x-1">
-                  <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></div>
-                  <span className="text-[10px] text-green-400">LIVE</span>
+                  <div className={`h-1.5 w-1.5 rounded-full ${isLiveData ? 'bg-green-500 animate-pulse' : 'bg-yellow-500'}`}></div>
+                  <span className={`text-[10px] ${isLiveData ? 'text-green-400' : 'text-yellow-400'}`}>
+                    {isLiveData ? 'LIVE' : 'STATIC'}
+                  </span>
                 </div>
               </div>
               <div className="p-4 grid grid-cols-2 gap-4">

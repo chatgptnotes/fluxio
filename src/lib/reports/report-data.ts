@@ -36,6 +36,12 @@ export interface AlertSummary {
   timestamp: Date
 }
 
+export interface DailyDataPoint {
+  date: string
+  fullDate: Date
+  totalFlow: number
+}
+
 export interface ReportData {
   reportType: 'daily' | 'monthly' | 'custom'
   dateRange: ReportDateRange
@@ -50,6 +56,8 @@ export interface ReportData {
   }
   pipeStatistics: PipeStatistics[]
   hourlyData: { hour: number; totalFlow: number }[]
+  dailyData: DailyDataPoint[]
+  isSingleDay: boolean
   alerts: AlertSummary[]
   deviceHealth: {
     pipeId: string
@@ -156,6 +164,58 @@ function generateHourlyData(
     hour: parseInt(hour),
     totalFlow: Math.round(totalFlow * 100) / 100,
   }))
+}
+
+// Check if report spans a single day
+function isSingleDayReport(dateRange: ReportDateRange): boolean {
+  const start = new Date(dateRange.startDate)
+  const end = new Date(dateRange.endDate)
+  return start.toDateString() === end.toDateString()
+}
+
+// Generate daily aggregated data for multi-day reports
+function generateDailyData(
+  allPipesData: Map<string, FlowDataPoint[]>,
+  dateRange: ReportDateRange
+): DailyDataPoint[] {
+  const dailyTotals: Map<string, { fullDate: Date; totalFlow: number }> = new Map()
+
+  // Initialize all days in the range
+  const current = new Date(dateRange.startDate)
+  current.setHours(0, 0, 0, 0)
+  const endDate = new Date(dateRange.endDate)
+  endDate.setHours(23, 59, 59, 999)
+
+  while (current <= endDate) {
+    const dateKey = current.toISOString().split('T')[0]
+    dailyTotals.set(dateKey, { fullDate: new Date(current), totalFlow: 0 })
+    current.setDate(current.getDate() + 1)
+  }
+
+  // Aggregate flow data by day
+  allPipesData.forEach((flowData) => {
+    flowData.forEach((point) => {
+      const dateKey = point.timestamp.toISOString().split('T')[0]
+      const existing = dailyTotals.get(dateKey)
+      if (existing) {
+        // Add flow rate * interval (5 min = 5/60 hours) to get volume
+        existing.totalFlow += point.flowRate * (5 / 60)
+      }
+    })
+  })
+
+  // Convert to array and format dates
+  return Array.from(dailyTotals.entries())
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([, data]) => ({
+      date: data.fullDate.toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'short',
+        timeZone: 'Asia/Kolkata'
+      }),
+      fullDate: data.fullDate,
+      totalFlow: Math.round(data.totalFlow * 100) / 100,
+    }))
 }
 
 // Generate mock alerts based on device status
@@ -308,6 +368,12 @@ export function generateReportData(
   // Generate hourly data
   const hourlyData = generateHourlyData(allPipesData)
 
+  // Generate daily data for multi-day reports
+  const dailyData = generateDailyData(allPipesData, dateRange)
+
+  // Check if single day report
+  const singleDay = isSingleDayReport(dateRange)
+
   // Generate alerts
   const alerts = generateAlerts(pipes, dateRange)
 
@@ -335,6 +401,8 @@ export function generateReportData(
     },
     pipeStatistics,
     hourlyData,
+    dailyData,
+    isSingleDay: singleDay,
     alerts,
     deviceHealth,
   }

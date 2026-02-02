@@ -1,46 +1,57 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { Droplet, LogIn, Mail, Lock, AlertCircle } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
+import { Suspense } from 'react'
 
-export default function LoginPage() {
-  const [email, setEmail] = useState('')
+function LoginContent() {
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isPendingVerification, setIsPendingVerification] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirect') || '/dashboard'
   const isDev = process.env.NODE_ENV === 'development'
 
   const fillDevCredentials = () => {
-    setEmail('test@fluxio.dev')
-    setPassword('test123456')
+    setUsername('buzzlightyear_42')
+    setPassword('Lightyear@123')
   }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
+    setIsPendingVerification(false)
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
       })
 
-      if (error) {
-        setError(error.message)
+      const data = await response.json()
+
+      if (!response.ok) {
+        // Check if it's a pending verification error
+        if (data.code === 'PENDING_VERIFICATION') {
+          setIsPendingVerification(true)
+          setError(data.error)
+        } else {
+          setError(data.error || 'Login failed')
+        }
         return
       }
 
-      if (data.user) {
-        router.push('/dashboard')
-        router.refresh()
-      }
+      router.push(redirectTo)
+      router.refresh()
     } catch (err) {
+      console.error('Login error:', err)
       setError('An unexpected error occurred. Please try again.')
     } finally {
       setLoading(false)
@@ -48,17 +59,17 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 px-4 py-12 sm:px-6 lg:px-8">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 px-4 py-12 sm:px-6 lg:px-8">
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.2),transparent_50%)]"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(255,255,255,0.2),transparent_50%)]"></div>
       </div>
 
-      <div className="relative w-full max-w-md animate-scale-in">
+      <div className="relative w-full max-w-md">
         {/* Logo */}
         <div className="mb-8 text-center">
           <Link href="/" className="group inline-flex items-center space-x-2 transition-transform hover:scale-105">
-            <Droplet className="h-10 w-10 text-white animate-float" />
+            <span className="material-icons text-white text-4xl">water_drop</span>
             <span className="text-3xl font-bold text-white">FluxIO</span>
           </Link>
           <p className="mt-2 text-sm text-white/80">
@@ -75,55 +86,83 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {error && (
+          {/* Pending Verification Warning */}
+          {isPendingVerification && (
+            <div className="mb-6 rounded-lg bg-amber-50 p-4 border border-amber-200">
+              <div className="flex items-start space-x-3">
+                <span className="material-icons text-amber-600 flex-shrink-0">schedule</span>
+                <div>
+                  <p className="font-medium text-amber-800">Account Pending Verification</p>
+                  <p className="mt-1 text-sm text-amber-700">
+                    Your account has been created but is awaiting superadmin approval. You will be able to log in once your account is verified.
+                  </p>
+                  <p className="mt-2 text-sm text-amber-600">
+                    Please contact your administrator for faster verification.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Regular Error */}
+          {error && !isPendingVerification && (
             <div className="mb-6 flex items-start space-x-3 rounded-lg bg-red-50 p-4">
-              <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-600" />
+              <span className="material-icons text-red-600 flex-shrink-0">error</span>
               <p className="text-sm text-red-800">{error}</p>
             </div>
           )}
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label htmlFor="email" className="label">
-                Email address
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+                Username or Email
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Mail className="h-5 w-5 text-gray-400" />
+                  <span className="material-icons text-gray-400 text-xl">person</span>
                 </div>
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
+                  id="username"
+                  name="username"
+                  type="text"
+                  autoComplete="username"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="input pl-10"
-                  placeholder="you@example.com"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Enter your username or email"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="label">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 Password
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                  <span className="material-icons text-gray-400 text-xl">lock</span>
                 </div>
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="input pl-10"
-                  placeholder="••••••••"
+                  className="w-full pl-10 pr-12 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Enter your password"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                >
+                  <span className="material-icons text-xl">
+                    {showPassword ? 'visibility_off' : 'visibility'}
+                  </span>
+                </button>
               </div>
             </div>
 
@@ -133,7 +172,7 @@ export default function LoginPage() {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
                 <label
                   htmlFor="remember-me"
@@ -145,7 +184,7 @@ export default function LoginPage() {
 
               <Link
                 href="/forgot-password"
-                className="text-sm font-medium text-primary-600 hover:text-primary-500"
+                className="text-sm font-medium text-blue-600 hover:text-blue-500"
               >
                 Forgot password?
               </Link>
@@ -155,31 +194,33 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={fillDevCredentials}
-                className="w-full rounded-lg border-2 border-dashed border-yellow-400 bg-yellow-50 px-4 py-2 text-sm font-medium text-yellow-800 transition-colors hover:bg-yellow-100"
+                className="w-full rounded-lg border-2 border-dashed border-yellow-400 bg-yellow-50 px-4 py-2 text-sm font-medium text-yellow-800 transition-colors hover:bg-yellow-100 flex items-center justify-center gap-2"
               >
-                Fill Dev Credentials (test@fluxio.dev)
+                <span className="material-icons text-sm">auto_fix_high</span>
+                Fill Superadmin Credentials (Dev Only)
               </button>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary flex w-full items-center justify-center space-x-2"
+              className="w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 font-medium"
             >
               {loading ? (
                 <>
-                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                  <span className="material-icons animate-spin">refresh</span>
                   <span>Signing in...</span>
                 </>
               ) : (
                 <>
-                  <LogIn className="h-5 w-5" />
+                  <span className="material-icons">login</span>
                   <span>Sign in</span>
                 </>
               )}
             </button>
           </form>
 
+          {/* Register Link */}
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
@@ -187,16 +228,17 @@ export default function LoginPage() {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="bg-white px-4 text-gray-500">
-                  New to FluxIO?
+                  Don&apos;t have an account?
                 </span>
               </div>
             </div>
 
-            <div className="mt-6">
+            <div className="mt-4">
               <Link
                 href="/signup"
-                className="btn-secondary flex w-full justify-center"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium"
               >
+                <span className="material-icons text-xl">person_add</span>
                 Create an account
               </Link>
             </div>
@@ -207,8 +249,9 @@ export default function LoginPage() {
         <div className="mt-6 text-center">
           <Link
             href="/"
-            className="text-sm font-medium text-white/90 hover:text-white"
+            className="text-sm font-medium text-white/90 hover:text-white flex items-center justify-center gap-1"
           >
+            <span className="material-icons text-sm">arrow_back</span>
             Back to home
           </Link>
         </div>
@@ -216,10 +259,22 @@ export default function LoginPage() {
         {/* Footer */}
         <div className="mt-8 text-center">
           <p className="text-xs text-white/60">
-            FluxIO v1.5 | January 9, 2025 | fluxio
+            FluxIO v1.6 | February 1, 2026 | fluxio
           </p>
         </div>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800">
+        <span className="material-icons text-white text-4xl animate-spin">refresh</span>
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   )
 }

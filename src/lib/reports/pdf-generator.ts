@@ -182,7 +182,6 @@ export function generatePDFReport(reportData: ReportData): string {
   const tableData = reportData.pipeStatistics.map((pipe) => [
     pipe.pipeId.replace('pipe-', 'Pipe '),
     pipe.deviceName,
-    pipe.location,
     `${pipe.minFlowRate}`,
     `${pipe.maxFlowRate}`,
     `${pipe.avgFlowRate}`,
@@ -191,10 +190,14 @@ export function generatePDFReport(reportData: ReportData): string {
     pipe.status.toUpperCase(),
   ])
 
+  // Calculate cumulative total volume
+  const cumulativeTotalVolume = reportData.pipeStatistics.reduce((sum, pipe) => sum + pipe.totalVolume, 0)
+
   autoTable(doc, {
     startY: yPos,
-    head: [['Pipe', 'Device', 'Location', 'Min Flow', 'Max Flow', 'Avg Flow', 'Total Vol', 'Op. Hours', 'Status']],
+    head: [['Pipe', 'Device', 'Min Flow (m³/h)', 'Max Flow (m³/h)', 'Avg Flow (m³/h)', 'Total Vol (m³)', 'Op. Hours', 'Status']],
     body: tableData,
+    foot: [['', '', '', '', 'TOTAL:', cumulativeTotalVolume.toLocaleString(), '', '']],
     theme: 'grid',
     styles: {
       fontSize: 7,
@@ -209,22 +212,27 @@ export function generatePDFReport(reportData: ReportData): string {
       fontStyle: 'bold',
       fontSize: 7,
     },
+    footStyles: {
+      fillColor: COLORS.secondary,
+      textColor: [255, 255, 255],
+      fontStyle: 'bold',
+      fontSize: 7,
+    },
     alternateRowStyles: {
       fillColor: COLORS.background,
     },
     columnStyles: {
-      0: { cellWidth: 15 },
-      1: { cellWidth: 35 },
-      2: { cellWidth: 30 },
-      3: { cellWidth: 15, halign: 'right' },
-      4: { cellWidth: 15, halign: 'right' },
-      5: { cellWidth: 15, halign: 'right' },
+      0: { cellWidth: 18 },
+      1: { cellWidth: 45 },
+      2: { cellWidth: 22, halign: 'right' },
+      3: { cellWidth: 22, halign: 'right' },
+      4: { cellWidth: 22, halign: 'right' },
+      5: { cellWidth: 25, halign: 'right' },
       6: { cellWidth: 20, halign: 'right' },
-      7: { cellWidth: 18, halign: 'right' },
-      8: { cellWidth: 17, halign: 'center' },
+      7: { cellWidth: 18, halign: 'center' },
     },
     didParseCell: function (data) {
-      if (data.section === 'body' && data.column.index === 8) {
+      if (data.section === 'body' && data.column.index === 7) {
         const status = data.cell.raw as string
         if (status === 'ONLINE') {
           data.cell.styles.textColor = COLORS.success
@@ -242,7 +250,7 @@ export function generatePDFReport(reportData: ReportData): string {
   yPos += 10
 
   // ===================
-  // HOURLY FLOW CHART (Simple bar representation)
+  // FLOW DISTRIBUTION CHART (Hourly for single day, Daily for multi-day)
   // ===================
 
   checkPageBreak(60)
@@ -250,43 +258,85 @@ export function generatePDFReport(reportData: ReportData): string {
   doc.setTextColor(...COLORS.text)
   doc.setFontSize(14)
   doc.setFont('helvetica', 'bold')
-  doc.text('Hourly Flow Distribution', margin, yPos)
-  yPos += 8
 
-  // Chart area
+  // Chart area dimensions
   const chartWidth = pageWidth - margin * 2
   const chartHeight = 35
-  const barWidth = chartWidth / 24 - 1
-  const maxFlow = Math.max(...reportData.hourlyData.map((d) => d.totalFlow), 1)
 
-  // Chart background
-  doc.setFillColor(...COLORS.background)
-  doc.setDrawColor(...COLORS.tableBorder)
-  doc.roundedRect(margin, yPos, chartWidth, chartHeight + 15, 2, 2, 'FD')
+  if (reportData.isSingleDay) {
+    // HOURLY FLOW DISTRIBUTION (24 bars)
+    doc.text('Hourly Flow Distribution', margin, yPos)
+    yPos += 8
 
-  // Draw bars
-  reportData.hourlyData.forEach((data, index) => {
-    const barHeight = (data.totalFlow / maxFlow) * chartHeight
-    const x = margin + 5 + index * (barWidth + 1)
-    const y = yPos + chartHeight - barHeight + 2
+    const barWidth = chartWidth / 24 - 1
+    const maxFlow = Math.max(...reportData.hourlyData.map((d) => d.totalFlow), 1)
 
-    // Bar gradient effect
-    doc.setFillColor(...COLORS.primary)
-    doc.rect(x, y, barWidth, barHeight, 'F')
+    // Chart background
+    doc.setFillColor(...COLORS.background)
+    doc.setDrawColor(...COLORS.tableBorder)
+    doc.roundedRect(margin, yPos, chartWidth, chartHeight + 15, 2, 2, 'FD')
 
-    // Hour label (every 3 hours)
-    if (index % 3 === 0) {
-      doc.setTextColor(...COLORS.textMuted)
-      doc.setFontSize(6)
-      doc.text(`${data.hour}:00`, x + barWidth / 2, yPos + chartHeight + 10, { align: 'center' })
-    }
-  })
+    // Draw bars
+    reportData.hourlyData.forEach((data, index) => {
+      const barHeight = (data.totalFlow / maxFlow) * chartHeight
+      const x = margin + 5 + index * (barWidth + 1)
+      const y = yPos + chartHeight - barHeight + 2
 
-  // Y-axis labels
-  doc.setTextColor(...COLORS.textMuted)
-  doc.setFontSize(6)
-  doc.text(`${maxFlow.toFixed(0)} m³`, margin + 2, yPos + 6)
-  doc.text('0', margin + 2, yPos + chartHeight)
+      doc.setFillColor(...COLORS.primary)
+      doc.rect(x, y, barWidth, barHeight, 'F')
+
+      // Hour label (every 3 hours)
+      if (index % 3 === 0) {
+        doc.setTextColor(...COLORS.textMuted)
+        doc.setFontSize(6)
+        doc.text(`${data.hour}:00`, x + barWidth / 2, yPos + chartHeight + 10, { align: 'center' })
+      }
+    })
+
+    // Y-axis labels
+    doc.setTextColor(...COLORS.textMuted)
+    doc.setFontSize(6)
+    doc.text(`${maxFlow.toFixed(0)} m³`, margin + 2, yPos + 6)
+    doc.text('0', margin + 2, yPos + chartHeight)
+  } else {
+    // DAILY FLOW DISTRIBUTION (dynamic number of bars)
+    doc.text('Daily Flow Distribution', margin, yPos)
+    yPos += 8
+
+    const numDays = reportData.dailyData.length
+    const barGap = numDays > 15 ? 0.5 : 1
+    const barWidth = (chartWidth - 10) / numDays - barGap
+    const maxFlow = Math.max(...reportData.dailyData.map((d) => d.totalFlow), 1)
+
+    // Chart background
+    doc.setFillColor(...COLORS.background)
+    doc.setDrawColor(...COLORS.tableBorder)
+    doc.roundedRect(margin, yPos, chartWidth, chartHeight + 15, 2, 2, 'FD')
+
+    // Draw bars
+    reportData.dailyData.forEach((data, index) => {
+      const barHeight = (data.totalFlow / maxFlow) * chartHeight
+      const x = margin + 5 + index * (barWidth + barGap)
+      const y = yPos + chartHeight - barHeight + 2
+
+      doc.setFillColor(...COLORS.primary)
+      doc.rect(x, y, barWidth, barHeight, 'F')
+
+      // Date label (show every nth day based on total days)
+      const labelInterval = numDays <= 7 ? 1 : numDays <= 14 ? 2 : numDays <= 21 ? 3 : 5
+      if (index % labelInterval === 0 || index === numDays - 1) {
+        doc.setTextColor(...COLORS.textMuted)
+        doc.setFontSize(numDays > 20 ? 5 : 6)
+        doc.text(data.date, x + barWidth / 2, yPos + chartHeight + 10, { align: 'center' })
+      }
+    })
+
+    // Y-axis labels
+    doc.setTextColor(...COLORS.textMuted)
+    doc.setFontSize(6)
+    doc.text(`${maxFlow.toFixed(0)} m³`, margin + 2, yPos + 6)
+    doc.text('0', margin + 2, yPos + chartHeight)
+  }
 
   yPos += chartHeight + 20
 
@@ -583,10 +633,9 @@ export function generatePDFBuffer(reportData: ReportData): Uint8Array {
   doc.text('Flow Data Summary', margin, yPos)
   yPos += 8
 
-  const tableData = reportData.pipeStatistics.map((pipe) => [
+  const tableDataCompact = reportData.pipeStatistics.map((pipe) => [
     pipe.pipeId.replace('pipe-', 'Pipe '),
     pipe.deviceName,
-    pipe.location,
     `${pipe.minFlowRate}`,
     `${pipe.maxFlowRate}`,
     `${pipe.avgFlowRate}`,
@@ -595,22 +644,27 @@ export function generatePDFBuffer(reportData: ReportData): Uint8Array {
     pipe.status.toUpperCase(),
   ])
 
+  // Calculate cumulative total volume
+  const cumulativeTotalVolumeCompact = reportData.pipeStatistics.reduce((sum, pipe) => sum + pipe.totalVolume, 0)
+
   autoTable(doc, {
     startY: yPos,
-    head: [['Pipe', 'Device', 'Location', 'Min Flow', 'Max Flow', 'Avg Flow', 'Total Vol', 'Op. Hours', 'Status']],
-    body: tableData,
+    head: [['Pipe', 'Device', 'Min Flow (m³/h)', 'Max Flow (m³/h)', 'Avg Flow (m³/h)', 'Total Vol (m³)', 'Op. Hours', 'Status']],
+    body: tableDataCompact,
+    foot: [['', '', '', '', 'TOTAL:', cumulativeTotalVolumeCompact.toLocaleString(), '', '']],
     theme: 'grid',
     styles: { fontSize: 7, cellPadding: 2, textColor: COLORS.text, lineColor: COLORS.tableBorder, lineWidth: 0.1 },
     headStyles: { fillColor: COLORS.secondary, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 7 },
+    footStyles: { fillColor: COLORS.secondary, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 7 },
     alternateRowStyles: { fillColor: COLORS.background },
     columnStyles: {
-      0: { cellWidth: 15 }, 1: { cellWidth: 35 }, 2: { cellWidth: 30 },
-      3: { cellWidth: 15, halign: 'right' }, 4: { cellWidth: 15, halign: 'right' },
-      5: { cellWidth: 15, halign: 'right' }, 6: { cellWidth: 20, halign: 'right' },
-      7: { cellWidth: 18, halign: 'right' }, 8: { cellWidth: 17, halign: 'center' },
+      0: { cellWidth: 18 }, 1: { cellWidth: 45 },
+      2: { cellWidth: 22, halign: 'right' }, 3: { cellWidth: 22, halign: 'right' },
+      4: { cellWidth: 22, halign: 'right' }, 5: { cellWidth: 25, halign: 'right' },
+      6: { cellWidth: 20, halign: 'right' }, 7: { cellWidth: 18, halign: 'center' },
     },
     didParseCell: function (data) {
-      if (data.section === 'body' && data.column.index === 8) {
+      if (data.section === 'body' && data.column.index === 7) {
         const status = data.cell.raw as string
         if (status === 'ONLINE') data.cell.styles.textColor = COLORS.success
         else if (status === 'WARNING') data.cell.styles.textColor = COLORS.warning
@@ -623,42 +677,80 @@ export function generatePDFBuffer(reportData: ReportData): Uint8Array {
   yPos = doc.lastAutoTable?.finalY || yPos + 50
   yPos += 10
 
-  // Hourly Chart
+  // Flow Distribution Chart (Hourly for single day, Daily for multi-day)
   checkPageBreak(60)
   doc.setTextColor(...COLORS.text)
   doc.setFontSize(14)
   doc.setFont('helvetica', 'bold')
-  doc.text('Hourly Flow Distribution', margin, yPos)
-  yPos += 8
 
-  const chartWidth = pageWidth - margin * 2
-  const chartHeight = 35
-  const barWidth = chartWidth / 24 - 1
-  const maxFlow = Math.max(...reportData.hourlyData.map((d) => d.totalFlow), 1)
+  const chartWidthBuf = pageWidth - margin * 2
+  const chartHeightBuf = 35
 
-  doc.setFillColor(...COLORS.background)
-  doc.setDrawColor(...COLORS.tableBorder)
-  doc.roundedRect(margin, yPos, chartWidth, chartHeight + 15, 2, 2, 'FD')
+  if (reportData.isSingleDay) {
+    // HOURLY FLOW DISTRIBUTION
+    doc.text('Hourly Flow Distribution', margin, yPos)
+    yPos += 8
 
-  reportData.hourlyData.forEach((data, index) => {
-    const barHeight = (data.totalFlow / maxFlow) * chartHeight
-    const x = margin + 5 + index * (barWidth + 1)
-    const y = yPos + chartHeight - barHeight + 2
-    doc.setFillColor(...COLORS.primary)
-    doc.rect(x, y, barWidth, barHeight, 'F')
-    if (index % 3 === 0) {
-      doc.setTextColor(...COLORS.textMuted)
-      doc.setFontSize(6)
-      doc.text(`${data.hour}:00`, x + barWidth / 2, yPos + chartHeight + 10, { align: 'center' })
-    }
-  })
+    const barWidthBuf = chartWidthBuf / 24 - 1
+    const maxFlowBuf = Math.max(...reportData.hourlyData.map((d) => d.totalFlow), 1)
 
-  doc.setTextColor(...COLORS.textMuted)
-  doc.setFontSize(6)
-  doc.text(`${maxFlow.toFixed(0)} m³`, margin + 2, yPos + 6)
-  doc.text('0', margin + 2, yPos + chartHeight)
+    doc.setFillColor(...COLORS.background)
+    doc.setDrawColor(...COLORS.tableBorder)
+    doc.roundedRect(margin, yPos, chartWidthBuf, chartHeightBuf + 15, 2, 2, 'FD')
 
-  yPos += chartHeight + 20
+    reportData.hourlyData.forEach((data, index) => {
+      const barHeight = (data.totalFlow / maxFlowBuf) * chartHeightBuf
+      const x = margin + 5 + index * (barWidthBuf + 1)
+      const y = yPos + chartHeightBuf - barHeight + 2
+      doc.setFillColor(...COLORS.primary)
+      doc.rect(x, y, barWidthBuf, barHeight, 'F')
+      if (index % 3 === 0) {
+        doc.setTextColor(...COLORS.textMuted)
+        doc.setFontSize(6)
+        doc.text(`${data.hour}:00`, x + barWidthBuf / 2, yPos + chartHeightBuf + 10, { align: 'center' })
+      }
+    })
+
+    doc.setTextColor(...COLORS.textMuted)
+    doc.setFontSize(6)
+    doc.text(`${maxFlowBuf.toFixed(0)} m³`, margin + 2, yPos + 6)
+    doc.text('0', margin + 2, yPos + chartHeightBuf)
+  } else {
+    // DAILY FLOW DISTRIBUTION
+    doc.text('Daily Flow Distribution', margin, yPos)
+    yPos += 8
+
+    const numDaysBuf = reportData.dailyData.length
+    const barGapBuf = numDaysBuf > 15 ? 0.5 : 1
+    const barWidthBuf = (chartWidthBuf - 10) / numDaysBuf - barGapBuf
+    const maxFlowBuf = Math.max(...reportData.dailyData.map((d) => d.totalFlow), 1)
+
+    doc.setFillColor(...COLORS.background)
+    doc.setDrawColor(...COLORS.tableBorder)
+    doc.roundedRect(margin, yPos, chartWidthBuf, chartHeightBuf + 15, 2, 2, 'FD')
+
+    reportData.dailyData.forEach((data, index) => {
+      const barHeight = (data.totalFlow / maxFlowBuf) * chartHeightBuf
+      const x = margin + 5 + index * (barWidthBuf + barGapBuf)
+      const y = yPos + chartHeightBuf - barHeight + 2
+      doc.setFillColor(...COLORS.primary)
+      doc.rect(x, y, barWidthBuf, barHeight, 'F')
+
+      const labelInterval = numDaysBuf <= 7 ? 1 : numDaysBuf <= 14 ? 2 : numDaysBuf <= 21 ? 3 : 5
+      if (index % labelInterval === 0 || index === numDaysBuf - 1) {
+        doc.setTextColor(...COLORS.textMuted)
+        doc.setFontSize(numDaysBuf > 20 ? 5 : 6)
+        doc.text(data.date, x + barWidthBuf / 2, yPos + chartHeightBuf + 10, { align: 'center' })
+      }
+    })
+
+    doc.setTextColor(...COLORS.textMuted)
+    doc.setFontSize(6)
+    doc.text(`${maxFlowBuf.toFixed(0)} m³`, margin + 2, yPos + 6)
+    doc.text('0', margin + 2, yPos + chartHeightBuf)
+  }
+
+  yPos += chartHeightBuf + 20
 
   // Alerts
   checkPageBreak(50)
@@ -710,7 +802,7 @@ export function generatePDFBuffer(reportData: ReportData): Uint8Array {
   doc.text('Device Health', margin, yPos)
   yPos += 8
 
-  const healthData = reportData.deviceHealth.map((device) => [
+  const healthDataBuf = reportData.deviceHealth.map((device) => [
     device.pipeId.replace('pipe-', 'Pipe '),
     device.deviceName,
     `${device.batteryLevel}%`,
@@ -722,7 +814,7 @@ export function generatePDFBuffer(reportData: ReportData): Uint8Array {
   autoTable(doc, {
     startY: yPos,
     head: [['Pipe', 'Device Name', 'Battery', 'Signal', 'Status', 'Last Communication']],
-    body: healthData,
+    body: healthDataBuf,
     theme: 'grid',
     styles: { fontSize: 8, cellPadding: 3, textColor: COLORS.text, lineColor: COLORS.tableBorder, lineWidth: 0.1 },
     headStyles: { fillColor: COLORS.secondary, textColor: [255, 255, 255], fontStyle: 'bold' },
@@ -755,8 +847,8 @@ export function generatePDFBuffer(reportData: ReportData): Uint8Array {
   })
 
   // Footer on all pages
-  const pageCount = doc.getNumberOfPages()
-  for (let i = 1; i <= pageCount; i++) {
+  const pageCountBuf = doc.getNumberOfPages()
+  for (let i = 1; i <= pageCountBuf; i++) {
     doc.setPage(i)
     doc.setDrawColor(...COLORS.tableBorder)
     doc.line(margin, doc.internal.pageSize.getHeight() - 18, pageWidth - margin, doc.internal.pageSize.getHeight() - 18)
@@ -765,7 +857,7 @@ export function generatePDFBuffer(reportData: ReportData): Uint8Array {
     doc.text('MAHAGENCO | Sterling Electricals & Technologies', margin, doc.internal.pageSize.getHeight() - 13)
     doc.setFontSize(7)
     doc.text(`Generated by FluxIO SCADA | Version 3.0 | ${formatDateTime(new Date())}`, margin, doc.internal.pageSize.getHeight() - 8)
-    doc.text(`Page ${i} of ${pageCount}`, pageWidth - margin, doc.internal.pageSize.getHeight() - 8, { align: 'right' })
+    doc.text(`Page ${i} of ${pageCountBuf}`, pageWidth - margin, doc.internal.pageSize.getHeight() - 8, { align: 'right' })
   }
 
   // Return as ArrayBuffer for server-side storage
@@ -875,10 +967,9 @@ export function downloadPDFReport(reportData: ReportData): void {
   doc.text('Flow Data Summary', margin, yPos)
   yPos += 8
 
-  const tableData = reportData.pipeStatistics.map((pipe) => [
+  const tableDataCompact = reportData.pipeStatistics.map((pipe) => [
     pipe.pipeId.replace('pipe-', 'Pipe '),
     pipe.deviceName,
-    pipe.location,
     `${pipe.minFlowRate}`,
     `${pipe.maxFlowRate}`,
     `${pipe.avgFlowRate}`,
@@ -887,22 +978,27 @@ export function downloadPDFReport(reportData: ReportData): void {
     pipe.status.toUpperCase(),
   ])
 
+  // Calculate cumulative total volume
+  const cumulativeTotalVolumeCompact = reportData.pipeStatistics.reduce((sum, pipe) => sum + pipe.totalVolume, 0)
+
   autoTable(doc, {
     startY: yPos,
-    head: [['Pipe', 'Device', 'Location', 'Min Flow', 'Max Flow', 'Avg Flow', 'Total Vol', 'Op. Hours', 'Status']],
-    body: tableData,
+    head: [['Pipe', 'Device', 'Min Flow (m³/h)', 'Max Flow (m³/h)', 'Avg Flow (m³/h)', 'Total Vol (m³)', 'Op. Hours', 'Status']],
+    body: tableDataCompact,
+    foot: [['', '', '', '', 'TOTAL:', cumulativeTotalVolumeCompact.toLocaleString(), '', '']],
     theme: 'grid',
     styles: { fontSize: 7, cellPadding: 2, textColor: COLORS.text, lineColor: COLORS.tableBorder, lineWidth: 0.1 },
     headStyles: { fillColor: COLORS.secondary, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 7 },
+    footStyles: { fillColor: COLORS.secondary, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 7 },
     alternateRowStyles: { fillColor: COLORS.background },
     columnStyles: {
-      0: { cellWidth: 15 }, 1: { cellWidth: 35 }, 2: { cellWidth: 30 },
-      3: { cellWidth: 15, halign: 'right' }, 4: { cellWidth: 15, halign: 'right' },
-      5: { cellWidth: 15, halign: 'right' }, 6: { cellWidth: 20, halign: 'right' },
-      7: { cellWidth: 18, halign: 'right' }, 8: { cellWidth: 17, halign: 'center' },
+      0: { cellWidth: 18 }, 1: { cellWidth: 45 },
+      2: { cellWidth: 22, halign: 'right' }, 3: { cellWidth: 22, halign: 'right' },
+      4: { cellWidth: 22, halign: 'right' }, 5: { cellWidth: 25, halign: 'right' },
+      6: { cellWidth: 20, halign: 'right' }, 7: { cellWidth: 18, halign: 'center' },
     },
     didParseCell: function (data) {
-      if (data.section === 'body' && data.column.index === 8) {
+      if (data.section === 'body' && data.column.index === 7) {
         const status = data.cell.raw as string
         if (status === 'ONLINE') data.cell.styles.textColor = COLORS.success
         else if (status === 'WARNING') data.cell.styles.textColor = COLORS.warning
@@ -915,42 +1011,80 @@ export function downloadPDFReport(reportData: ReportData): void {
   yPos = doc.lastAutoTable?.finalY || yPos + 50
   yPos += 10
 
-  // Hourly Chart
+  // Flow Distribution Chart (Hourly for single day, Daily for multi-day)
   checkPageBreak(60)
   doc.setTextColor(...COLORS.text)
   doc.setFontSize(14)
   doc.setFont('helvetica', 'bold')
-  doc.text('Hourly Flow Distribution', margin, yPos)
-  yPos += 8
 
-  const chartWidth = pageWidth - margin * 2
-  const chartHeight = 35
-  const barWidth = chartWidth / 24 - 1
-  const maxFlow = Math.max(...reportData.hourlyData.map((d) => d.totalFlow), 1)
+  const chartWidthDl = pageWidth - margin * 2
+  const chartHeightDl = 35
 
-  doc.setFillColor(...COLORS.background)
-  doc.setDrawColor(...COLORS.tableBorder)
-  doc.roundedRect(margin, yPos, chartWidth, chartHeight + 15, 2, 2, 'FD')
+  if (reportData.isSingleDay) {
+    // HOURLY FLOW DISTRIBUTION
+    doc.text('Hourly Flow Distribution', margin, yPos)
+    yPos += 8
 
-  reportData.hourlyData.forEach((data, index) => {
-    const barHeight = (data.totalFlow / maxFlow) * chartHeight
-    const x = margin + 5 + index * (barWidth + 1)
-    const y = yPos + chartHeight - barHeight + 2
-    doc.setFillColor(...COLORS.primary)
-    doc.rect(x, y, barWidth, barHeight, 'F')
-    if (index % 3 === 0) {
-      doc.setTextColor(...COLORS.textMuted)
-      doc.setFontSize(6)
-      doc.text(`${data.hour}:00`, x + barWidth / 2, yPos + chartHeight + 10, { align: 'center' })
-    }
-  })
+    const barWidthDl = chartWidthDl / 24 - 1
+    const maxFlowDl = Math.max(...reportData.hourlyData.map((d) => d.totalFlow), 1)
 
-  doc.setTextColor(...COLORS.textMuted)
-  doc.setFontSize(6)
-  doc.text(`${maxFlow.toFixed(0)} m³`, margin + 2, yPos + 6)
-  doc.text('0', margin + 2, yPos + chartHeight)
+    doc.setFillColor(...COLORS.background)
+    doc.setDrawColor(...COLORS.tableBorder)
+    doc.roundedRect(margin, yPos, chartWidthDl, chartHeightDl + 15, 2, 2, 'FD')
 
-  yPos += chartHeight + 20
+    reportData.hourlyData.forEach((data, index) => {
+      const barHeight = (data.totalFlow / maxFlowDl) * chartHeightDl
+      const x = margin + 5 + index * (barWidthDl + 1)
+      const y = yPos + chartHeightDl - barHeight + 2
+      doc.setFillColor(...COLORS.primary)
+      doc.rect(x, y, barWidthDl, barHeight, 'F')
+      if (index % 3 === 0) {
+        doc.setTextColor(...COLORS.textMuted)
+        doc.setFontSize(6)
+        doc.text(`${data.hour}:00`, x + barWidthDl / 2, yPos + chartHeightDl + 10, { align: 'center' })
+      }
+    })
+
+    doc.setTextColor(...COLORS.textMuted)
+    doc.setFontSize(6)
+    doc.text(`${maxFlowDl.toFixed(0)} m³`, margin + 2, yPos + 6)
+    doc.text('0', margin + 2, yPos + chartHeightDl)
+  } else {
+    // DAILY FLOW DISTRIBUTION
+    doc.text('Daily Flow Distribution', margin, yPos)
+    yPos += 8
+
+    const numDaysDl = reportData.dailyData.length
+    const barGapDl = numDaysDl > 15 ? 0.5 : 1
+    const barWidthDl = (chartWidthDl - 10) / numDaysDl - barGapDl
+    const maxFlowDl = Math.max(...reportData.dailyData.map((d) => d.totalFlow), 1)
+
+    doc.setFillColor(...COLORS.background)
+    doc.setDrawColor(...COLORS.tableBorder)
+    doc.roundedRect(margin, yPos, chartWidthDl, chartHeightDl + 15, 2, 2, 'FD')
+
+    reportData.dailyData.forEach((data, index) => {
+      const barHeight = (data.totalFlow / maxFlowDl) * chartHeightDl
+      const x = margin + 5 + index * (barWidthDl + barGapDl)
+      const y = yPos + chartHeightDl - barHeight + 2
+      doc.setFillColor(...COLORS.primary)
+      doc.rect(x, y, barWidthDl, barHeight, 'F')
+
+      const labelInterval = numDaysDl <= 7 ? 1 : numDaysDl <= 14 ? 2 : numDaysDl <= 21 ? 3 : 5
+      if (index % labelInterval === 0 || index === numDaysDl - 1) {
+        doc.setTextColor(...COLORS.textMuted)
+        doc.setFontSize(numDaysDl > 20 ? 5 : 6)
+        doc.text(data.date, x + barWidthDl / 2, yPos + chartHeightDl + 10, { align: 'center' })
+      }
+    })
+
+    doc.setTextColor(...COLORS.textMuted)
+    doc.setFontSize(6)
+    doc.text(`${maxFlowDl.toFixed(0)} m³`, margin + 2, yPos + 6)
+    doc.text('0', margin + 2, yPos + chartHeightDl)
+  }
+
+  yPos += chartHeightDl + 20
 
   // Alerts
   checkPageBreak(50)

@@ -126,10 +126,10 @@ export default function LandingPage() {
             </div>
             <div className="flex items-center space-x-6">
               <Link
-                href="/dashboard"
+                href="/signup"
                 className="text-white/90 hover:text-white"
               >
-                Dashboard
+                Register
               </Link>
               <Link href="#faq" className="text-white/90 hover:text-white">
                 FAQ
@@ -170,11 +170,11 @@ export default function LandingPage() {
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <Link
-                  href="/cstps-pipeline"
+                  href="/login"
                   className="group inline-flex items-center justify-center space-x-2 rounded-xl border-2 border-white/50 bg-white/10 px-8 py-4 text-lg font-semibold text-white backdrop-blur-md transition-all duration-300 hover:border-white hover:bg-white/20 hover:shadow-xl hover:-translate-y-1"
                 >
                   <Radio className="h-5 w-5 animate-pulse-slow" />
-                  <span>View CSTPS Pipeline</span>
+                  <span>Login</span>
                 </Link>
               </div>
 

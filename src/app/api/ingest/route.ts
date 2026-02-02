@@ -3,19 +3,26 @@ import { createAdminClient } from '@/lib/supabase/admin'
 
 // Map TRB246 Modbus register addresses to field names
 // Based on Nivus 750 register layout (32-bit float values, 2 registers each)
+// Supports both 0-based (standard) and 1-based (TRB246 default) addressing
 const MODBUS_REGISTER_MAP: Record<string, string> = {
-  // Hex format
+  // Hex format (0-based)
   '0x0000': 'flow_rate',
   '0x0002': 'totalizer',
   '0x0004': 'temperature',
   '0x0006': 'level',
   '0x0008': 'velocity',
-  // Decimal format (string)
+  // Decimal format (0-based)
   '0': 'flow_rate',
   '2': 'totalizer',
   '4': 'temperature',
   '6': 'level',
   '8': 'velocity',
+  // Decimal format (1-based - TRB246 default addressing)
+  '1': 'flow_rate',
+  '3': 'totalizer',
+  '5': 'temperature',
+  '7': 'level',
+  '9': 'velocity',
 }
 
 // Interface for TRB246 Modbus data format
@@ -65,6 +72,8 @@ interface IngestData {
   totalizer?: number
   temperature?: number
   pressure?: number
+  level?: number // water level in mm
+  velocity?: number // flow velocity in m/s
   battery_level?: number
   signal_strength?: number
   timestamp?: string
@@ -93,6 +102,14 @@ function normalizeData(data: Record<string, unknown>, defaultDeviceId: string): 
   // Handle pressure (case-insensitive)
   const pressure = data.pressure ?? data.Pressure ?? data.PRESSURE
   if (pressure !== undefined) normalized.pressure = Number(pressure)
+
+  // Handle level/water_level (case-insensitive)
+  const level = data.level ?? data.Level ?? data.LEVEL ?? data.water_level ?? data.Water_level
+  if (level !== undefined) normalized.level = Number(level)
+
+  // Handle velocity (case-insensitive)
+  const velocity = data.velocity ?? data.Velocity ?? data.VELOCITY
+  if (velocity !== undefined) normalized.velocity = Number(velocity)
 
   // Handle battery_level
   const batteryLevel = data.battery_level ?? data.Battery_level ?? data.batteryLevel
@@ -267,6 +284,13 @@ export async function POST(request: NextRequest) {
     // Process each data point
     const results = []
     for (const data of dataArray) {
+      // Build metadata object with level and velocity (since they don't have dedicated columns)
+      const metadata: Record<string, unknown> = {
+        ...(data.metadata || {}),
+      }
+      if (data.level !== undefined) metadata.water_level = data.level
+      if (data.velocity !== undefined) metadata.velocity = data.velocity
+
       // Insert flow data
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: insertError } = await supabase.from('flow_data').insert({
@@ -278,7 +302,7 @@ export async function POST(request: NextRequest) {
         battery_level: data.battery_level ?? null,
         signal_strength: data.signal_strength ?? null,
         created_at: data.timestamp || new Date().toISOString(),
-        metadata: data.metadata || {},
+        metadata,
       } as any)
 
       if (insertError) {
