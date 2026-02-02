@@ -11,6 +11,7 @@ const navItems = [
   { href: '/admin/pipelines', label: 'Pipelines', icon: 'water' },
   { href: '/admin/users', label: 'Users', icon: 'people' },
   { href: '/admin/companies', label: 'Companies', icon: 'business' },
+  { href: '/admin/email-logs', label: 'Email Logs', icon: 'mail' },
   { href: '/admin/audit', label: 'Audit Logs', icon: 'history' },
 ];
 
