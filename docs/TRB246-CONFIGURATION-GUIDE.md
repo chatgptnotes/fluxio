@@ -1,6 +1,6 @@
-# Teltonika TRB246 Configuration Guide for FluxIO
+# Teltonika TRB246 Configuration Guide for FlowNexus
 
-Complete setup guide for connecting Nivus flow transmitters to FluxIO via TRB246 gateway.
+Complete setup guide for connecting Nivus flow transmitters to FlowNexus via TRB246 gateway.
 
 ---
 
@@ -25,13 +25,13 @@ Before starting, ensure you have:
 - [ ] Nivus flow transmitter with Modbus RTU/TCP enabled
 - [ ] RS-485 cable (for Modbus RTU connection)
 - [ ] Computer with Ethernet port
-- [ ] FluxIO API endpoint URL and API key
+- [ ] FlowNexus API endpoint URL and API key
 
 ### Required Information
 
 | Item | Value | Notes |
 |------|-------|-------|
-| FluxIO API URL | `https://your-domain.vercel.app/api/ingest` | Your deployed FluxIO URL |
+| FlowNexus API URL | `https://your-domain.vercel.app/api/ingest` | Your deployed FlowNexus URL |
 | API Key | `your-api-secret-key` | From `.env` file (`API_SECRET_KEY`) |
 | Device ID | `TRB246-001` | Unique identifier for this gateway |
 | Modbus Slave ID | `1` | Default Nivus address |
@@ -92,7 +92,7 @@ PIN: [SIM PIN if set]
 
 1. Navigate to: **System > Administration > Troubleshoot**
 2. Run ping test to `8.8.8.8`
-3. Run ping test to your FluxIO domain
+3. Run ping test to your FlowNexus domain
 
 ---
 
@@ -187,13 +187,13 @@ Period: 30 (seconds)
 
 ## Data to Server Configuration
 
-### Configure HTTP POST to FluxIO
+### Configure HTTP POST to FlowNexus
 
 1. Navigate to: **Services > Data to Server**
 2. Click **Add** to create new data sender:
 
 ```
-Name: FluxIO_Sender
+Name: FlowNexus_Sender
 Enabled: Yes
 Protocol: HTTP(S)
 URL: https://your-domain.vercel.app/api/ingest
@@ -243,7 +243,7 @@ For newer firmware versions:
 3. Configure collection:
 
 ```
-Name: FluxIO_Collection
+Name: FlowNexus_Collection
 Enabled: Yes
 
 # Server Settings
@@ -320,9 +320,9 @@ curl -X POST https://your-domain.vercel.app/api/ingest \
    - Last send: Recent timestamp
    - Success rate: Should be high percentage
 
-### Step 4: Verify in FluxIO Dashboard
+### Step 4: Verify in FlowNexus Dashboard
 
-1. Open FluxIO dashboard: `https://your-domain.vercel.app`
+1. Open FlowNexus dashboard: `https://your-domain.vercel.app`
 2. Navigate to Devices page
 3. Your TRB246 device should appear
 4. Check flow data is being received
@@ -336,7 +336,7 @@ curl -X POST https://your-domain.vercel.app/api/ingest \
 | Problem | Possible Cause | Solution |
 |---------|---------------|----------|
 | No cellular connection | SIM not activated | Contact carrier to verify SIM |
-| Cannot reach FluxIO | Firewall blocking | Check firewall rules |
+| Cannot reach FlowNexus | Firewall blocking | Check firewall rules |
 | 401 Unauthorized | Wrong API key | Verify x-api-key header matches API_SECRET_KEY |
 | 400 Bad Request | Invalid JSON | Check JSON format and required fields |
 
@@ -349,9 +349,9 @@ curl -X POST https://your-domain.vercel.app/api/ingest \
 | Timeout errors | Wrong slave ID | Verify Nivus Modbus address |
 | Wrong values | Endianness issue | Try different byte order settings |
 
-### Data Not Appearing in FluxIO
+### Data Not Appearing in FlowNexus
 
-1. **Check device_id:** Must match a registered device in FluxIO
+1. **Check device_id:** Must match a registered device in FlowNexus
 2. **Check timestamp:** Use ISO 8601 format
 3. **Check API logs:** Look for errors in Vercel deployment logs
 4. **Verify data format:** At least one measurement field required
@@ -393,7 +393,7 @@ If connecting multiple Nivus transmitters:
 
 ### Secure Connection (TLS)
 
-1. Use HTTPS URL for FluxIO API
+1. Use HTTPS URL for FlowNexus API
 2. TRB246 supports TLS 1.2/1.3
 3. For self-signed certificates, upload CA certificate in **System > Certificates**
 
@@ -407,7 +407,7 @@ If connecting multiple Nivus transmitters:
 
 ## Quick Reference
 
-### FluxIO API Endpoint
+### FlowNexus API Endpoint
 ```
 POST https://your-domain.vercel.app/api/ingest
 ```
@@ -451,8 +451,8 @@ x-api-key: your-api-secret-key
 - [Teltonika TRB246 Wiki](https://wiki.teltonika-networks.com/view/TRB246)
 - [Teltonika Modbus Configuration](https://wiki.teltonika-networks.com/view/TRB246_Modbus)
 - [Nivus Modbus Documentation](https://www.nivus.com)
-- FluxIO Issues: https://github.com/chatgptnotes/fluxio/issues
+- FlowNexus Issues: https://github.com/chatgptnotes/flownexus/issues
 
 ---
 
-Version 1.3 | January 26, 2025 | github.com/chatgptnotes/fluxio
+Version 1.3 | January 26, 2025 | github.com/chatgptnotes/flownexus

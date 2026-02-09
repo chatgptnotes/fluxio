@@ -522,7 +522,7 @@ export default function CompanyDashboardPage() {
       <footer className="mt-16 border-t border-gray-200 bg-white py-4">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="text-center text-xs text-gray-400">
-            FluxIO v1.6 | February 1, 2026 | fluxio
+            FlowNexus v1.6 | February 1, 2026 | flownexus
           </p>
         </div>
       </footer>

@@ -1,5 +1,5 @@
 # AUTONOMOUS AGENT CONFIGURATION
-## FluxIO - IIoT Flow Monitoring Platform
+## FlowNexus - IIoT Flow Monitoring Platform
 
 ---
 
@@ -31,7 +31,7 @@ After completing each to-do task, automatically suggest:
 ## PROJECT MISSION
 
 ### [PROJECT GOAL]
-Build and ship FluxIO, a complete IIoT platform for real-time monitoring of Nivus flow transmitters via Teltonika gateways, with cloud-based dashboard, alert system, and data analytics.
+Build and ship FlowNexus, a complete IIoT platform for real-time monitoring of Nivus flow transmitters via Teltonika gateways, with cloud-based dashboard, alert system, and data analytics.
 
 ### [TECH STACK & TARGETS]
 - **Frontend:** Next.js 14 + TypeScript + Tailwind CSS
@@ -43,7 +43,7 @@ Build and ship FluxIO, a complete IIoT platform for real-time monitoring of Nivu
 - **OS:** macOS development environment
 
 ### [REPO/ENV]
-- Repository: https://github.com/chatgptnotes/fluxio.git
+- Repository: https://github.com/chatgptnotes/flownexus.git
 - Package Manager: pnpm
 - Environment: macOS with Node.js 18+
 
@@ -285,7 +285,7 @@ Provide at completion:
 
 **Version:** 1.2
 **Last Updated:** January 9, 2025
-**Repository:** https://github.com/chatgptnotes/fluxio
+**Repository:** https://github.com/chatgptnotes/flownexus
 
 ---
 

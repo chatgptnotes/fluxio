@@ -995,7 +995,7 @@ export default function PipeDetailPage() {
             </div>
           </div>
           <div className="text-[10px] md:text-xs text-white font-bold font-mono hidden sm:block">
-            FluxIO v3.0
+            FlowNexus v3.0
           </div>
         </div>
       </footer>

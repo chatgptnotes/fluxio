@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { generateSessionToken } from './password';
 import { buildSessionUser, type SessionUser } from './permissions';
 
-const SESSION_COOKIE_NAME = 'fluxio_session';
+const SESSION_COOKIE_NAME = 'flownexus_session';
 const SESSION_DURATION_MINUTES = 30; // Session expires after 30 minutes of inactivity
 
 export interface Session {

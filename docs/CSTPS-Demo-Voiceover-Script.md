@@ -211,7 +211,7 @@ You see we arrive at the same type of detail page, but now showing information f
 
 *Point to the Back button on the left side of header*
 
-"In the header, the Back button on the left takes you to the main FluxIO dashboard, which shows all monitored sites, not just CSTPS."
+"In the header, the Back button on the left takes you to the main FlowNexus dashboard, which shows all monitored sites, not just CSTPS."
 
 ### Reports Button
 
@@ -339,4 +339,4 @@ Are there any questions about what we have seen today?"
 
 ---
 
-*Version 3.1 | January 28, 2026 | github.com/chatgptnotes/fluxio*
+*Version 3.1 | January 28, 2026 | github.com/chatgptnotes/flownexus*

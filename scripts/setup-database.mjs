@@ -16,7 +16,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 console.log('\n===========================================')
-console.log('FluxIO Database Setup')
+console.log('FlowNexus Database Setup')
 console.log('===========================================\n')
 
 if (!supabaseUrl || !supabaseServiceKey) {

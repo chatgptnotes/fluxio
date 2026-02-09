@@ -1,4 +1,4 @@
-// FluxIO Database Cleanup Script
+// FlowNexus Database Cleanup Script
 // Run with: pnpm tsx scripts/clean-database.ts
 
 import { createClient } from '@supabase/supabase-js'
@@ -21,7 +21,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 })
 
 async function cleanDatabase() {
-  console.log('\n=== FluxIO Database Cleanup ===\n')
+  console.log('\n=== FlowNexus Database Cleanup ===\n')
 
   // Step 1: Delete all alerts
   console.log('1. Deleting all alerts...')

@@ -32,7 +32,7 @@ interface ModbusRegisterData {
   data: number
 }
 
-// Convert TRB246 Modbus register array format to FluxIO field format
+// Convert TRB246 Modbus register array format to FlowNexus field format
 function convertModbusFormat(data: unknown): Record<string, unknown> | null {
   // Check if data is an array
   if (!Array.isArray(data)) return null
@@ -51,7 +51,7 @@ function convertModbusFormat(data: unknown): Record<string, unknown> | null {
 
   if (!hasModbusFormat) return null
 
-  // Convert to FluxIO format
+  // Convert to FlowNexus format
   const converted: Record<string, unknown> = {}
   for (const item of data as ModbusRegisterData[]) {
     const addr = String(item.full_addr ?? item.address)
@@ -80,7 +80,7 @@ interface IngestData {
   metadata?: Record<string, unknown>
 }
 
-// Normalize TRB246 Modbus data format to FluxIO format
+// Normalize TRB246 Modbus data format to FlowNexus format
 function normalizeData(data: Record<string, unknown>, defaultDeviceId: string): Record<string, unknown> {
   const normalized: Record<string, unknown> = {}
 
@@ -345,7 +345,7 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   return NextResponse.json({
     status: 'ok',
-    service: 'FluxIO Data Ingest API',
+    service: 'FlowNexus Data Ingest API',
     version: '1.0.0',
     timestamp: new Date().toISOString(),
   })

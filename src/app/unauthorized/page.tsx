@@ -35,7 +35,7 @@ export default function UnauthorizedPage() {
         </div>
 
         <p className="text-center text-xs text-gray-400 mt-6">
-          FluxIO v1.3 | February 1, 2026 | fluxio
+          FlowNexus v1.3 | February 1, 2026 | flownexus
         </p>
       </div>
     </div>

@@ -124,10 +124,10 @@ export const faqSchema = {
     },
     {
       '@type': 'Question',
-      name: 'What data can I monitor with FluxIO?',
+      name: 'What data can I monitor with FlowNexus?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'FluxIO monitors flow rate (m³/h), totalizer values, velocity (m/s), level measurements, temperature, and device status. Historical data is available for trend analysis and reporting.',
+        text: 'FlowNexus monitors flow rate (m³/h), totalizer values, velocity (m/s), level measurements, temperature, and device status. Historical data is available for trend analysis and reporting.',
       },
     },
   ],

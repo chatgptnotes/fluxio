@@ -6,7 +6,7 @@ Step-by-step guide to configure a brand new Teltonika TBR 246 gateway to read da
 
 **Architecture:**
 ```
-Nivus 750          TBR 246              Supabase           FluxIO Website
+Nivus 750          TBR 246              Supabase           FlowNexus Website
     |                  |                    |                    |
     |--Modbus TCP----->|                    |                    |
     |   (every 5min)   |                    |                    |
@@ -257,7 +257,7 @@ Without Nivus 750, skip Modbus setup. We will send static test data instead.
 | Setting | Value |
 |---------|-------|
 | **Enable** | ON |
-| **Name** | `Supabase_FluxIO` |
+| **Name** | `Supabase_FlowNexus` |
 | **Type/Protocol** | `HTTP(S)` |
 | **URL** | `https://aynoltymgusyasgxshng.supabase.co/rest/v1/flow_data` |
 | **Method** | `POST` |
@@ -370,7 +370,7 @@ Invoke-RestMethod -Uri "https://aynoltymgusyasgxshng.supabase.co/rest/v1/flow_da
 3. Look for new records with `device_id = NIVUS_750_01`
 4. Should see records from both laptop test and TBR 246
 
-## Step 17: Check FluxIO Dashboard
+## Step 17: Check FlowNexus Dashboard
 
 1. Open: http://localhost:3000/dashboard (or your deployed URL)
 2. Verify device shows as "Online"
@@ -520,7 +520,7 @@ Every 5 minutes (production) / 30 seconds (testing):
 3. Supabase inserts into flow_data table
 4. Device last_seen is updated automatically (trigger)
 
-When you open FluxIO:
+When you open FlowNexus:
 1. Website queries Supabase for flow_data
 2. Displays current and historical readings
 ```
@@ -544,7 +544,7 @@ When you open FluxIO:
 | 7 | Configure JSON payload (static or Modbus) | [ ] |
 | 8 | Test connection (Send Now button) | [ ] |
 | 9 | Verify data in Supabase Table Editor | [ ] |
-| 10 | Check FluxIO dashboard | [ ] |
+| 10 | Check FlowNexus dashboard | [ ] |
 | 11 | Save TBR 246 configuration backup | [ ] |
 
 ---
@@ -554,8 +554,8 @@ When you open FluxIO:
 - [Supabase REST API Documentation](https://supabase.com/docs/guides/api)
 - [Teltonika TBR 246 Wiki](https://wiki.teltonika-networks.com/view/TBR246)
 - [NivuFlow 750 Product Page](https://www.nivus.com/en/products/flow-measurement/polluted-media/flowmeter/nivuflow-750-flowmeter)
-- [FluxIO Documentation](./README.md)
+- [FlowNexus Documentation](./README.md)
 
 ---
 
-*Version 1.4 | January 24, 2026 | fluxio*
+*Version 1.4 | January 24, 2026 | flownexus*

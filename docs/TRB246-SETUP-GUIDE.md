@@ -1,14 +1,14 @@
 # TRB246 End-to-End Test Setup Guide
 
-This guide walks through setting up a complete test environment for the FluxIO IIoT platform using a Modbus TCP simulator on your laptop and the TRB246 gateway.
+This guide walks through setting up a complete test environment for the FlowNexus IIoT platform using a Modbus TCP simulator on your laptop and the TRB246 gateway.
 
 ## Test Architecture
 
 ```
 +-------------------------+        +-----------------+        +------------------+
-|  Laptop                 |        |  TRB246         |        |  FluxIO Cloud    |
+|  Laptop                 |        |  TRB246         |        |  FlowNexus Cloud    |
 |  (Modbus TCP Simulator) | <----> |  Gateway        | -----> |  (Vercel)        |
-|  192.168.2.100:502      |  ETH   |  192.168.2.1    |  4G    |  www.fluxio.work |
+|  192.168.2.100:502      |  ETH   |  192.168.2.1    |  4G    |  www.flownexus.com |
 |  Simulates Nivus data   |        |  Reads & Sends  |        |  Stores data     |
 +-------------------------+        +-----------------+        +------------------+
 ```
@@ -64,7 +64,7 @@ New-NetFirewallRule -DisplayName "Modbus TCP Simulator" -Direction Inbound -Prot
 
 ### Step 1.4: Run the Simulator
 
-Navigate to the FluxIO project directory:
+Navigate to the FlowNexus project directory:
 
 ```powershell
 cd "D:\flowmeter Project\fluxio"
@@ -204,7 +204,7 @@ Click **Save & Apply** at the bottom of the page.
 
 ---
 
-## Part 4: Configure Data to Server (HTTP POST to FluxIO)
+## Part 4: Configure Data to Server (HTTP POST to FlowNexus)
 
 ### Step 4.1: Create Data Sender
 
@@ -215,9 +215,9 @@ Click **Save & Apply** at the bottom of the page.
 
 | Field | Value |
 |-------|-------|
-| Name | `FluxIO_Cloud` |
+| Name | `FlowNexus_Cloud` |
 | Enabled | Yes |
-| URL/Host | `https://www.fluxio.work/api/ingest` |
+| URL/Host | `https://www.flownexus.com/api/ingest` |
 | Protocol | HTTP(S) |
 | Method | POST |
 
@@ -228,8 +228,7 @@ Add these HTTP headers:
 | Header Name | Value |
 |-------------|-------|
 | Content-Type | `application/json` |
-| x-api-key | `fluxio_secure_key_2025_production` |
-
+| x-api-key | `flownexus_secure_key_2025_production` |
 ### Step 4.4: Configure Data Format
 
 1. Set Format to **Custom**
@@ -281,9 +280,9 @@ Click **Save & Apply** to activate the configuration.
    - Last Send: Recent timestamp
    - No error messages
 
-### Step 5.3: Check FluxIO Dashboard
+### Step 5.3: Check FlowNexus Dashboard
 
-1. Open: https://www.fluxio.work/cstps-pipeline
+1. Open: https://www.flownexus.com/cstps-pipeline
 2. Look for device `TRB246-CSTPS-001`
 3. Verify:
    - Device shows as **Online**
@@ -322,11 +321,11 @@ LIMIT 10;
 
 **Solutions:**
 1. Verify TRB246 has internet (4G) connectivity
-2. Check the URL is exactly: `https://www.fluxio.work/api/ingest`
+2. Check the URL is exactly: `https://www.flownexus.com/api/ingest`
 3. Verify API key header is correct
-4. Check FluxIO API is responding:
+4. Check FlowNexus API is responding:
    ```powershell
-   curl -X POST "https://www.fluxio.work/api/ingest" -H "Content-Type: application/json" -H "x-api-key: fluxio_secure_key_2025_production" -d "{\"device_id\":\"test\",\"flow_rate\":100}"
+   curl -X POST "https://www.flownexus.com/api/ingest" -H "Content-Type: application/json" -H "x-api-key: flownexus_secure_key_2025_production" -d "{\"device_id\":\"test\",\"flow_rate\":100}"
    ```
 
 ### Values Not Updating
@@ -386,8 +385,8 @@ After successful testing, to deploy with real Nivus transmitter:
 | Laptop IP | 192.168.2.100 |
 | TRB246 IP | 192.168.2.1 |
 | Modbus Port | 502 |
-| FluxIO API | https://www.fluxio.work/api/ingest |
-| API Key | fluxio_secure_key_2025_production |
+| FlowNexus API | https://www.flownexus.com/api/ingest |
+| API Key | flownexus_secure_key_2025_production |
 | Device ID | TRB246-CSTPS-001 |
 
 ---
@@ -396,9 +395,9 @@ After successful testing, to deploy with real Nivus transmitter:
 
 **Test API directly from laptop:**
 ```powershell
-curl -X POST "https://www.fluxio.work/api/ingest" `
+curl -X POST "https://www.flownexus.com/api/ingest" `
   -H "Content-Type: application/json" `
-  -H "x-api-key: fluxio_secure_key_2025_production" `
+  -H "x-api-key: flownexus_secure_key_2025_production" `
   -d '{"device_id":"TRB246-CSTPS-001","flow_rate":125.5,"totalizer":458920,"temperature":25.3}'
 ```
 
@@ -469,4 +468,4 @@ plink -ssh -l root -pw "Lightyear@123" 192.168.1.2 "logread | grep fluxio"
 
 ---
 
-Version: 1.4 | February 1, 2026 | fluxio
+Version: 1.4 | February 1, 2026 | flownexus

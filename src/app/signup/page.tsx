@@ -31,7 +31,7 @@ export default function SignupPage() {
     setFormData({
       fullName: 'Test User',
       username: 'testuser',
-      email: 'test@fluxio.dev',
+      email: 'test@flownexus.dev',
       password: 'test123456',
       confirmPassword: 'test123456',
     })
@@ -106,7 +106,7 @@ export default function SignupPage() {
           <div className="mb-8 text-center">
             <Link href="/" className="group inline-flex items-center space-x-2 transition-transform hover:scale-105">
               <Droplet className="h-10 w-10 text-white animate-float" />
-              <span className="text-3xl font-bold text-white">FluxIO</span>
+              <span className="text-3xl font-bold text-white">FlowNexus</span>
             </Link>
           </div>
 
@@ -171,7 +171,7 @@ export default function SignupPage() {
           {/* Footer */}
           <div className="mt-8 text-center">
             <p className="text-xs text-white/60">
-              FluxIO v1.6 | February 1, 2026 | fluxio
+              FlowNexus v1.6 | February 1, 2026 | flownexus
             </p>
           </div>
         </div>
@@ -191,7 +191,7 @@ export default function SignupPage() {
         <div className="mb-8 text-center">
           <Link href="/" className="group inline-flex items-center space-x-2 transition-transform hover:scale-105">
             <Droplet className="h-10 w-10 text-white animate-float" />
-            <span className="text-3xl font-bold text-white">FluxIO</span>
+            <span className="text-3xl font-bold text-white">FlowNexus</span>
           </Link>
           <p className="mt-2 text-sm text-white/80">
             Create your account to get started
@@ -435,7 +435,7 @@ export default function SignupPage() {
         {/* Footer */}
         <div className="mt-8 text-center">
           <p className="text-xs text-white/60">
-            FluxIO v1.6 | February 1, 2026 | fluxio
+            FlowNexus v1.6 | February 1, 2026 | flownexus
           </p>
         </div>
       </div>

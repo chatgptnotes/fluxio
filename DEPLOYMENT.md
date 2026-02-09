@@ -1,13 +1,13 @@
-# FluxIO Deployment Guide
+# FlowNexus Deployment Guide
 
 ## Production Deployment
 
-FluxIO has been successfully deployed to Vercel.
+FlowNexus has been successfully deployed to Vercel.
 
 ### Live URLs
 
-- **Production:** https://fluxio-three.vercel.app
-- **GitHub Repository:** https://github.com/chatgptnotes/fluxio
+- **Production:** https://flownexus.com
+- **GitHub Repository:** https://github.com/chatgptnotes/flownexus
 
 ### Local Development
 
@@ -31,7 +31,7 @@ Before the application is fully functional, you need to configure Supabase:
 
 In Vercel dashboard:
 
-1. Go to your project: https://vercel.com/chatgptnotes-6366s-projects/fluxio
+1. Go to your project: https://vercel.com/chatgptnotes-6366s-projects/flownexus
 2. Navigate to Settings > Environment Variables
 3. Add the following:
 
@@ -73,14 +73,14 @@ Or trigger a redeploy from the Vercel dashboard.
 ### Health Check
 
 ```bash
-curl https://fluxio-three.vercel.app/api/ingest
+curl https://flownexus.com/api/ingest
 ```
 
 Expected response:
 ```json
 {
   "status": "ok",
-  "service": "FluxIO Data Ingest API",
+  "service": "FlowNexus Data Ingest API",
   "version": "1.0.0",
   "timestamp": "2025-01-09T..."
 }
@@ -89,7 +89,7 @@ Expected response:
 ### Send Test Data
 
 ```bash
-curl -X POST https://fluxio-three.vercel.app/api/ingest \
+curl -X POST https://flownexus.com/api/ingest \
   -H "Content-Type: application/json" \
   -H "x-api-key: YOUR_API_SECRET_KEY" \
   -d '{
@@ -115,7 +115,7 @@ curl -X POST https://fluxio-three.vercel.app/api/ingest \
 
 3. **Configure Data to Server:**
    - Go to Services > Data to Server
-   - **URL:** https://fluxio-three.vercel.app/api/ingest
+   - **URL:** https://flownexus.com/api/ingest
    - **Method:** POST
    - **Headers:** x-api-key: YOUR_API_SECRET_KEY
    - **Body Format:** JSON
@@ -142,19 +142,19 @@ curl -X POST https://fluxio-three.vercel.app/api/ingest \
 ### View Deployment Logs
 
 ```bash
-vercel logs fluxio-three.vercel.app
+vercel logs flownexus.com
 ```
 
 ### View Real-time Logs
 
 ```bash
-vercel logs fluxio-three.vercel.app --follow
+vercel logs flownexus.com --follow
 ```
 
 ### Inspect Deployment
 
 ```bash
-vercel inspect fluxio-three.vercel.app
+vercel inspect flownexus.com
 ```
 
 ---
@@ -233,7 +233,7 @@ To use a custom domain:
 ## Support Resources
 
 - **Documentation:** README.md, ARCHITECTURE.md
-- **GitHub Issues:** https://github.com/chatgptnotes/fluxio/issues
+- **GitHub Issues:** https://github.com/chatgptnotes/flownexus/issues
 - **Vercel Docs:** https://vercel.com/docs
 - **Supabase Docs:** https://supabase.com/docs
 
@@ -241,4 +241,4 @@ To use a custom domain:
 
 **Version:** 1.3
 **Last Updated:** January 9, 2025
-**Repository:** https://github.com/chatgptnotes/fluxio
+**Repository:** https://github.com/chatgptnotes/flownexus

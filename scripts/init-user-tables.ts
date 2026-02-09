@@ -115,7 +115,7 @@ INSERT INTO users (
   is_active
 ) VALUES (
   'buzzlightyear_42',
-  'superadmin@fluxio.com',
+  'superadmin@flownexus.com',
   'Super Administrator',
   '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.K5mPjRXrBh4GSe',
   'admin',
@@ -130,7 +130,7 @@ INSERT INTO users (
 
 -- Insert default company
 INSERT INTO companies (name, code, description) VALUES
-  ('FluxIO', 'FLUXIO', 'Default FluxIO company')
+  ('FlowNexus', 'FLOWNEXUS', 'Default FlowNexus company')
 ON CONFLICT (code) DO NOTHING;
 `;
 

@@ -71,7 +71,7 @@ function LoginContent() {
         <div className="mb-8 text-center">
           <Link href="/" className="group inline-flex items-center space-x-2 transition-transform hover:scale-105">
             <span className="material-icons text-white text-4xl">water_drop</span>
-            <span className="text-3xl font-bold text-white">FluxIO</span>
+            <span className="text-3xl font-bold text-white">FlowNexus</span>
           </Link>
           <p className="mt-2 text-sm text-white/80">
             Sign in to access your dashboard
@@ -275,7 +275,7 @@ function LoginContent() {
         {/* Footer */}
         <div className="mt-8 text-center">
           <p className="text-xs text-white/60">
-            FluxIO v1.6 | February 1, 2026 | fluxio
+            FlowNexus v1.6 | February 1, 2026 | flownexus
           </p>
         </div>
       </div>

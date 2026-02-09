@@ -1,7 +1,7 @@
 # IRAI Dam SCADA Visualization Skill
 
 ## Overview
-This skill documents the static IRAI Dam SCADA visualization with CSS animation overlays for the FluxIO IIoT platform.
+This skill documents the static IRAI Dam SCADA visualization with CSS animation overlays for the FlowNexus IIoT platform.
 
 ## Static Image Location
 - Path: `public/images/irai-dam-scada.png`
@@ -90,4 +90,4 @@ Edit `src/components/DamAnimationOverlay.tsx` to adjust:
 ## Version
 - Version: 1.9
 - Date: January 21, 2026
-- Repository: fluxio
+- Repository: flownexus

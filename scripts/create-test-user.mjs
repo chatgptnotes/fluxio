@@ -15,7 +15,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 console.log('\n===========================================')
-console.log('FluxIO - Create Test User')
+console.log('FlowNexus - Create Test User')
 console.log('===========================================\n')
 
 if (!supabaseUrl || !supabaseServiceKey) {
@@ -32,7 +32,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 })
 
 async function createTestUser() {
-  const testEmail = 'test@fluxio.dev'
+  const testEmail = 'test@flownexus.dev'
   const testPassword = 'test123456'
   const testName = 'Test User'
 

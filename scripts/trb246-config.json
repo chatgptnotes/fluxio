@@ -1,9 +1,9 @@
 {
-  "_comment": "TRB246 Configuration for FluxIO - Reference Configuration",
+  "_comment": "TRB246 Configuration for FlowNexus - Reference Configuration",
   "_version": "1.1",
   "_created": "2026-02-01",
   "_updated": "2026-02-01",
-  "_description": "Configures 6 Nivus 750 Modbus TCP devices for FluxIO IIoT platform",
+  "_description": "Configures 6 Nivus 750 Modbus TCP devices for FlowNexus IIoT platform",
   "_note": "The built-in data_sender service has HTTPS issues. Use fluxio_sender.sh cron script instead.",
   "_setup_command": "Run: .\\setup-trb246-complete.ps1 -Password 'Lightyear@123'",
 
@@ -365,9 +365,9 @@
   "data_sender": {
     "_note": "TRB246 built-in data_sender may have issues with HTTPS. Use fluxio_sender.sh cron script instead.",
     "sender1": {
-      "name": "FluxIO_API",
+      "name": "FlowNexus_API",
       "enabled": true,
-      "url": "https://www.fluxio.work/api/ingest",
+      "url": "https://www.flownexus.com/api/ingest",
       "method": "post",
       "period": 300,
       "data_format": "custom",
@@ -375,12 +375,12 @@
       "tls": true,
       "headers": [
         "Content-Type: application/json",
-        "x-api-key: fluxio_secure_key_2025_production"
+        "x-api-key: flownexus_secure_key_2025_production"
       ]
     },
     "sender_supabase_backup": {
       "_note": "Backup configuration for direct Supabase access",
-      "name": "FluxIO_Supabase",
+      "name": "FlowNexus_Supabase",
       "enabled": false,
       "url": "https://dzmiisuxwruoeklbkyzc.supabase.co/rest/v1/flow_data",
       "method": "post",

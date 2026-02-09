@@ -369,7 +369,7 @@ export default function TransmitterDetailPage() {
 
       {/* Footer */}
       <footer className="text-center py-4 text-[10px] text-[#546E7A]">
-        Version 1.5 | January 21, 2025 | FluxIO SCADA System
+        Version 1.5 | January 21, 2025 | FlowNexus SCADA System
       </footer>
     </div>
   )

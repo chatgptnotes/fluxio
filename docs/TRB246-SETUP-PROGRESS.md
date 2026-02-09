@@ -64,12 +64,12 @@ When "Enable secure connection" is OFF:
 4. Save & Apply
 5. Check if data appears in Supabase flow_data table
 
-### Option 2: Use FluxIO API endpoint instead
+### Option 2: Use FlowNexus API endpoint instead
 
-Instead of direct Supabase, use the FluxIO Next.js API:
+Instead of direct Supabase, use the FlowNexus Next.js API:
 
-1. Deploy FluxIO to Vercel first
-2. Configure TRB246 to send to: `https://your-fluxio-app.vercel.app/api/ingest`
+1. Deploy FlowNexus to Vercel first
+2. Configure TRB246 to send to: `https://your-flownexus-app.vercel.app/api/ingest`
 3. Use header: `x-api-key: your-api-secret-key`
 4. The API will forward data to Supabase
 
@@ -109,4 +109,4 @@ LIMIT 5;
 
 ---
 
-Version 1.4 | January 28, 2026 | github.com/chatgptnotes/fluxio
+Version 1.4 | January 28, 2026 | github.com/chatgptnotes/flownexus

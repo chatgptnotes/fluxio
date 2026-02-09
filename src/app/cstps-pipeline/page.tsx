@@ -1549,7 +1549,7 @@ export default function CSTPSPipelinePage() {
               )}
             </div>
             <div className="text-[9px] md:text-xs text-[#78909C] font-mono">
-              <span className="hidden md:inline">FluxIO SCADA v1.7 | Gravity Fed System | </span>CSTPS Water Supply
+              <span className="hidden md:inline">FlowNexus SCADA v1.7 | Gravity Fed System | </span>CSTPS Water Supply
             </div>
           </div>
         </div>
@@ -1557,7 +1557,7 @@ export default function CSTPSPipelinePage() {
 
       {/* Version Footer */}
       <footer className="text-center py-2 text-[9px] md:text-[10px] text-[#90A4AE]">
-        Version 3.3-CLEAN | February 1, 2026 18:45 | NO MOCK DATA | github.com/chatgptnotes/fluxio
+        Version 3.3-CLEAN | February 1, 2026 18:45 | NO MOCK DATA | github.com/chatgptnotes/flownexus
       </footer>
 
       {/* CSS Animations */}

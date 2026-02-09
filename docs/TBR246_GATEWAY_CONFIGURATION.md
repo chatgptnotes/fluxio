@@ -2,16 +2,16 @@
 
 ## Overview
 
-This guide configures Teltonika TBR 246 gateway to read data from Nivus 750 flow transmitter via **Modbus TCP** and write **directly to Supabase database** every 5 minutes. FluxIO website reads from Supabase to display data.
+This guide configures Teltonika TBR 246 gateway to read data from Nivus 750 flow transmitter via **Modbus TCP** and write **directly to Supabase database** every 5 minutes. FlowNexus website reads from Supabase to display data.
 
-**Key Benefit:** The FluxIO website does not need to be running 24/7. Data is stored directly in the database.
+**Key Benefit:** The FlowNexus website does not need to be running 24/7. Data is stored directly in the database.
 
 ---
 
 ## Architecture
 
 ```
-Nivus 750          TBR 246              Supabase           FluxIO Website
+Nivus 750          TBR 246              Supabase           FlowNexus Website
     |                  |                    |                    |
     |--Modbus TCP----->|                    |                    |
     |   (every 5min)   |                    |                    |
@@ -344,25 +344,25 @@ Some TBR 246 firmware versions use different syntax:
 
 ---
 
-## Step 7: Alternative - Use FluxIO API Endpoint
+## Step 7: Alternative - Use FlowNexus API Endpoint
 
-If you prefer to use the FluxIO API instead of direct Supabase access:
+If you prefer to use the FlowNexus API instead of direct Supabase access:
 
-### 7.1 Configure Data to Server for FluxIO API
+### 7.1 Configure Data to Server for FlowNexus API
 
 | Setting | Value |
 |---------|-------|
-| URL | `https://your-fluxio-domain.vercel.app/api/ingest` |
+| URL | `https://your-flownexus-domain.vercel.app/api/ingest` |
 | Method | POST |
 
-### 7.2 HTTP Headers for FluxIO API
+### 7.2 HTTP Headers for FlowNexus API
 
 ```
 x-api-key: YOUR_API_SECRET_KEY
 Content-Type: application/json
 ```
 
-### 7.3 JSON Payload for FluxIO API
+### 7.3 JSON Payload for FlowNexus API
 
 ```json
 {
@@ -375,7 +375,7 @@ Content-Type: application/json
 }
 ```
 
-**Benefits of FluxIO API:**
+**Benefits of FlowNexus API:**
 - Alert rule evaluation happens on ingestion
 - Automatic device status updates
 - Validation and error handling
@@ -398,9 +398,9 @@ In TBR 246: **Status > Modbus**
 2. Wait 5 minutes
 3. Refresh and verify new records appear
 
-### 8.3 Check FluxIO Dashboard
+### 8.3 Check FlowNexus Dashboard
 
-1. Open your FluxIO website
+1. Open your FlowNexus website
 2. Navigate to Devices page
 3. Data should appear from Supabase
 
@@ -439,7 +439,7 @@ Every 5 minutes:
 3. Supabase inserts into flow_data table
 4. Device last_seen is updated automatically (trigger)
 
-When you open FluxIO:
+When you open FlowNexus:
 1. Website queries Supabase for flow_data
 2. Displays current and historical readings
 ```
@@ -587,7 +587,7 @@ If register addresses are not documented:
 | 5 | Configure TBR 246 Modbus TCP Master | [ ] |
 | 6 | Configure TBR 246 Data to Server (Supabase URL) | [ ] |
 | 7 | Verify data appears in Supabase | [ ] |
-| 8 | Verify FluxIO displays the data | [ ] |
+| 8 | Verify FlowNexus displays the data | [ ] |
 
 ---
 
@@ -639,8 +639,8 @@ Either:
 - [Supabase REST API Documentation](https://supabase.com/docs/guides/api)
 - [Teltonika TBR 246 Wiki](https://wiki.teltonika-networks.com/view/TBR246)
 - [NivuFlow 750 Product Page](https://www.nivus.com/en/products/flow-measurement/polluted-media/flowmeter/nivuflow-750-flowmeter)
-- [FluxIO Documentation](./README.md)
+- [FlowNexus Documentation](./README.md)
 
 ---
 
-*Version 1.4 | January 24, 2026 | fluxio*
+*Version 1.4 | January 24, 2026 | flownexus*

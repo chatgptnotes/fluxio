@@ -1,6 +1,6 @@
-# TRB246 Configuration Scripts for FluxIO
+# TRB246 Configuration Scripts for FlowNexus
 
-This directory contains scripts to configure the Teltonika TRB246 gateway for the FluxIO IIoT platform.
+This directory contains scripts to configure the Teltonika TRB246 gateway for the FlowNexus IIoT platform.
 
 ## Quick Start
 
@@ -58,7 +58,7 @@ This directory contains scripts to configure the Teltonika TRB246 gateway for th
 | `configure-trb246.sh` | Bash script to configure Modbus TCP and Data Sender |
 | `configure-trb246.ps1` | PowerShell version for Windows |
 | `diagnose-trb246.ps1` | Diagnostic script to check TRB246 configuration and connectivity |
-| `fluxio_sender.sh` | Custom shell script for TRB246 to send data to FluxIO API |
+| `fluxio_sender.sh` | Custom shell script for TRB246 to send data to FlowNexus API |
 | `fluxio_sender_simple.sh` | Simplified single-device version |
 | `fluxio_sender_simulator.sh` | Auto-detecting version for simulator testing |
 | `install-fluxio-sender.sh` | Automated installer for Linux/macOS |
@@ -167,13 +167,13 @@ If you don't have actual Nivus 750 transmitters connected, use the Modbus simula
 ## API Endpoint
 
 The sender scripts send data to:
-- **URL:** https://www.fluxio.work/api/ingest
+- **URL:** https://www.flownexus.com/api/ingest
 - **Method:** POST
 - **Authentication:** x-api-key header
 
 ## Supabase Direct Access (Backup)
 
-If the FluxIO API is unavailable, configure direct Supabase access:
+If the FlowNexus API is unavailable, configure direct Supabase access:
 - **URL:** https://dzmiisuxwruoeklbkyzc.supabase.co/rest/v1/flow_data
 - **Headers:**
   - `apikey: sb_publishable_ed4UwVUrD7rc2Qlx0Fp8sg_rdm3ctOL`
@@ -184,4 +184,4 @@ If the FluxIO API is unavailable, configure direct Supabase access:
 
 - **Version:** 1.4
 - **Date:** 2026-02-01
-- **Repository:** https://github.com/chatgptnotes/fluxio
+- **Repository:** https://github.com/chatgptnotes/flownexus

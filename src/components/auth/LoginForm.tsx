@@ -50,7 +50,7 @@ export default function LoginForm({ redirectTo = '/' }: LoginFormProps) {
             <div className="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
               <span className="material-icons text-white text-3xl">water_drop</span>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">FluxIO</h1>
+            <h1 className="text-2xl font-bold text-gray-900">FlowNexus</h1>
             <p className="text-gray-500 mt-1">Sign in to your account</p>
           </div>
 
@@ -137,7 +137,7 @@ export default function LoginForm({ redirectTo = '/' }: LoginFormProps) {
 
         {/* Footer */}
         <p className="text-center text-xs text-gray-400 mt-6">
-          FluxIO v1.3 - IIoT Flow Monitoring Platform
+          FlowNexus v1.3 - IIoT Flow Monitoring Platform
         </p>
       </div>
     </div>

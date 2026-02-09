@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'FluxIO - Real-Time Industrial IoT Flow Monitoring | Nivus Transmitters',
+  title: 'FlowNexus - Real-Time Industrial IoT Flow Monitoring | Nivus Transmitters',
   description:
-    'Monitor Nivus flow transmitters in real-time with FluxIO. Cloud-based IIoT platform with intelligent alerts, historical analytics, and multi-device support. Get started free.',
+    'Monitor Nivus flow transmitters in real-time with FlowNexus. Cloud-based IIoT platform with intelligent alerts, historical analytics, and multi-device support. Get started free.',
   keywords: [
     'flow monitoring',
     'industrial iot',
@@ -16,26 +16,26 @@ export const metadata: Metadata = {
     'cloud iot platform',
     'industrial automation',
   ],
-  authors: [{ name: 'FluxIO Team' }],
-  creator: 'FluxIO',
-  publisher: 'FluxIO',
+  authors: [{ name: 'FlowNexus Team' }],
+  creator: 'FlowNexus',
+  publisher: 'FlowNexus',
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
   openGraph: {
-    title: 'FluxIO - Real-Time Industrial IoT Flow Monitoring',
+    title: 'FlowNexus - Real-Time Industrial IoT Flow Monitoring',
     description:
       'Monitor your Nivus flow transmitters in real-time. Intelligent alerts, powerful analytics, enterprise security. Start your free trial today.',
-    url: 'https://fluxio-three.vercel.app',
-    siteName: 'FluxIO',
+    url: 'https://www.flownexus.com',
+    siteName: 'FlowNexus',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'FluxIO - Industrial IoT Monitoring Platform',
+        alt: 'FlowNexus - Industrial IoT Monitoring Platform',
       },
     ],
     locale: 'en_US',
@@ -43,11 +43,11 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FluxIO - Real-Time Industrial IoT Flow Monitoring',
+    title: 'FlowNexus - Real-Time Industrial IoT Flow Monitoring',
     description:
       'Monitor your Nivus flow transmitters in real-time with cloud-based IIoT platform.',
     images: ['/og-image.png'],
-    creator: '@fluxio',
+    creator: '@flownexus',
   },
   robots: {
     index: true,
@@ -78,7 +78,7 @@ export default function LandingLayout({
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'SoftwareApplication',
-            name: 'FluxIO',
+            name: 'FlowNexus',
             applicationCategory: 'IndustrialSoftware',
             offers: {
               '@type': 'Offer',

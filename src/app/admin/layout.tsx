@@ -29,7 +29,7 @@ function AdminNav() {
             <div className="flex items-center gap-4">
               <Link href="/" className="flex items-center gap-2 text-blue-600">
                 <span className="material-icons">water_drop</span>
-                <span className="font-bold text-xl">FluxIO</span>
+                <span className="font-bold text-xl">FlowNexus</span>
               </Link>
               <span className="text-gray-300">|</span>
               <span className="text-gray-600 font-medium">Admin Panel</span>
@@ -135,7 +135,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         {/* Footer */}
         <footer className="bg-white border-t py-4 px-6">
           <p className="text-center text-xs text-gray-400">
-            FluxIO v1.4 | February 2, 2026 | fluxio
+            FlowNexus v1.4 | February 2, 2026 | flownexus
           </p>
         </footer>
       </div>
@@ -153,7 +153,7 @@ function AdminHeader() {
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-2 text-blue-600">
               <span className="material-icons">water_drop</span>
-              <span className="font-bold text-xl">FluxIO</span>
+              <span className="font-bold text-xl">FlowNexus</span>
             </Link>
             <span className="text-gray-300">|</span>
             <span className="text-gray-600 font-medium">Admin Panel</span>

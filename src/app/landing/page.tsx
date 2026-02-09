@@ -128,7 +128,7 @@ export default function LandingPage() {
     {
       question: 'What flow transmitters are supported?',
       answer:
-        'FluxIO is optimized for Nivus flow transmitters but works with any Modbus RTU device. We support all Nivus models including NivuFlow 550, 600, and 750 series.',
+        'FlowNexus is optimized for Nivus flow transmitters but works with any Modbus RTU device. We support all Nivus models including NivuFlow 550, 600, and 750 series.',
     },
     {
       question: 'Do I need special hardware?',
@@ -143,7 +143,7 @@ export default function LandingPage() {
     {
       question: 'Can I integrate with my existing systems?',
       answer:
-        'Yes! FluxIO provides REST APIs for all data operations. You can easily integrate with SCADA systems, ERP software, or custom applications.',
+        'Yes! FlowNexus provides REST APIs for all data operations. You can easily integrate with SCADA systems, ERP software, or custom applications.',
     },
     {
       question: 'What about data security?',
@@ -170,7 +170,7 @@ export default function LandingPage() {
           <nav className="mb-16 flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Droplet className="h-8 w-8 text-white" />
-              <span className="text-2xl font-bold text-white">FluxIO</span>
+              <span className="text-2xl font-bold text-white">FlowNexus</span>
             </div>
             <div className="flex items-center space-x-6">
               <Link
@@ -210,7 +210,7 @@ export default function LandingPage() {
               </h1>
 
               <p className="mb-8 text-xl text-white/90">
-                FluxIO bridges the gap between your Nivus flow transmitters and
+                FlowNexus bridges the gap between your Nivus flow transmitters and
                 the cloud. Get instant insights, intelligent alerts, and
                 powerful analytics for your industrial water monitoring systems.
               </p>
@@ -337,7 +337,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-16 text-center">
             <h2 className="mb-4 text-4xl font-bold text-gray-900">
-              How FluxIO Works
+              How FlowNexus Works
             </h2>
             <p className="mx-auto max-w-2xl text-xl text-gray-600">
               Simple setup, powerful results. Get started in under 30 minutes.
@@ -356,7 +356,7 @@ export default function LandingPage() {
                 step: '2',
                 title: 'Configure Gateway',
                 description:
-                  'Set up Modbus registers and point to FluxIO API endpoint.',
+                  'Set up Modbus registers and point to FlowNexus API endpoint.',
               },
               {
                 step: '3',
@@ -535,7 +535,7 @@ export default function LandingPage() {
             Ready to Transform Your Monitoring?
           </h2>
           <p className="mb-8 text-xl text-white/90">
-            Join industrial operators worldwide who trust FluxIO for their
+            Join industrial operators worldwide who trust FlowNexus for their
             critical infrastructure monitoring.
           </p>
           <div className="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-x-4 sm:space-y-0">
@@ -547,7 +547,7 @@ export default function LandingPage() {
               <ArrowRight className="h-5 w-5" />
             </Link>
             <a
-              href="https://github.com/chatgptnotes/fluxio"
+              href="https://github.com/chatgptnotes/flownexus"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center space-x-2 rounded-lg border-2 border-white px-8 py-4 text-lg font-medium text-white transition-all hover:bg-white/10"
@@ -566,7 +566,7 @@ export default function LandingPage() {
               <div className="mb-4 flex items-center space-x-2">
                 <Droplet className="h-6 w-6 text-primary-600" />
                 <span className="text-xl font-bold text-gray-900">
-                  FluxIO
+                  FlowNexus
                 </span>
               </div>
               <p className="text-sm text-gray-600">
@@ -590,7 +590,7 @@ export default function LandingPage() {
                 </li>
                 <li>
                   <a
-                    href="https://github.com/chatgptnotes/fluxio"
+                    href="https://github.com/chatgptnotes/flownexus"
                     className="hover:text-primary-600"
                   >
                     Documentation
@@ -604,7 +604,7 @@ export default function LandingPage() {
               <ul className="space-y-2 text-sm text-gray-600">
                 <li>
                   <a
-                    href="https://github.com/chatgptnotes/fluxio"
+                    href="https://github.com/chatgptnotes/flownexus"
                     className="hover:text-primary-600"
                   >
                     GitHub
@@ -647,7 +647,7 @@ export default function LandingPage() {
 
           <div className="mt-12 border-t border-gray-200 pt-8 text-center">
             <p className="text-xs text-gray-400">
-              FluxIO v1.4 | January 9, 2025 | fluxio
+              FlowNexus v1.4 | January 9, 2025 | flownexus
             </p>
           </div>
         </div>

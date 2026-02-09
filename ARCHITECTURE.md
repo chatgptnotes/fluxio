@@ -1,8 +1,8 @@
-# FluxIO Architecture Documentation
+# FlowNexus Architecture Documentation
 
 ## System Overview
 
-FluxIO is a three-tier architecture for industrial IoT data collection and monitoring:
+FlowNexus is a three-tier architecture for industrial IoT data collection and monitoring:
 
 1. **Edge Layer** - Nivus flow transmitters + Teltonika gateway
 2. **Application Layer** - Next.js application with API routes
@@ -27,13 +27,13 @@ FluxIO is a three-tier architecture for industrial IoT data collection and monit
   1. Polls Nivus devices every N seconds
   2. Reads Modbus registers
   3. Converts binary data to JSON
-  4. POSTs to FluxIO API via 4G/LTE
+  4. POSTs to FlowNexus API via 4G/LTE
 
 **Configuration Flow:**
 ```
 Teltonika → Modbus Request → Nivus Device
 Nivus → Modbus Response → Teltonika
-Teltonika → JSON over HTTPS → FluxIO API
+Teltonika → JSON over HTTPS → FlowNexus API
 ```
 
 ### 2. Application Layer (Next.js)

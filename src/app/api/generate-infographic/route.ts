@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
 
 function getPage1Prompt(): string {
   return `
-Create a professional, visually stunning infographic for FluxIO cloud SCADA platform.
+Create a professional, visually stunning infographic for FlowNexus cloud SCADA platform.
 
 === DESIGN SPECIFICATIONS ===
 - Style: Modern, clean, corporate design with professional gradients
@@ -87,7 +87,7 @@ Create a professional, visually stunning infographic for FluxIO cloud SCADA plat
 === CONTENT TO INCLUDE ===
 
 **HEADER SECTION (Top 12%)**
-- Large title: "FluxIO" in bold blue gradient
+- Large title: "FlowNexus" in bold blue gradient
 - Tagline below: "Next-Gen Cloud SCADA for Industrial Flow Monitoring"
 - Subtitle: "Real-Time. Cloud-Native. Multi-Protocol."
 - Include subtle cloud/water iconography in background
@@ -100,7 +100,7 @@ Create a professional, visually stunning infographic for FluxIO cloud SCADA plat
   - Mobile and desktop devices showing dashboards
 
 **PROTOCOL SUPPORT SECTION (28-45%)**
-Central hub diagram with FluxIO at center, protocols radiating outward:
+Central hub diagram with FlowNexus at center, protocols radiating outward:
 - Title: "Universal Protocol Gateway"
 - Show 8 protocol icons in a circular/hub arrangement:
 
@@ -113,7 +113,7 @@ Central hub diagram with FluxIO at center, protocols radiating outward:
 7. BACnet (yellow) - "Building Automation"
 8. SNMP (red) - "Network Monitoring"
 
-Each protocol should have a small colored icon/badge connected to central FluxIO hub
+Each protocol should have a small colored icon/badge connected to central FlowNexus hub
 
 **KEY FEATURES GRID (45-72%)**
 Six feature boxes arranged in 2x3 grid, each with icon and description:
@@ -157,8 +157,8 @@ Four metric badges in a horizontal row:
 - "Zero Servers to Manage"
 
 **FOOTER (92-100%)**
-- FluxIO logo small
-- Website: fluxio.work
+- FlowNexus logo small
+- Website: flownexus.com
 - "One Platform. Every Protocol."
 
 === VISUAL STYLE GUIDELINES ===
@@ -184,12 +184,12 @@ Four metric badges in a horizontal row:
 
 function getPage2Prompt(): string {
   return `
-Create a professional comparison infographic: FluxIO Cloud vs Traditional SCADA Systems.
+Create a professional comparison infographic: FlowNexus Cloud vs Traditional SCADA Systems.
 
 === DESIGN SPECIFICATIONS ===
 - Style: Split-screen comparison design, modern corporate
 - Left Side: Gray tones (#6B7280, #9CA3AF) representing Traditional SCADA (old, complex)
-- Right Side: Blue gradient (#2563EB, #06B6D4) representing FluxIO (modern, simple)
+- Right Side: Blue gradient (#2563EB, #06B6D4) representing FlowNexus (modern, simple)
 - Layout: Portrait orientation, optimized for 1080x1920 pixels presentation slide
 - Font Style: Clean sans-serif, bold headers
 - Overall Aesthetic: Before/After transformation, clear contrast
@@ -197,7 +197,7 @@ Create a professional comparison infographic: FluxIO Cloud vs Traditional SCADA 
 === CONTENT TO INCLUDE ===
 
 **HEADER (Top 10%)**
-- Title: "Why Choose FluxIO Over Traditional SCADA?"
+- Title: "Why Choose FlowNexus Over Traditional SCADA?"
 - Subtitle: "Modernize Your Industrial Monitoring"
 
 **SPLIT COMPARISON VISUAL (10-35%)**
@@ -207,16 +207,16 @@ Left Side (Traditional - Gray/Dated):
 - VPN connection icons, firewalls
 - Label: "Traditional SCADA"
 
-Right Side (FluxIO - Blue/Modern):
+Right Side (FlowNexus - Blue/Modern):
 - Clean cloud icon, mobile devices
 - Simple, elegant dashboard
 - Anywhere access icons
-- Label: "FluxIO Cloud"
+- Label: "FlowNexus Cloud"
 
 **COMPARISON TABLE (35-70%)**
 Side-by-side comparison table with 6 rows:
 
-| Aspect | Traditional SCADA | FluxIO Cloud |
+| Aspect | Traditional SCADA | FlowNexus Cloud |
 |--------|-------------------|--------------|
 | Infrastructure | On-premise servers, VPNs, firewalls | Zero hardware, cloud-hosted |
 | Access | Office network only, VPN required | Any device, anywhere, anytime |
@@ -226,7 +226,7 @@ Side-by-side comparison table with 6 rows:
 | Updates | Manual deployment windows | CI/CD, instant rollouts |
 
 Use X marks (red) for Traditional negatives
-Use checkmarks (green) for FluxIO positives
+Use checkmarks (green) for FlowNexus positives
 
 **FOUR ADVANTAGE PILLARS (70-85%)**
 Four boxes with icons at bottom:
@@ -257,9 +257,9 @@ Highlighted box with key statistics:
 
 **FOOTER CTA (92-100%)**
 - "Modernize Your SCADA Today"
-- Website: fluxio.work
+- Website: flownexus.com
 - Include QR code placeholder area
-- FluxIO logo
+- FlowNexus logo
 
 === VISUAL STYLE GUIDELINES ===
 - Clear visual contrast between old (gray) and new (blue)
@@ -274,7 +274,7 @@ Highlighted box with key statistics:
 === IMPORTANT ===
 - The comparison must be visually obvious at a glance
 - Traditional SCADA should look complex/outdated
-- FluxIO should look simple/modern
+- FlowNexus should look simple/modern
 - All text must be readable
 - Professional enterprise aesthetic
 - Suitable for sales presentations
@@ -283,6 +283,6 @@ Highlighted box with key statistics:
 
 export async function GET() {
   return NextResponse.json({
-    message: 'POST with { page: 1 } for FluxIO overview with protocol support, or { page: 2 } for comparison infographic'
+    message: 'POST with { page: 1 } for FlowNexus overview with protocol support, or { page: 2 } for comparison infographic'
   })
 }

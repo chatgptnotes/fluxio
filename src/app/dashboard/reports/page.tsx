@@ -164,7 +164,7 @@ export default function ReportsPage() {
         // Trigger download
         const link = document.createElement('a')
         link.href = result.data.download_url
-        link.download = `FluxIO-${reportType}-Report-${new Date().toISOString().split('T')[0]}.pdf`
+        link.download = `FlowNexus-${reportType}-Report-${new Date().toISOString().split('T')[0]}.pdf`
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
@@ -182,7 +182,7 @@ export default function ReportsPage() {
   const handleDownload = (report: ReportHistory) => {
     const link = document.createElement('a')
     link.href = report.downloadUrl
-    link.download = `FluxIO-${report.reportType}-Report-${report.dateRange.start.split('T')[0]}.pdf`
+    link.download = `FlowNexus-${report.reportType}-Report-${report.dateRange.start.split('T')[0]}.pdf`
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -535,8 +535,8 @@ export default function ReportsPage() {
       {/* Footer */}
       <footer className="fixed bottom-0 left-0 right-0 border-t border-slate-700 bg-slate-800/90 backdrop-blur-sm px-6 py-2">
         <div className="flex items-center justify-between text-xs text-slate-500">
-          <span>FluxIO SCADA - Report Generation Module</span>
-          <span>Version 1.4 | January 2026 | github.com/chatgptnotes/fluxio</span>
+          <span>FlowNexus SCADA - Report Generation Module</span>
+          <span>Version 1.4 | January 2026 | github.com/chatgptnotes/flownexus</span>
         </div>
       </footer>
     </div>

@@ -16,7 +16,7 @@ const nextConfig = {
     ],
   },
   env: {
-    NEXT_PUBLIC_APP_NAME: 'FluxIO',
+    NEXT_PUBLIC_APP_NAME: 'FlowNexus',
     NEXT_PUBLIC_APP_VERSION: '1.0.0',
   },
   experimental: {

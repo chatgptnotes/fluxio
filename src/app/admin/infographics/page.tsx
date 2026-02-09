@@ -86,7 +86,7 @@ export default function InfographicsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">FluxIO Infographics</h1>
+          <h1 className="text-2xl font-bold text-gray-900">FlowNexus Infographics</h1>
           <p className="text-gray-600 mt-1">
             Generate professional presentation infographics using Gemini AI
           </p>
@@ -128,7 +128,7 @@ export default function InfographicsPage() {
           <div className="p-4 border-b bg-gradient-to-r from-blue-50 to-cyan-50">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">Page 1: FluxIO Overview</h2>
+                <h2 className="text-lg font-semibold text-gray-900">Page 1: FlowNexus Overview</h2>
                 <p className="text-sm text-gray-600">Platform features and protocol support</p>
               </div>
               <span className="material-icons text-3xl text-blue-500">hub</span>
@@ -142,7 +142,7 @@ export default function InfographicsPage() {
               <ul className="space-y-1 text-gray-600">
                 <li className="flex items-center gap-2">
                   <span className="material-icons text-xs text-green-500">check_circle</span>
-                  FluxIO hero branding and tagline
+                  FlowNexus hero branding and tagline
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="material-icons text-xs text-green-500">check_circle</span>
@@ -217,7 +217,7 @@ export default function InfographicsPage() {
                       View
                     </button>
                     <button
-                      onClick={() => downloadImage(state.page1.imageUrl, 'fluxio-overview-infographic.png')}
+                      onClick={() => downloadImage(state.page1.imageUrl, 'flownexus-overview-infographic.png')}
                       className="text-sm text-green-600 hover:text-green-700 flex items-center gap-1"
                     >
                       <span className="material-icons text-sm">download</span>
@@ -231,7 +231,7 @@ export default function InfographicsPage() {
                 >
                   <img
                     src={state.page1.imageUrl}
-                    alt="FluxIO Overview Infographic"
+                    alt="FlowNexus Overview Infographic"
                     className="w-full h-auto"
                   />
                 </div>
@@ -245,7 +245,7 @@ export default function InfographicsPage() {
           <div className="p-4 border-b bg-gradient-to-r from-gray-50 to-blue-50">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">Page 2: FluxIO vs Traditional</h2>
+                <h2 className="text-lg font-semibold text-gray-900">Page 2: FlowNexus vs Traditional</h2>
                 <p className="text-sm text-gray-600">Comparison with traditional SCADA</p>
               </div>
               <span className="material-icons text-3xl text-gray-500">compare</span>
@@ -326,7 +326,7 @@ export default function InfographicsPage() {
                       View
                     </button>
                     <button
-                      onClick={() => downloadImage(state.page2.imageUrl, 'fluxio-comparison-infographic.png')}
+                      onClick={() => downloadImage(state.page2.imageUrl, 'flownexus-comparison-infographic.png')}
                       className="text-sm text-green-600 hover:text-green-700 flex items-center gap-1"
                     >
                       <span className="material-icons text-sm">download</span>
@@ -340,7 +340,7 @@ export default function InfographicsPage() {
                 >
                   <img
                     src={state.page2.imageUrl}
-                    alt="FluxIO vs Traditional SCADA Infographic"
+                    alt="FlowNexus vs Traditional SCADA Infographic"
                     className="w-full h-auto"
                   />
                 </div>
@@ -413,7 +413,7 @@ export default function InfographicsPage() {
       {/* Footer */}
       <footer className="text-center py-4">
         <p className="text-xs text-gray-400">
-          Version 1.4 | February 2, 2026 | fluxio
+          Version 1.4 | February 2, 2026 | flownexus
         </p>
       </footer>
     </div>

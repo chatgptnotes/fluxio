@@ -766,7 +766,7 @@ export default function AlarmsPage() {
             </div>
           </div>
           <div className="text-xs text-gray-400">
-            FluxIO SCADA v3.1 | CSTPS Water Supply | January 22, 2026
+            FlowNexus SCADA v3.1 | CSTPS Water Supply | January 22, 2026
           </div>
         </div>
       </footer>

@@ -110,7 +110,7 @@ export default function DashboardPage() {
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">FluxIO</h1>
+              <h1 className="text-3xl font-bold text-gray-900">FlowNexus</h1>
               <p className="mt-1 text-sm text-gray-500">
                 Industrial Flow Monitoring Platform
               </p>
@@ -306,7 +306,7 @@ export default function DashboardPage() {
       <footer className="mt-16 border-t border-gray-200 bg-white py-4">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="text-center text-xs text-gray-400">
-            FluxIO v1.6 | February 1, 2026 | fluxio
+            FlowNexus v1.6 | February 1, 2026 | flownexus
           </p>
         </div>
       </footer>

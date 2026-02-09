@@ -372,7 +372,7 @@ export default function ProfilePage() {
       <footer className="mt-12 border-t border-gray-200 bg-white py-6">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
           <p className="text-xs text-gray-500">
-            FluxIO v1.5 | January 9, 2025 | fluxio
+            FlowNexus v1.5 | January 9, 2025 | flownexus
           </p>
         </div>
       </footer>

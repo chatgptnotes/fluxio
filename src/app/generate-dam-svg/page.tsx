@@ -662,7 +662,7 @@ export default function Generate3DVisualizationPage() {
 
       {/* Footer */}
       <footer className="fixed bottom-2 left-1/2 -translate-x-1/2 z-20 text-center px-4 py-1 text-[10px] text-slate-500 bg-white/60 rounded-full backdrop-blur-sm border border-slate-200">
-        Version 2.3 | January 21, 2026 | fluxio
+        Version 2.3 | January 21, 2026 | flownexus
       </footer>
     </div>
   )

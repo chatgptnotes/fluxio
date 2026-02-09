@@ -1,4 +1,4 @@
--- Create Companies Table for FluxIO
+-- Create Companies Table for FlowNexus
 -- Run this in Supabase SQL Editor to fix the company dropdown issue
 
 -- Create companies table if not exists
@@ -61,7 +61,7 @@ CREATE POLICY "Allow anon read" ON companies
 
 -- Insert default companies
 INSERT INTO companies (name, code, description) VALUES
-  ('FluxIO', 'FLUXIO', 'Default FluxIO company'),
+  ('FlowNexus', 'FLOWNEXUS', 'Default FlowNexus company'),
   ('CSTPS', 'CSTPS', 'Chandrapur Super Thermal Power Station')
 ON CONFLICT (code) DO UPDATE SET
   name = EXCLUDED.name,

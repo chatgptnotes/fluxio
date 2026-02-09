@@ -1,9 +1,9 @@
-# FluxIO Test Credentials
+# FlowNexus Test Credentials
 
 ## Development Test Account
 
 ### Login Credentials
-- **Email:** test@fluxio.dev
+- **Email:** test@flownexus.dev
 - **Password:** test123456
 - **Name:** Test User
 - **User ID:** 40bce510-9034-4f67-9129-822f7b073d5f
@@ -13,14 +13,14 @@
 #### Option 1: Dev Credentials Auto-Fill (Development Mode Only)
 1. Ensure the app is running in development mode: `pnpm dev`
 2. Navigate to http://localhost:3000/login
-3. Look for the yellow button labeled "Fill Dev Credentials (test@fluxio.dev)"
+3. Look for the yellow button labeled "Fill Dev Credentials (test@flownexus.dev)"
 4. Click the button to auto-fill the email and password fields
 5. Click "Sign in"
 
 #### Option 2: Manual Entry
 1. Navigate to http://localhost:3000/login
 2. Enter the credentials manually:
-   - Email: test@fluxio.dev
+   - Email: test@flownexus.dev
    - Password: test123456
 3. Click "Sign in"
 

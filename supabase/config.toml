@@ -1,6 +1,6 @@
 # Supabase Configuration File
 
-project_id = "fluxio"
+project_id = "flownexus"
 
 [api]
 enabled = true

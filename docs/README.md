@@ -1,4 +1,4 @@
-# FluxIO Documentation
+# FlowNexus Documentation
 
 ## Gateway Configuration
 
@@ -17,15 +17,15 @@ Located in `/scripts/`:
 ```
 Option A: Direct to Supabase (Recommended)
 ==========================================
-Nivus 750 → TBR 246 → Supabase → FluxIO Website (on demand)
+Nivus 750 → TBR 246 → Supabase → FlowNexus Website (on demand)
 
 - Gateway writes directly to database
 - Website does not need to run 24/7
 - Data is always persisted
 
-Option B: Via FluxIO API
+Option B: Via FlowNexus API
 ========================
-Nivus 750 → TBR 246 → FluxIO API → Supabase → FluxIO Website
+Nivus 750 → TBR 246 → FlowNexus API → Supabase → FlowNexus Website
 
 - API validates data and evaluates alerts
 - Requires website to be running
@@ -41,7 +41,7 @@ Key variables for TBR 246 integration:
 | Variable | Description | Used By |
 |----------|-------------|---------|
 | `SUPABASE_SERVICE_ROLE_KEY` | Full database access | Direct Supabase insert |
-| `API_SECRET_KEY` | API authentication | FluxIO API endpoint |
+| `API_SECRET_KEY` | API authentication | FlowNexus API endpoint |
 
 ## Additional Resources
 
@@ -51,4 +51,4 @@ Key variables for TBR 246 integration:
 
 ---
 
-*Version 1.3 | January 24, 2026 | fluxio*
+*Version 1.3 | January 24, 2026 | flownexus*

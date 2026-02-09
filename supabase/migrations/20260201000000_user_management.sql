@@ -104,7 +104,7 @@ CREATE POLICY "Allow all for authenticated users" ON user_sessions
 
 -- Insert default companies
 INSERT INTO companies (name, code, description) VALUES
-  ('FluxIO', 'FLUXIO', 'Default FluxIO company'),
+  ('FlowNexus', 'FLOWNEXUS', 'Default FlowNexus company'),
   ('CSTPS', 'CSTPS', 'Chandrapur Super Thermal Power Station')
 ON CONFLICT (code) DO NOTHING;
 
@@ -129,7 +129,7 @@ INSERT INTO users (
   is_active
 ) VALUES (
   'buzzlightyear_42',
-  'superadmin@fluxio.com',
+  'superadmin@flownexus.com',
   'Super Administrator',
   'admin',
   TRUE,

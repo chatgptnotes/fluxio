@@ -1,10 +1,10 @@
-# FluxIO - IIoT Flow Monitoring Platform
+# FlowNexus - IIoT Flow Monitoring Platform
 
 A modern, real-time monitoring platform for Nivus flow transmitters with Teltonika gateway integration.
 
 ## Overview
 
-FluxIO is a complete Industrial IoT (IIoT) solution that bridges the gap between your Nivus flow transmitters and the cloud. It provides:
+FlowNexus is a complete Industrial IoT (IIoT) solution that bridges the gap between your Nivus flow transmitters and the cloud. It provides:
 
 - **Real-time data ingestion** from Teltonika TRB245 (or similar) gateways
 - **Live dashboard** with WebSocket updates
@@ -34,7 +34,7 @@ FluxIO is a complete Industrial IoT (IIoT) solution that bridges the gap between
                                                      │
                                     ┌────────────────▼─────────────┐
                                     │                              │
-                                    │   FluxIO Platform            │
+                                    │   FlowNexus Platform            │
                                     │   (Next.js + Supabase)       │
                                     │                              │
                                     │  ┌────────────────────────┐  │
@@ -71,7 +71,7 @@ FluxIO is a complete Industrial IoT (IIoT) solution that bridges the gap between
 ### 1. Clone and Install
 
 ```bash
-cd Fluxio
+cd FlowNexus
 pnpm install
 ```
 
@@ -125,14 +125,14 @@ Open http://localhost:3000 to see the dashboard.
 
 ### 5. Configure Your Gateway
 
-FluxIO supports two methods for receiving data from Teltonika gateways:
+FlowNexus supports two methods for receiving data from Teltonika gateways:
 
 #### Option A: Direct to Supabase (Recommended)
 
-The gateway posts directly to Supabase database. FluxIO website does not need to be running 24/7.
+The gateway posts directly to Supabase database. FlowNexus website does not need to be running 24/7.
 
 ```
-Nivus 750 → TBR 246 → Supabase Database → FluxIO Website (on demand)
+Nivus 750 → TBR 246 → Supabase Database → FlowNexus Website (on demand)
 ```
 
 **See:** `docs/TBR246_GATEWAY_CONFIGURATION.md` for complete setup instructions.
@@ -144,12 +144,12 @@ Nivus 750 → TBR 246 → Supabase Database → FluxIO Website (on demand)
    - **URL:** `https://xxxxx.supabase.co/rest/v1/flow_data`
    - **Headers:** `apikey: YOUR_SERVICE_ROLE_KEY`, `Authorization: Bearer YOUR_SERVICE_ROLE_KEY`
 
-#### Option B: Via FluxIO API
+#### Option B: Via FlowNexus API
 
-The gateway posts to FluxIO API which validates data and evaluates alert rules.
+The gateway posts to FlowNexus API which validates data and evaluates alert rules.
 
 ```
-Nivus 750 → TBR 246 → FluxIO API → Supabase Database
+Nivus 750 → TBR 246 → FlowNexus API → Supabase Database
 ```
 
 **TBR 246 Configuration:**
@@ -319,8 +319,8 @@ Follow prompts and add environment variables in Vercel dashboard.
 ### Option 2: Docker
 
 ```bash
-docker build -t fluxio .
-docker run -p 3000:3000 --env-file .env fluxio
+docker build -t flownexus .
+docker run -p 3000:3000 --env-file .env flownexus
 ```
 
 ### Option 3: Traditional Server
@@ -362,7 +362,7 @@ Response:
 ```json
 {
   "status": "ok",
-  "service": "FluxIO Data Ingest API",
+  "service": "FlowNexus Data Ingest API",
   "version": "1.0.0",
   "timestamp": "2024-01-09T..."
 }
@@ -444,4 +444,4 @@ Built with:
 
 ---
 
-*Version 1.3 | January 24, 2026 | fluxio*
+*Version 1.3 | January 24, 2026 | flownexus*

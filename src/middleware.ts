@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const SESSION_COOKIE_NAME = 'fluxio_session'
+const SESSION_COOKIE_NAME = 'flownexus_session'
 
 // Routes that require custom session authentication
 const protectedRoutes = ['/admin']

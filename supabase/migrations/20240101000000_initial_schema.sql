@@ -223,7 +223,7 @@ CREATE POLICY "Allow all for authenticated users" ON audit_logs
 
 -- Insert default admin user (update with your email)
 INSERT INTO users (email, full_name, role)
-VALUES ('admin@fluxio.com', 'Admin User', 'admin')
+VALUES ('admin@flownexus.com', 'Admin User', 'admin')
 ON CONFLICT (email) DO NOTHING;
 
 -- Insert sample devices for testing

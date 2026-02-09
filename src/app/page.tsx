@@ -430,7 +430,7 @@ export default function LandingPage() {
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
             <a
-              href="https://github.com/chatgptnotes/fluxio"
+              href="https://github.com/chatgptnotes/flownexus"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center space-x-2 rounded-xl border-2 border-white bg-white/10 px-8 py-4 text-lg font-bold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/20 hover:shadow-xl hover:-translate-y-1"
@@ -468,7 +468,7 @@ export default function LandingPage() {
                 </li>
                 <li>
                   <a
-                    href="https://github.com/chatgptnotes/fluxio"
+                    href="https://github.com/chatgptnotes/flownexus"
                     className="hover:text-primary-600"
                   >
                     Documentation
@@ -482,7 +482,7 @@ export default function LandingPage() {
               <ul className="space-y-2 text-sm text-gray-600">
                 <li>
                   <a
-                    href="https://github.com/chatgptnotes/fluxio"
+                    href="https://github.com/chatgptnotes/flownexus"
                     className="hover:text-primary-600"
                   >
                     GitHub
@@ -525,7 +525,7 @@ export default function LandingPage() {
 
           <div className="mt-12 border-t border-gray-200 pt-8 text-center">
             <p className="text-xs text-gray-400">
-              FlowNexus v1.4 | January 9, 2025 | fluxio
+              FlowNexus v1.4 | January 9, 2025 | flownexus
             </p>
           </div>
         </div>
