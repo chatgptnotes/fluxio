@@ -1,9 +1,9 @@
 export const seoConfig = {
-  siteName: 'FluxIO',
-  siteUrl: 'https://www.fluxio.work',
-  defaultTitle: 'FluxIO - Industrial IoT Flow Monitoring System',
+  siteName: 'FlowNexus',
+  siteUrl: 'https://www.flownexus.com',
+  defaultTitle: 'FlowNexus - Industrial IoT Flow Monitoring System',
   defaultDescription:
-    'FluxIO is a professional Industrial IoT platform for real-time monitoring of Nivus flow transmitters. Monitor flow rates, totalizers, and receive instant alerts for wastewater and industrial applications.',
+    'FlowNexus is a professional Industrial IoT platform for real-time monitoring of Nivus flow transmitters. Monitor flow rates, totalizers, and receive instant alerts for wastewater and industrial applications.',
   defaultKeywords: [
     'industrial iot',
     'flow monitoring',
@@ -21,9 +21,9 @@ export const seoConfig = {
     'smart water management',
     'industrial telemetry',
   ],
-  ogImage: 'https://www.fluxio.work/og-image.png',
-  twitterHandle: '@fluxio',
-  author: 'FluxIO Team',
+  ogImage: 'https://www.flownexus.com/og-image.png',
+  twitterHandle: '@flownexus',
+  author: 'FlowNexus Team',
   locale: 'en_US',
   type: 'website',
 }
@@ -31,29 +31,29 @@ export const seoConfig = {
 export const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'FluxIO',
-  url: 'https://www.fluxio.work',
-  logo: 'https://www.fluxio.work/logo.png',
+  name: 'FlowNexus',
+  url: 'https://www.flownexus.com',
+  logo: 'https://www.flownexus.com/logo.png',
   description:
-    'FluxIO provides industrial IoT solutions for real-time flow monitoring and management.',
+    'FlowNexus provides industrial IoT solutions for real-time flow monitoring and management.',
   foundingDate: '2025',
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'Customer Service',
-    email: 'support@fluxio.work',
+    email: 'support@flownexus.com',
     availableLanguage: ['English'],
   },
   sameAs: [
-    'https://twitter.com/fluxio',
-    'https://linkedin.com/company/fluxio',
-    'https://github.com/chatgptnotes/fluxio',
+    'https://twitter.com/flownexus',
+    'https://linkedin.com/company/flownexus',
+    'https://github.com/chatgptnotes/flownexus',
   ],
 }
 
 export const softwareSchema = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
-  name: 'FluxIO',
+  name: 'FlowNexus',
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'Web',
   offers: {
@@ -84,26 +84,26 @@ export const faqSchema = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'What is FluxIO?',
+      name: 'What is FlowNexus?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'FluxIO is an Industrial IoT platform designed for real-time monitoring of Nivus flow transmitters. It provides instant alerts, historical data analytics, and remote monitoring capabilities for wastewater and industrial applications.',
+        text: 'FlowNexus is an Industrial IoT platform designed for real-time monitoring of Nivus flow transmitters. It provides instant alerts, historical data analytics, and remote monitoring capabilities for wastewater and industrial applications.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Which flow transmitters does FluxIO support?',
+      name: 'Which flow transmitters does FlowNexus support?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'FluxIO supports Nivus flow transmitters including NivuFlow 550, 600, 650, 750, and 1000 series. It connects via Teltonika TRB245 gateways using Modbus RTU over RS485.',
+        text: 'FlowNexus supports Nivus flow transmitters including NivuFlow 550, 600, 650, 750, and 1000 series. It connects via Teltonika TRB245 gateways using Modbus RTU over RS485.',
       },
     },
     {
       '@type': 'Question',
-      name: 'How does FluxIO send alerts?',
+      name: 'How does FlowNexus send alerts?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'FluxIO sends real-time alerts via email and push notifications when flow rates exceed thresholds, devices go offline, or critical conditions are detected.',
+        text: 'FlowNexus sends real-time alerts via email and push notifications when flow rates exceed thresholds, devices go offline, or critical conditions are detected.',
       },
     },
     {
@@ -111,15 +111,15 @@ export const faqSchema = {
       name: 'Can I monitor multiple flow transmitters?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes, FluxIO supports monitoring unlimited flow transmitters from a single dashboard. Each device can be configured with custom alert rules and monitoring parameters.',
+        text: 'Yes, FlowNexus supports monitoring unlimited flow transmitters from a single dashboard. Each device can be configured with custom alert rules and monitoring parameters.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Is FluxIO cloud-based?',
+      name: 'Is FlowNexus cloud-based?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes, FluxIO is a cloud-based platform accessible from any device with a web browser. Your data is securely stored and backed up in the cloud.',
+        text: 'Yes, FlowNexus is a cloud-based platform accessible from any device with a web browser. Your data is securely stored and backed up in the cloud.',
       },
     },
     {
@@ -147,19 +147,19 @@ export const breadcrumbSchema = (items: { name: string; url: string }[]) => ({
 export const productSchema = {
   '@context': 'https://schema.org',
   '@type': 'Product',
-  name: 'FluxIO Industrial IoT Platform',
+  name: 'FlowNexus Industrial IoT Platform',
   description:
     'Professional Industrial IoT platform for real-time monitoring of Nivus flow transmitters with instant alerts and comprehensive analytics.',
   brand: {
     '@type': 'Brand',
-    name: 'FluxIO',
+    name: 'FlowNexus',
   },
   offers: {
     '@type': 'Offer',
     price: '0',
     priceCurrency: 'USD',
     availability: 'https://schema.org/InStock',
-    url: 'https://www.fluxio.work',
+    url: 'https://www.flownexus.com',
   },
   aggregateRating: {
     '@type': 'AggregateRating',
@@ -177,7 +177,7 @@ export const productSchema = {
       },
       datePublished: '2025-01-05',
       reviewBody:
-        'FluxIO has transformed our wastewater monitoring operations. Real-time alerts and comprehensive analytics make it easy to manage multiple flow transmitters.',
+        'FlowNexus has transformed our wastewater monitoring operations. Real-time alerts and comprehensive analytics make it easy to manage multiple flow transmitters.',
       reviewRating: {
         '@type': 'Rating',
         ratingValue: '5',

@@ -1,0 +1,496 @@
+{
+  "_comment": "TRB246 Configuration for FluxIO - Reference Configuration",
+  "_version": "1.1",
+  "_created": "2026-02-01",
+  "_updated": "2026-02-01",
+  "_description": "Configures 6 Nivus 750 Modbus TCP devices for FluxIO IIoT platform",
+  "_note": "The built-in data_sender service has HTTPS issues. Use fluxio_sender.sh cron script instead.",
+  "_setup_command": "Run: .\\setup-trb246-complete.ps1 -Password 'Lightyear@123'",
+
+  "modbus": {
+    "devices": [
+      {
+        "id": "device_1",
+        "name": "NIVUS_750_001",
+        "ip": "192.168.1.10",
+        "port": 502,
+        "slave_id": 1,
+        "period": 300,
+        "timeout": 5,
+        "enabled": true
+      },
+      {
+        "id": "device_2",
+        "name": "NIVUS_750_002",
+        "ip": "192.168.1.11",
+        "port": 502,
+        "slave_id": 1,
+        "period": 300,
+        "timeout": 5,
+        "enabled": true
+      },
+      {
+        "id": "device_3",
+        "name": "NIVUS_750_003",
+        "ip": "192.168.1.12",
+        "port": 502,
+        "slave_id": 1,
+        "period": 300,
+        "timeout": 5,
+        "enabled": true
+      },
+      {
+        "id": "device_4",
+        "name": "NIVUS_750_004",
+        "ip": "192.168.1.13",
+        "port": 502,
+        "slave_id": 1,
+        "period": 300,
+        "timeout": 5,
+        "enabled": true
+      },
+      {
+        "id": "device_5",
+        "name": "NIVUS_750_005",
+        "ip": "192.168.1.14",
+        "port": 502,
+        "slave_id": 1,
+        "period": 300,
+        "timeout": 5,
+        "enabled": true
+      },
+      {
+        "id": "device_6",
+        "name": "NIVUS_750_006",
+        "ip": "192.168.1.15",
+        "port": 502,
+        "slave_id": 1,
+        "period": 300,
+        "timeout": 5,
+        "enabled": true
+      }
+    ],
+    "requests": [
+      {
+        "_comment": "Device 1 - NIVUS_750_001 Registers",
+        "device_1_flow_rate": {
+          "device": "device_1",
+          "name": "flow_rate",
+          "function": 3,
+          "first_reg": 1,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_1_totalizer": {
+          "device": "device_1",
+          "name": "totalizer",
+          "function": 3,
+          "first_reg": 3,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_1_temperature": {
+          "device": "device_1",
+          "name": "temperature",
+          "function": 3,
+          "first_reg": 5,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_1_water_level": {
+          "device": "device_1",
+          "name": "water_level",
+          "function": 3,
+          "first_reg": 7,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_1_velocity": {
+          "device": "device_1",
+          "name": "velocity",
+          "function": 3,
+          "first_reg": 9,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        }
+      },
+      {
+        "_comment": "Device 2 - NIVUS_750_002 Registers",
+        "device_2_flow_rate": {
+          "device": "device_2",
+          "name": "flow_rate",
+          "function": 3,
+          "first_reg": 1,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_2_totalizer": {
+          "device": "device_2",
+          "name": "totalizer",
+          "function": 3,
+          "first_reg": 3,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_2_temperature": {
+          "device": "device_2",
+          "name": "temperature",
+          "function": 3,
+          "first_reg": 5,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_2_water_level": {
+          "device": "device_2",
+          "name": "water_level",
+          "function": 3,
+          "first_reg": 7,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_2_velocity": {
+          "device": "device_2",
+          "name": "velocity",
+          "function": 3,
+          "first_reg": 9,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        }
+      },
+      {
+        "_comment": "Device 3 - NIVUS_750_003 Registers",
+        "device_3_flow_rate": {
+          "device": "device_3",
+          "name": "flow_rate",
+          "function": 3,
+          "first_reg": 1,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_3_totalizer": {
+          "device": "device_3",
+          "name": "totalizer",
+          "function": 3,
+          "first_reg": 3,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_3_temperature": {
+          "device": "device_3",
+          "name": "temperature",
+          "function": 3,
+          "first_reg": 5,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_3_water_level": {
+          "device": "device_3",
+          "name": "water_level",
+          "function": 3,
+          "first_reg": 7,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_3_velocity": {
+          "device": "device_3",
+          "name": "velocity",
+          "function": 3,
+          "first_reg": 9,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        }
+      },
+      {
+        "_comment": "Device 4 - NIVUS_750_004 Registers",
+        "device_4_flow_rate": {
+          "device": "device_4",
+          "name": "flow_rate",
+          "function": 3,
+          "first_reg": 1,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_4_totalizer": {
+          "device": "device_4",
+          "name": "totalizer",
+          "function": 3,
+          "first_reg": 3,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_4_temperature": {
+          "device": "device_4",
+          "name": "temperature",
+          "function": 3,
+          "first_reg": 5,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_4_water_level": {
+          "device": "device_4",
+          "name": "water_level",
+          "function": 3,
+          "first_reg": 7,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_4_velocity": {
+          "device": "device_4",
+          "name": "velocity",
+          "function": 3,
+          "first_reg": 9,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        }
+      },
+      {
+        "_comment": "Device 5 - NIVUS_750_005 Registers",
+        "device_5_flow_rate": {
+          "device": "device_5",
+          "name": "flow_rate",
+          "function": 3,
+          "first_reg": 1,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_5_totalizer": {
+          "device": "device_5",
+          "name": "totalizer",
+          "function": 3,
+          "first_reg": 3,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_5_temperature": {
+          "device": "device_5",
+          "name": "temperature",
+          "function": 3,
+          "first_reg": 5,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_5_water_level": {
+          "device": "device_5",
+          "name": "water_level",
+          "function": 3,
+          "first_reg": 7,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_5_velocity": {
+          "device": "device_5",
+          "name": "velocity",
+          "function": 3,
+          "first_reg": 9,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        }
+      },
+      {
+        "_comment": "Device 6 - NIVUS_750_006 Registers",
+        "device_6_flow_rate": {
+          "device": "device_6",
+          "name": "flow_rate",
+          "function": 3,
+          "first_reg": 1,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_6_totalizer": {
+          "device": "device_6",
+          "name": "totalizer",
+          "function": 3,
+          "first_reg": 3,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_6_temperature": {
+          "device": "device_6",
+          "name": "temperature",
+          "function": 3,
+          "first_reg": 5,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_6_water_level": {
+          "device": "device_6",
+          "name": "water_level",
+          "function": 3,
+          "first_reg": 7,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        },
+        "device_6_velocity": {
+          "device": "device_6",
+          "name": "velocity",
+          "function": 3,
+          "first_reg": 9,
+          "reg_count": 2,
+          "data_type": "32bit_float_cdab",
+          "enabled": true
+        }
+      }
+    ]
+  },
+
+  "data_sender": {
+    "_note": "TRB246 built-in data_sender may have issues with HTTPS. Use fluxio_sender.sh cron script instead.",
+    "sender1": {
+      "name": "FluxIO_API",
+      "enabled": true,
+      "url": "https://www.fluxio.work/api/ingest",
+      "method": "post",
+      "period": 300,
+      "data_format": "custom",
+      "content_type": "application/json",
+      "tls": true,
+      "headers": [
+        "Content-Type: application/json",
+        "x-api-key: fluxio_secure_key_2025_production"
+      ]
+    },
+    "sender_supabase_backup": {
+      "_note": "Backup configuration for direct Supabase access",
+      "name": "FluxIO_Supabase",
+      "enabled": false,
+      "url": "https://dzmiisuxwruoeklbkyzc.supabase.co/rest/v1/flow_data",
+      "method": "post",
+      "period": 300,
+      "data_format": "custom",
+      "content_type": "application/json",
+      "headers": [
+        "apikey: sb_publishable_ed4UwVUrD7rc2Qlx0Fp8sg_rdm3ctOL",
+        "Authorization: Bearer YOUR_SUPABASE_SERVICE_ROLE_KEY",
+        "Content-Type: application/json",
+        "Prefer: return=minimal"
+      ]
+    }
+  },
+
+  "register_mapping": {
+    "_description": "Nivus 750 Modbus Register Map (1-based addressing for TRB246)",
+    "registers": [
+      {
+        "name": "flow_rate",
+        "address_1based": 1,
+        "address_0based": 40001,
+        "count": 2,
+        "data_type": "Float32",
+        "byte_order": "CDAB",
+        "unit": "m3/h",
+        "description": "Current flow rate"
+      },
+      {
+        "name": "totalizer",
+        "address_1based": 3,
+        "address_0based": 40003,
+        "count": 2,
+        "data_type": "Float32",
+        "byte_order": "CDAB",
+        "unit": "m3",
+        "description": "Total volume accumulated"
+      },
+      {
+        "name": "temperature",
+        "address_1based": 5,
+        "address_0based": 40005,
+        "count": 2,
+        "data_type": "Float32",
+        "byte_order": "CDAB",
+        "unit": "C",
+        "description": "Medium temperature"
+      },
+      {
+        "name": "water_level",
+        "address_1based": 7,
+        "address_0based": 40007,
+        "count": 2,
+        "data_type": "Float32",
+        "byte_order": "CDAB",
+        "unit": "mm",
+        "description": "Water level in pipe"
+      },
+      {
+        "name": "velocity",
+        "address_1based": 9,
+        "address_0based": 40009,
+        "count": 2,
+        "data_type": "Float32",
+        "byte_order": "CDAB",
+        "unit": "m/s",
+        "description": "Flow velocity"
+      }
+    ]
+  },
+
+  "network": {
+    "trb246": {
+      "ip": "192.168.1.2",
+      "subnet": "255.255.255.0",
+      "gateway": "192.168.1.1"
+    },
+    "nivus_devices": {
+      "ip_range_start": "192.168.1.10",
+      "ip_range_end": "192.168.1.15",
+      "modbus_port": 502
+    }
+  },
+
+  "uci_commands": {
+    "_description": "Raw UCI commands for manual configuration",
+    "example_device": [
+      "uci set modbus.device_1=device",
+      "uci set modbus.device_1.name='NIVUS_750_001'",
+      "uci set modbus.device_1.ip='192.168.1.10'",
+      "uci set modbus.device_1.port='502'",
+      "uci set modbus.device_1.slave_id='1'",
+      "uci set modbus.device_1.period='300'",
+      "uci set modbus.device_1.enabled='1'",
+      "uci commit modbus"
+    ],
+    "example_request": [
+      "uci set modbus.req_1_flow=request",
+      "uci set modbus.req_1_flow.device='device_1'",
+      "uci set modbus.req_1_flow.name='flow_rate'",
+      "uci set modbus.req_1_flow.function='3'",
+      "uci set modbus.req_1_flow.first_reg='1'",
+      "uci set modbus.req_1_flow.reg_count='2'",
+      "uci set modbus.req_1_flow.data_type='32bit_float_cdab'",
+      "uci set modbus.req_1_flow.enabled='1'",
+      "uci commit modbus"
+    ],
+    "restart_services": [
+      "/etc/init.d/modbus restart",
+      "/etc/init.d/data_sender restart"
+    ]
+  }
+}

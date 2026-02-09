@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS flow_data (
 CREATE TABLE IF NOT EXISTS alerts (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   device_id TEXT NOT NULL,
-  alert_type TEXT NOT NULL CHECK (alert_type IN ('high_flow', 'low_flow', 'no_data', 'device_offline', 'battery_low', 'custom')),
+  alert_type TEXT NOT NULL CHECK (alert_type IN ('high_flow', 'low_flow', 'no_data', 'device_offline', 'battery_low', 'zero_flow', 'custom')),
   severity TEXT CHECK (severity IN ('info', 'warning', 'critical')) DEFAULT 'warning',
   message TEXT NOT NULL,
   threshold_value FLOAT4,
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS alert_rules (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   device_id TEXT NOT NULL,
   rule_name TEXT NOT NULL,
-  rule_type TEXT NOT NULL CHECK (rule_type IN ('high_flow', 'low_flow', 'no_data', 'device_offline', 'battery_low')),
+  rule_type TEXT NOT NULL CHECK (rule_type IN ('high_flow', 'low_flow', 'no_data', 'device_offline', 'battery_low', 'zero_flow')),
   threshold_value FLOAT4,
   duration_minutes INTEGER DEFAULT 5,
   severity TEXT CHECK (severity IN ('info', 'warning', 'critical')) DEFAULT 'warning',

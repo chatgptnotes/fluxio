@@ -73,7 +73,7 @@ export default function DashboardPage() {
         id: 'cstps',
         name: 'CSTPS',
         code: 'CSTPS',
-        description: 'Central Station Treatment Plant System - Flow Monitoring',
+        description: 'Chandrapur Super Thermal Power Station - Flow Monitoring',
         deviceCount,
         onlineDevices,
         activeAlerts: alerts?.length || 0,

@@ -105,7 +105,7 @@ CREATE POLICY "Allow all for authenticated users" ON user_sessions
 -- Insert default companies
 INSERT INTO companies (name, code, description) VALUES
   ('FluxIO', 'FLUXIO', 'Default FluxIO company'),
-  ('CSTPS', 'CSTPS', 'Central Station Treatment Plant System')
+  ('CSTPS', 'CSTPS', 'Chandrapur Super Thermal Power Station')
 ON CONFLICT (code) DO NOTHING;
 
 -- Insert default permission templates

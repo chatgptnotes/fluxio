@@ -40,7 +40,7 @@ const COMPANIES: Record<string, CompanyData> = {
   cstps: {
     name: 'CSTPS',
     code: 'CSTPS',
-    description: 'Central Station Treatment Plant System',
+    description: 'Chandrapur Super Thermal Power Station',
   },
 }
 

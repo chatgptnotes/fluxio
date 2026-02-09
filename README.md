@@ -125,30 +125,54 @@ Open http://localhost:3000 to see the dashboard.
 
 ### 5. Configure Your Gateway
 
-#### Teltonika TRB245 Configuration
+FluxIO supports two methods for receiving data from Teltonika gateways:
+
+#### Option A: Direct to Supabase (Recommended)
+
+The gateway posts directly to Supabase database. FluxIO website does not need to be running 24/7.
+
+```
+Nivus 750 → TBR 246 → Supabase Database → FluxIO Website (on demand)
+```
+
+**See:** `docs/TBR246_GATEWAY_CONFIGURATION.md` for complete setup instructions.
+
+**Quick Setup:**
+1. Run `scripts/setup-tbr246-device.sql` in Supabase SQL Editor
+2. Test with `scripts/test-supabase-insert.ps1` (Windows) or `scripts/test-supabase-insert.sh` (Linux/Mac)
+3. Configure TBR 246 Data to Server:
+   - **URL:** `https://xxxxx.supabase.co/rest/v1/flow_data`
+   - **Headers:** `apikey: YOUR_SERVICE_ROLE_KEY`, `Authorization: Bearer YOUR_SERVICE_ROLE_KEY`
+
+#### Option B: Via FluxIO API
+
+The gateway posts to FluxIO API which validates data and evaluates alert rules.
+
+```
+Nivus 750 → TBR 246 → FluxIO API → Supabase Database
+```
+
+**TBR 246 Configuration:**
 
 1. Access gateway web interface (usually http://192.168.1.1)
-2. Go to **Services → Modbus**
-3. Configure Modbus Master:
-   - **Modbus Serial:** RS485
-   - **Baud Rate:** 9600 (or match your Nivus)
-   - **Data Bits:** 8
-   - **Parity:** None
-   - **Stop Bits:** 1
+2. Go to **Services > Modbus > Modbus TCP Master** (for Nivus 750 via Modbus TCP)
+3. Configure Modbus TCP Slave:
+   - **IP Address:** Your Nivus 750 IP (e.g., 192.168.1.100)
+   - **Port:** 502
+   - **Unit ID:** 1
 
 4. Add Modbus requests for each register:
-   - **Slave ID:** 1 (or your Nivus device ID)
    - **Function Code:** 03 (Read Holding Registers)
-   - **Register Address:** Check your Nivus manual
+   - **Register Address:** Check your Nivus manual or `docs/TBR246_GATEWAY_CONFIGURATION.md`
    - **Number of Registers:** 2 (for Float32)
 
-5. Go to **Services → Data to Server**
+5. Go to **Services > Data to Server**
 6. Configure HTTP POST:
    - **URL:** `https://your-domain.com/api/ingest` (or ngrok URL for testing)
    - **Method:** POST
    - **Headers:** `x-api-key: YOUR_API_SECRET_KEY`
    - **Body Format:** JSON
-   - **Interval:** 60 seconds (or desired frequency)
+   - **Interval:** 300 seconds (5 minutes)
 
 #### Example JSON Payload Format
 
@@ -235,6 +259,7 @@ VALUES ('NIVUS_01', 'High Flow Alert', 'high_flow', 100.0, 'warning');
 Supported rule types:
 - `high_flow` - Triggers when flow_rate > threshold
 - `low_flow` - Triggers when flow_rate < threshold
+- `zero_flow` - Triggers when flow_rate = 0
 - `device_offline` - Triggers when no data for duration
 - `battery_low` - Triggers when battery < threshold
 
@@ -419,6 +444,4 @@ Built with:
 
 ---
 
-**Version:** 1.0.0
-**Last Updated:** January 9, 2025
-**Repository:** Fluxio
+*Version 1.3 | January 24, 2026 | fluxio*

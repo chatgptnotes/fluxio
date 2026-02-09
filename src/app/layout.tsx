@@ -6,14 +6,14 @@ import Providers from '@/components/providers/Providers'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.fluxio.work'),
+  metadataBase: new URL('https://www.flownexus.com'),
   title: {
     default:
-      'FluxIO - Industrial IoT Flow Monitoring | Real-Time Nivus Transmitter Analytics',
-    template: '%s | FluxIO Industrial IoT Platform',
+      'FlowNexus - Industrial IoT Flow Monitoring | Real-Time Nivus Transmitter Analytics',
+    template: '%s | FlowNexus Industrial IoT Platform',
   },
   description:
-    'FluxIO is the leading Industrial IoT platform for real-time monitoring of Nivus flow transmitters. Get instant alerts, comprehensive analytics, and remote management for wastewater and industrial flow measurement. Compatible with NivuFlow 550, 600, 650, 750, 1000 series. Start monitoring today.',
+    'FlowNexus is the leading Industrial IoT platform for real-time monitoring of Nivus flow transmitters. Get instant alerts, comprehensive analytics, and remote management for wastewater and industrial flow measurement. Compatible with NivuFlow 550, 600, 650, 750, 1000 series. Start monitoring today.',
   keywords: [
     'industrial iot platform',
     'flow monitoring system',
@@ -36,10 +36,10 @@ export const metadata: Metadata = {
     'water treatment monitoring',
     'sewage flow monitoring',
   ],
-  authors: [{ name: 'FluxIO Team', url: 'https://www.fluxio.work' }],
-  creator: 'FluxIO Industrial IoT Solutions',
-  publisher: 'FluxIO',
-  applicationName: 'FluxIO',
+  authors: [{ name: 'FlowNexus Team', url: 'https://www.flownexus.com' }],
+  creator: 'FlowNexus Industrial IoT Solutions',
+  publisher: 'FlowNexus',
+  applicationName: 'FlowNexus',
   referrer: 'origin-when-cross-origin',
   formatDetection: {
     email: false,
@@ -49,30 +49,30 @@ export const metadata: Metadata = {
   category: 'Industrial IoT',
   classification: 'Industrial Monitoring Software',
   openGraph: {
-    title: 'FluxIO - Industrial IoT Flow Monitoring Platform',
+    title: 'FlowNexus - Industrial IoT Flow Monitoring Platform',
     description:
       'Monitor Nivus flow transmitters in real-time with intelligent alerts, comprehensive analytics, and cloud-based dashboard. Perfect for wastewater and industrial applications.',
-    url: 'https://www.fluxio.work',
-    siteName: 'FluxIO',
+    url: 'https://www.flownexus.com',
+    siteName: 'FlowNexus',
     locale: 'en_US',
     type: 'website',
     images: [
       {
-        url: 'https://www.fluxio.work/og-image.png',
+        url: 'https://www.flownexus.com/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'FluxIO Industrial IoT Flow Monitoring Platform',
+        alt: 'FlowNexus Industrial IoT Flow Monitoring Platform',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FluxIO - Industrial IoT Flow Monitoring Platform',
+    title: 'FlowNexus - Industrial IoT Flow Monitoring Platform',
     description:
       'Real-time monitoring of Nivus flow transmitters with instant alerts and comprehensive analytics.',
-    creator: '@fluxio',
-    site: '@fluxio',
-    images: ['https://www.fluxio.work/twitter-image.png'],
+    creator: '@flownexus',
+    site: '@flownexus',
+    images: ['https://www.flownexus.com/twitter-image.png'],
   },
   robots: {
     index: true,
@@ -88,7 +88,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: 'https://www.fluxio.work',
+    canonical: 'https://www.flownexus.com',
   },
   verification: {
     google: 'google-site-verification-code',
@@ -107,28 +107,28 @@ export default function RootLayout({
   const organizationSchema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'FluxIO',
-    url: 'https://www.fluxio.work',
-    logo: 'https://www.fluxio.work/logo.png',
+    name: 'FlowNexus',
+    url: 'https://www.flownexus.com',
+    logo: 'https://www.flownexus.com/logo.png',
     description:
-      'FluxIO provides industrial IoT solutions for real-time flow monitoring and management.',
+      'FlowNexus provides industrial IoT solutions for real-time flow monitoring and management.',
     sameAs: [
-      'https://twitter.com/fluxio',
-      'https://linkedin.com/company/fluxio',
-      'https://github.com/chatgptnotes/fluxio',
+      'https://twitter.com/flownexus',
+      'https://linkedin.com/company/flownexus',
+      'https://github.com/chatgptnotes/flownexus',
     ],
   }
 
   const websiteSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'FluxIO',
-    url: 'https://www.fluxio.work',
+    name: 'FlowNexus',
+    url: 'https://www.flownexus.com',
     potentialAction: {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: 'https://www.fluxio.work/search?q={search_term_string}',
+        urlTemplate: 'https://www.flownexus.com/search?q={search_term_string}',
       },
       'query-input': 'required name=search_term_string',
     },
