@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import ExploreInfographics from '@/components/ExploreInfographics'
 
 interface SimulatedDevice {
   id: string
@@ -326,6 +327,11 @@ export default function ExplorePage() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* AI-Generated Platform Visualizations */}
+        <div className="mt-10 mb-8">
+          <ExploreInfographics />
         </div>
 
         {/* How It Works - Animated Pipeline */}

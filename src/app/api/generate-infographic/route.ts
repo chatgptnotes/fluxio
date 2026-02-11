@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 
 export async function POST(request: NextRequest) {
   try {
-    const { apiKey, page } = await request.json()
+    const { apiKey, page, prompt: customPrompt } = await request.json()
 
     // Use provided apiKey or fall back to environment variable
     const geminiKey = apiKey || process.env.GEMINI_API_KEY
@@ -17,15 +17,17 @@ export async function POST(request: NextRequest) {
 
     const genAI = new GoogleGenerativeAI(geminiKey)
 
-    // Choose prompt based on page number
+    // Choose prompt: custom prompt takes priority, then page-based presets
     let prompt: string
-    if (page === 1) {
+    if (customPrompt && typeof customPrompt === 'string') {
+      prompt = customPrompt
+    } else if (page === 1) {
       prompt = getPage1Prompt()
     } else if (page === 2) {
       prompt = getPage2Prompt()
     } else {
       return NextResponse.json(
-        { error: 'Invalid page number. Use 1 or 2.' },
+        { error: 'Provide a custom prompt or use page 1 or 2.' },
         { status: 400 }
       )
     }
