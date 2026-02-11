@@ -163,10 +163,11 @@ export default function LandingPage() {
 
               <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0 animate-slide-in-bottom">
                 <Link
-                  href="/signup"
+                  href="/explore"
                   className="group inline-flex items-center justify-center space-x-2 rounded-xl bg-white px-8 py-4 text-lg font-semibold text-primary-600 shadow-2xl transition-all duration-300 hover:bg-gray-50 hover:shadow-2xl hover:-translate-y-1 hover:scale-105"
                 >
-                  <span>Get Started Free</span>
+                  <span className="material-icons text-xl mr-1">play_circle</span>
+                  <span>See It Live</span>
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <Link
@@ -487,10 +488,11 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-x-4 sm:space-y-0 animate-slide-in-bottom">
             <Link
-              href="/signup"
+              href="/explore"
               className="group inline-flex items-center justify-center space-x-2 rounded-xl bg-white px-8 py-4 text-lg font-bold text-primary-600 shadow-2xl transition-all duration-300 hover:bg-gray-50 hover:shadow-2xl hover:-translate-y-1 hover:scale-105 animate-glow"
             >
-              <span>Get Started Free</span>
+              <span className="material-icons text-xl mr-1">play_circle</span>
+              <span>See It Live</span>
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
             <a
