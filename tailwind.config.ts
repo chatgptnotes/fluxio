@@ -38,6 +38,25 @@ const config: Config = {
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'scan-line': 'scanLine 4s linear infinite',
+        'travel-right': 'travelRight 2s linear infinite',
+        'shimmer-slide': 'shimmerSlide 2.5s ease-in-out infinite',
+      },
+      keyframes: {
+        scanLine: {
+          '0%': { top: '-2%' },
+          '100%': { top: '102%' },
+        },
+        travelRight: {
+          '0%': { left: '0%', opacity: '0' },
+          '10%': { opacity: '1' },
+          '90%': { opacity: '1' },
+          '100%': { left: '100%', opacity: '0' },
+        },
+        shimmerSlide: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
+        },
       },
       gridTemplateColumns: {
         '14': 'repeat(14, minmax(0, 1fr))',

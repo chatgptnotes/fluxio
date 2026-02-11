@@ -5,7 +5,6 @@ import {
   Activity,
   AlertTriangle,
   ArrowRight,
-  BarChart3,
   CheckCircle2,
   Cloud,
   Database,
@@ -16,6 +15,7 @@ import {
   Zap,
 } from 'lucide-react'
 import Link from 'next/link'
+import FlowMeterSlideshow from '@/components/FlowMeterSlideshow'
 
 export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
@@ -194,46 +194,110 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Hero Image / Dashboard Preview */}
-            <div className="relative">
-              <div className="rounded-2xl bg-white/10 p-8 shadow-2xl backdrop-blur-md">
-                <div className="mb-4 flex items-center space-x-2 text-white">
-                  <BarChart3 className="h-6 w-6" />
-                  <span className="font-semibold">Live Dashboard</span>
+            {/* Flow Measurement Infographics Slideshow + Metrics Panel */}
+            <div className="flex flex-col gap-4">
+              <FlowMeterSlideshow />
+
+              {/* Mini Metrics Panel below slideshow */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="group rounded-xl border border-white/15 bg-white/5 p-4 backdrop-blur-md transition-all hover:bg-white/10">
+                  <div className="mb-1 flex items-center space-x-1.5">
+                    <span className="material-icons text-cyan-300 text-base">sensors</span>
+                    <span className="text-[10px] font-medium uppercase tracking-wider text-white/50">Measurement Types</span>
+                  </div>
+                  <div className="text-2xl font-bold text-white">6+</div>
+                  <div className="text-[11px] text-white/50">Flow technologies</div>
                 </div>
-                <div className="space-y-4">
-                  <div className="rounded-lg bg-white/20 p-4 backdrop-blur-sm">
-                    <div className="mb-2 text-sm text-white/70">
-                      Flow Rate - NIVUS_01
-                    </div>
-                    <div className="text-3xl font-bold text-white">
-                      12.5 m³/h
-                    </div>
+                <div className="group rounded-xl border border-white/15 bg-white/5 p-4 backdrop-blur-md transition-all hover:bg-white/10">
+                  <div className="mb-1 flex items-center space-x-1.5">
+                    <span className="material-icons text-green-300 text-base">precision_manufacturing</span>
+                    <span className="text-[10px] font-medium uppercase tracking-wider text-white/50">Accuracy</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="rounded-lg bg-white/20 p-4 backdrop-blur-sm">
-                      <div className="mb-2 text-sm text-white/70">
-                        Total Volume
-                      </div>
-                      <div className="text-xl font-bold text-white">
-                        4,500 m³
-                      </div>
-                    </div>
-                    <div className="rounded-lg bg-white/20 p-4 backdrop-blur-sm">
-                      <div className="mb-2 text-sm text-white/70">
-                        Active Devices
-                      </div>
-                      <div className="text-xl font-bold text-white">4/4</div>
-                    </div>
+                  <div className="text-2xl font-bold text-white">0.5%</div>
+                  <div className="text-[11px] text-white/50">Reading precision</div>
+                </div>
+                <div className="group rounded-xl border border-white/15 bg-white/5 p-4 backdrop-blur-md transition-all hover:bg-white/10">
+                  <div className="mb-1 flex items-center space-x-1.5">
+                    <span className="material-icons text-amber-300 text-base">hub</span>
+                    <span className="text-[10px] font-medium uppercase tracking-wider text-white/50">Protocols</span>
                   </div>
-                  <div className="flex items-center space-x-2 rounded-lg bg-green-500/20 p-3 backdrop-blur-sm">
-                    <CheckCircle2 className="h-5 w-5 text-green-300" />
-                    <span className="text-sm text-white">
-                      All systems operational
-                    </span>
-                  </div>
+                  <div className="text-2xl font-bold text-white">Modbus</div>
+                  <div className="text-[11px] text-white/50">RTU / TCP / MQTT</div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Animated Stats Banner */}
+      <section className="relative -mt-16 z-10">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 gap-4 rounded-2xl border border-gray-100 bg-white p-8 shadow-2xl md:grid-cols-4">
+            <div className="text-center">
+              <div className="mb-2 inline-flex rounded-xl bg-primary-50 p-3">
+                <span className="material-icons text-primary-600 text-2xl">water_drop</span>
+              </div>
+              <div className="text-3xl font-bold text-gray-900">1M+</div>
+              <div className="text-sm text-gray-500">Data Points Daily</div>
+            </div>
+            <div className="text-center">
+              <div className="mb-2 inline-flex rounded-xl bg-emerald-50 p-3">
+                <span className="material-icons text-emerald-600 text-2xl">devices</span>
+              </div>
+              <div className="text-3xl font-bold text-gray-900">500+</div>
+              <div className="text-sm text-gray-500">Active Devices</div>
+            </div>
+            <div className="text-center">
+              <div className="mb-2 inline-flex rounded-xl bg-blue-50 p-3">
+                <span className="material-icons text-blue-600 text-2xl">public</span>
+              </div>
+              <div className="text-3xl font-bold text-gray-900">12</div>
+              <div className="text-sm text-gray-500">Countries Served</div>
+            </div>
+            <div className="text-center">
+              <div className="mb-2 inline-flex rounded-xl bg-amber-50 p-3">
+                <span className="material-icons text-amber-600 text-2xl">verified</span>
+              </div>
+              <div className="text-3xl font-bold text-gray-900">99.9%</div>
+              <div className="text-sm text-gray-500">Platform Uptime</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Industry Partners / Supported Technologies */}
+      <section className="py-16 bg-gray-50/50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className="mb-8 text-center text-sm font-medium uppercase tracking-widest text-gray-400">Supported Technologies and Standards</p>
+          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
+            <div className="flex items-center space-x-2 text-gray-400 transition-colors hover:text-gray-600">
+              <span className="material-icons text-xl">memory</span>
+              <span className="text-sm font-semibold">Modbus RTU</span>
+            </div>
+            <div className="flex items-center space-x-2 text-gray-400 transition-colors hover:text-gray-600">
+              <span className="material-icons text-xl">cell_tower</span>
+              <span className="text-sm font-semibold">4G / LTE</span>
+            </div>
+            <div className="flex items-center space-x-2 text-gray-400 transition-colors hover:text-gray-600">
+              <span className="material-icons text-xl">lan</span>
+              <span className="text-sm font-semibold">MQTT</span>
+            </div>
+            <div className="flex items-center space-x-2 text-gray-400 transition-colors hover:text-gray-600">
+              <span className="material-icons text-xl">lock</span>
+              <span className="text-sm font-semibold">TLS 1.3</span>
+            </div>
+            <div className="flex items-center space-x-2 text-gray-400 transition-colors hover:text-gray-600">
+              <span className="material-icons text-xl">cloud_sync</span>
+              <span className="text-sm font-semibold">REST API</span>
+            </div>
+            <div className="flex items-center space-x-2 text-gray-400 transition-colors hover:text-gray-600">
+              <span className="material-icons text-xl">database</span>
+              <span className="text-sm font-semibold">PostgreSQL</span>
+            </div>
+            <div className="flex items-center space-x-2 text-gray-400 transition-colors hover:text-gray-600">
+              <span className="material-icons text-xl">bolt</span>
+              <span className="text-sm font-semibold">WebSocket</span>
             </div>
           </div>
         </div>
@@ -319,16 +383,16 @@ export default function LandingPage() {
               },
             ].map((item, index) => (
               <div key={index} className="relative">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary-600 text-xl font-bold text-white">
+                <div className="relative z-10 mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary-600 text-xl font-bold text-white">
                   {item.step}
                 </div>
+                {index < 3 && (
+                  <div className="absolute left-[3rem] top-[1.5rem] hidden h-0.5 bg-primary-200 lg:block" style={{ width: 'calc(100% - 1.5rem)' }}></div>
+                )}
                 <h3 className="mb-2 text-xl font-semibold text-gray-900">
                   {item.title}
                 </h3>
                 <p className="text-gray-600">{item.description}</p>
-                {index < 3 && (
-                  <div className="absolute left-6 top-16 hidden h-full w-0.5 bg-primary-200 lg:block"></div>
-                )}
               </div>
             ))}
           </div>

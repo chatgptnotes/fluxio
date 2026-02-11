@@ -124,6 +124,59 @@
   .animate-glow {
     animation: glow 2s ease-in-out infinite;
   }
+
+  @keyframes scanLine {
+    0% {
+      top: -2%;
+    }
+    100% {
+      top: 102%;
+    }
+  }
+
+  @keyframes travelRight {
+    0% {
+      left: 0%;
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      left: 100%;
+      opacity: 0;
+    }
+  }
+
+  @keyframes shimmerSlide {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .animate-scan-line {
+    animation: scanLine 4s linear infinite;
+  }
+
+  .animate-travel-right {
+    animation: travelRight 2s linear infinite;
+  }
+
+  .animate-shimmer-slide {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.15) 50%,
+      transparent 100%
+    );
+    animation: shimmerSlide 2.5s ease-in-out infinite;
+  }
 }
 
 @layer components {
