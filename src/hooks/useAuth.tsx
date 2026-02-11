@@ -36,9 +36,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setUser(null);
         // Session expired, redirect to login if on protected page
-        if (window.location.pathname !== '/login' &&
-            window.location.pathname !== '/' &&
-            window.location.pathname !== '/register') {
+        const publicPaths = ['/login', '/', '/register', '/signup', '/landing', '/explore', '/unauthorized'];
+        const isPublicPage = publicPaths.some(p => window.location.pathname === p || window.location.pathname.startsWith('/explore'));
+        if (!isPublicPage) {
           router.push('/login?expired=true');
         }
       }
