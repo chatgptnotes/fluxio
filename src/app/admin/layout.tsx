@@ -98,6 +98,13 @@ function AdminNav() {
                 <span className="material-icons text-sm">analytics</span>
                 CSTPS Pipelines
               </Link>
+              <Link
+                href="/cstps-pipeline/readings"
+                className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 py-1"
+              >
+                <span className="material-icons text-sm">sensors</span>
+                CSTPS Readings
+              </Link>
             </div>
           </div>
         </aside>
@@ -225,6 +232,13 @@ function AdminSidebar() {
           >
             <span className="material-icons text-sm">analytics</span>
             CSTPS Pipelines
+          </Link>
+          <Link
+            href="/cstps-pipeline/readings"
+            className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 py-1"
+          >
+            <span className="material-icons text-sm">sensors</span>
+            CSTPS Readings
           </Link>
         </div>
       </div>

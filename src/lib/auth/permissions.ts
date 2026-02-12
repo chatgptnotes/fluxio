@@ -12,6 +12,7 @@ export interface UserPermissions {
   canCreateUsers?: boolean;
   canManagePermissions?: boolean;
   canAccessAllPipelines?: boolean;
+  canAccessReadings?: boolean;
   pipelines?: Record<string, PipelinePermissions>;
 }
 
@@ -91,6 +92,13 @@ export function canCreateUsers(user: SessionUser | null): boolean {
  */
 export function canManagePermissions(user: SessionUser | null): boolean {
   return hasGlobalPermission(user, 'canManagePermissions');
+}
+
+/**
+ * Check if a user can access CSTPS readings page
+ */
+export function canAccessReadings(user: SessionUser | null): boolean {
+  return hasGlobalPermission(user, 'canAccessReadings');
 }
 
 /**

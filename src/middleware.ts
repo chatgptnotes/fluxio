@@ -36,6 +36,17 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
+  // Handle CSTPS readings route - require session
+  if (pathname === '/cstps-pipeline/readings') {
+    if (!sessionToken) {
+      const redirectUrl = new URL('/login', request.url)
+      redirectUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(redirectUrl)
+    }
+    // Permission verification happens client-side via useAuth
+    return response
+  }
+
   // Check if Supabase credentials are configured for other protected routes
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -129,5 +140,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/admin/:path*', '/login', '/signup'],
+  matcher: ['/dashboard/:path*', '/admin/:path*', '/cstps-pipeline/readings', '/login', '/signup'],
 }
