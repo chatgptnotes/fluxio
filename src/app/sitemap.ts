@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://www.flownexus.com'
+  const baseUrl = 'https://www.flownexus.work'
   const currentDate = new Date()
 
   return [

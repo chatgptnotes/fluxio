@@ -23,7 +23,7 @@
 # ==============================================================================
 
 # Configuration - Can be overridden by environment variables
-API_URL="${FLUXIO_API_URL:-https://www.fluxio.work/api/ingest}"
+API_URL="${FLUXIO_API_URL:-https://www.flownexus.work/api/ingest}"
 API_KEY="${FLUXIO_API_KEY:-fluxio_secure_key_2025_production}"
 DEVICE_ID="${FLUXIO_DEVICE_ID:-NIVUS_750_001}"
 

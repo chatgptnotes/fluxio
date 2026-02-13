@@ -16,7 +16,7 @@ TRB246_PASSWORD=""
 DRY_RUN=false
 
 # FluxIO API configuration (preferred over direct Supabase)
-FLUXIO_API_URL="https://www.fluxio.work/api/ingest"
+FLUXIO_API_URL="https://www.flownexus.work/api/ingest"
 FLUXIO_API_KEY="fluxio_secure_key_2025_production"
 
 # Supabase configuration (backup, if direct API fails)

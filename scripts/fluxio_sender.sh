@@ -23,7 +23,7 @@
 # ==============================================================================
 
 # Configuration
-API_URL="https://www.fluxio.work/api/ingest"
+API_URL="https://www.flownexus.work/api/ingest"
 API_KEY="fluxio_secure_key_2025_production"
 
 # Device configurations (ID|IP|Modbus_Device_Name)
@@ -183,9 +183,9 @@ main() {
     log_debug "Starting FluxIO data collection cycle"
 
     # Check network connectivity to API
-    if ! ping -c 1 -W 2 www.fluxio.work > /dev/null 2>&1; then
+    if ! ping -c 1 -W 2 www.flownexus.work > /dev/null 2>&1; then
         # Try DNS resolution
-        if ! nslookup www.fluxio.work > /dev/null 2>&1; then
+        if ! nslookup www.flownexus.work > /dev/null 2>&1; then
             log_error "Cannot resolve API hostname, check network/DNS"
             exit 1
         fi

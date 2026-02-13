@@ -16,7 +16,7 @@
 # Date: 2026-02-01
 # ==============================================================================
 
-API_URL="https://www.fluxio.work/api/ingest"
+API_URL="https://www.flownexus.work/api/ingest"
 API_KEY="fluxio_secure_key_2025_production"
 DB="/tmp/run/modbus_client/modbus.db"
 LOG_TAG="fluxio"

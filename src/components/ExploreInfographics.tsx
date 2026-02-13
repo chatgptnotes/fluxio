@@ -161,7 +161,7 @@ CENTER COMPARISON TABLE (6 rows):
 
 BOTTOM SECTION:
 Big bold text: "100x Faster to Deploy. 10x Lower Cost. Zero Maintenance."
-FlowNexus logo and "flownexus.com"
+FlowNexus logo and "flownexus.work"
 
 Make the contrast dramatic and obvious. Traditional side should feel heavy and outdated. FlowNexus side should feel light, modern, and effortless.
 

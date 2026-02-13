@@ -17,7 +17,7 @@
 # ==============================================================================
 
 # Configuration - Update these values as needed
-API_URL="https://www.fluxio.work/api/ingest"
+API_URL="https://www.flownexus.work/api/ingest"
 API_KEY="fluxio_secure_key_2025_production"
 DEVICE_ID="NIVUS_750_001"
 

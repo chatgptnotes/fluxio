@@ -129,7 +129,7 @@ INSERT INTO users (
   is_active
 ) VALUES (
   'buzzlightyear_42',
-  'superadmin@flownexus.com',
+  'superadmin@flownexus.work',
   'Super Administrator',
   'admin',
   TRUE,

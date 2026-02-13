@@ -90,7 +90,7 @@ uci show modbus | grep -E 'device_[1-6]'
 # STEP 7: Install sender script (copy-paste this entire block)
 cat > /root/fluxio_sender.sh << 'SCRIPT_EOF'
 #!/bin/sh
-API_URL="https://www.flownexus.com/api/ingest"
+API_URL="https://www.flownexus.work/api/ingest"
 API_KEY="flownexus_secure_key_2025_production"
 DB="/tmp/run/modbus_client/modbus.db"
 LOG_TAG="fluxio"

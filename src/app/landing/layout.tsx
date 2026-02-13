@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     title: 'FlowNexus - Real-Time Industrial IoT Flow Monitoring',
     description:
       'Monitor your Nivus flow transmitters in real-time. Intelligent alerts, powerful analytics, enterprise security. Start your free trial today.',
-    url: 'https://www.flownexus.com',
+    url: 'https://www.flownexus.work',
     siteName: 'FlowNexus',
     images: [
       {

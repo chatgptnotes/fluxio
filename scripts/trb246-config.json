@@ -367,7 +367,7 @@
     "sender1": {
       "name": "FlowNexus_API",
       "enabled": true,
-      "url": "https://www.flownexus.com/api/ingest",
+      "url": "https://www.flownexus.work/api/ingest",
       "method": "post",
       "period": 300,
       "data_format": "custom",

@@ -8,7 +8,7 @@ This guide walks through setting up a complete test environment for the FlowNexu
 +-------------------------+        +-----------------+        +------------------+
 |  Laptop                 |        |  TRB246         |        |  FlowNexus Cloud    |
 |  (Modbus TCP Simulator) | <----> |  Gateway        | -----> |  (Vercel)        |
-|  192.168.2.100:502      |  ETH   |  192.168.2.1    |  4G    |  www.flownexus.com |
+|  192.168.2.100:502      |  ETH   |  192.168.2.1    |  4G    |  www.flownexus.work |
 |  Simulates Nivus data   |        |  Reads & Sends  |        |  Stores data     |
 +-------------------------+        +-----------------+        +------------------+
 ```
@@ -217,7 +217,7 @@ Click **Save & Apply** at the bottom of the page.
 |-------|-------|
 | Name | `FlowNexus_Cloud` |
 | Enabled | Yes |
-| URL/Host | `https://www.flownexus.com/api/ingest` |
+| URL/Host | `https://www.flownexus.work/api/ingest` |
 | Protocol | HTTP(S) |
 | Method | POST |
 
@@ -282,7 +282,7 @@ Click **Save & Apply** to activate the configuration.
 
 ### Step 5.3: Check FlowNexus Dashboard
 
-1. Open: https://www.flownexus.com/cstps-pipeline
+1. Open: https://www.flownexus.work/cstps-pipeline
 2. Look for device `TRB246-CSTPS-001`
 3. Verify:
    - Device shows as **Online**
@@ -321,11 +321,11 @@ LIMIT 10;
 
 **Solutions:**
 1. Verify TRB246 has internet (4G) connectivity
-2. Check the URL is exactly: `https://www.flownexus.com/api/ingest`
+2. Check the URL is exactly: `https://www.flownexus.work/api/ingest`
 3. Verify API key header is correct
 4. Check FlowNexus API is responding:
    ```powershell
-   curl -X POST "https://www.flownexus.com/api/ingest" -H "Content-Type: application/json" -H "x-api-key: flownexus_secure_key_2025_production" -d "{\"device_id\":\"test\",\"flow_rate\":100}"
+   curl -X POST "https://www.flownexus.work/api/ingest" -H "Content-Type: application/json" -H "x-api-key: flownexus_secure_key_2025_production" -d "{\"device_id\":\"test\",\"flow_rate\":100}"
    ```
 
 ### Values Not Updating
@@ -385,7 +385,7 @@ After successful testing, to deploy with real Nivus transmitter:
 | Laptop IP | 192.168.2.100 |
 | TRB246 IP | 192.168.2.1 |
 | Modbus Port | 502 |
-| FlowNexus API | https://www.flownexus.com/api/ingest |
+| FlowNexus API | https://www.flownexus.work/api/ingest |
 | API Key | flownexus_secure_key_2025_production |
 | Device ID | TRB246-CSTPS-001 |
 
@@ -395,7 +395,7 @@ After successful testing, to deploy with real Nivus transmitter:
 
 **Test API directly from laptop:**
 ```powershell
-curl -X POST "https://www.flownexus.com/api/ingest" `
+curl -X POST "https://www.flownexus.work/api/ingest" `
   -H "Content-Type: application/json" `
   -H "x-api-key: flownexus_secure_key_2025_production" `
   -d '{"device_id":"TRB246-CSTPS-001","flow_rate":125.5,"totalizer":458920,"temperature":25.3}'

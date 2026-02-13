@@ -65,7 +65,7 @@
 
 ### 7. Deployment (100%)
 - [x] Vercel production deployment
-- [x] Custom domain (www.flownexus.com)
+- [x] Custom domain (www.flownexus.work)
 - [x] Environment variables configured
 - [x] Build pipeline working
 - [x] Git repository setup
@@ -325,7 +325,7 @@
 
 ### Dev Credentials (Already Implemented) ✅
 - **Login/Signup:** Yellow "Fill Dev Credentials" button
-- **Email:** test@flownexus.com
+- **Email:** test@flownexus.work
 - **Password:** test123456
 - **Visibility:** Development mode only
 
@@ -342,7 +342,7 @@ All configured in `.env`:
 - Site URL ✅
 
 ### Deployment
-- **Production:** https://www.flownexus.com
+- **Production:** https://www.flownexus.work
 - **GitHub:** https://github.com/chatgptnotes/flownexus
 - **Platform:** Vercel
 - **Status:** Live ✅

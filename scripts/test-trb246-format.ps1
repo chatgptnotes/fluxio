@@ -21,7 +21,7 @@ $headers = @{
 }
 
 try {
-    $response = Invoke-RestMethod -Uri 'https://www.fluxio.work/api/ingest' -Method POST -Headers $headers -Body $modbusData
+    $response = Invoke-RestMethod -Uri 'https://www.flownexus.work/api/ingest' -Method POST -Headers $headers -Body $modbusData
     Write-Host "API Response:" -ForegroundColor Green
     $response | ConvertTo-Json -Depth 5
 } catch {

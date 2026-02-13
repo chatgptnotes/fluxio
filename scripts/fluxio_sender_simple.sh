@@ -11,7 +11,7 @@
 # ==============================================================================
 
 # Configuration
-API_URL="https://www.fluxio.work/api/ingest"
+API_URL="https://www.flownexus.work/api/ingest"
 API_KEY="fluxio_secure_key_2025_production"
 DEVICE_ID="NIVUS_750_001"
 MODBUS_DEVICE="device_1"

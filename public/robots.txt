@@ -66,4 +66,4 @@ Disallow: /login
 Disallow: /signup
 
 # Sitemaps
-Sitemap: https://www.flownexus.com/sitemap.xml
+Sitemap: https://www.flownexus.work/sitemap.xml

@@ -55,7 +55,7 @@ async function setupUserManagement() {
         .from('users')
         .insert({
           username: 'buzzlightyear_42',
-          email: 'superadmin@flownexus.com',
+          email: 'superadmin@flownexus.work',
           full_name: 'Super Administrator',
           role: 'admin',
           is_superadmin: true,
@@ -80,7 +80,7 @@ async function setupUserManagement() {
               password_hash: passwordHash,
               permissions: { all: true, canCreateUsers: true, canManagePermissions: true, canAccessAllPipelines: true }
             })
-            .eq('email', 'superadmin@flownexus.com');
+            .eq('email', 'superadmin@flownexus.work');
 
           if (updateError) {
             console.error('   Failed to update user:', updateError.message);

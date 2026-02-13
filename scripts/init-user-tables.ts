@@ -115,7 +115,7 @@ INSERT INTO users (
   is_active
 ) VALUES (
   'buzzlightyear_42',
-  'superadmin@flownexus.com',
+  'superadmin@flownexus.work',
   'Super Administrator',
   '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.K5mPjRXrBh4GSe',
   'admin',

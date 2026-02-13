@@ -51,7 +51,7 @@ param(
 )
 
 # FluxIO API configuration
-$FluxioApiUrl = "https://www.fluxio.work/api/ingest"
+$FluxioApiUrl = "https://www.flownexus.work/api/ingest"
 $FluxioApiKey = "fluxio_secure_key_2025_production"
 
 # Polling interval in seconds (5 minutes)
@@ -195,7 +195,7 @@ function Install-Sender {
 # Version: 1.1
 # Sends Modbus data to FluxIO API every minute via cron
 
-API_URL="https://www.fluxio.work/api/ingest"
+API_URL="https://www.flownexus.work/api/ingest"
 API_KEY="fluxio_secure_key_2025_production"
 DEVICE_ID="NIVUS_750_001"
 DB="/tmp/run/modbus_client/modbus.db"
@@ -335,7 +335,7 @@ function Main {
     Write-Host "  plink -ssh -l $User -pw `"$Password`" $HostIP"
     Write-Host ""
     Write-Host "Monitor FluxIO dashboard:" -ForegroundColor Yellow
-    Write-Host "  https://www.fluxio.work"
+    Write-Host "  https://www.flownexus.work"
     Write-Host ""
 
     # Version footer

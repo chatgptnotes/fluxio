@@ -152,14 +152,14 @@ if ($dataSenderLogs) {
 # Check network connectivity to API
 Write-Section "9. NETWORK CONNECTIVITY"
 Write-Host "Testing connection to FluxIO API..."
-$pingTest = Invoke-SSH "ping -c 1 -W 2 www.fluxio.work 2>&1 || echo 'PING_FAILED'"
+$pingTest = Invoke-SSH "ping -c 1 -W 2 www.flownexus.work 2>&1 || echo 'PING_FAILED'"
 if ($pingTest -notmatch "PING_FAILED") {
-    Write-Info "Ping to www.fluxio.work successful"
+    Write-Info "Ping to www.flownexus.work successful"
 } else {
-    Write-Warn "Cannot ping www.fluxio.work (may be blocked, trying curl)"
+    Write-Warn "Cannot ping www.flownexus.work (may be blocked, trying curl)"
 }
 
-$curlTest = Invoke-SSH "curl -k -s -o /dev/null -w '%{http_code}' https://www.fluxio.work/api/ingest -X POST -H 'Content-Type: application/json' -d '{\"test\":true}' 2>&1"
+$curlTest = Invoke-SSH "curl -k -s -o /dev/null -w '%{http_code}' https://www.flownexus.work/api/ingest -X POST -H 'Content-Type: application/json' -d '{\"test\":true}' 2>&1"
 Write-Info "API endpoint returned HTTP: $curlTest"
 
 # Check cron for fluxio_sender

@@ -6,7 +6,7 @@ FlowNexus has been successfully deployed to Vercel.
 
 ### Live URLs
 
-- **Production:** https://flownexus.com
+- **Production:** https://flownexus.work
 - **GitHub Repository:** https://github.com/chatgptnotes/flownexus
 
 ### Local Development
@@ -73,7 +73,7 @@ Or trigger a redeploy from the Vercel dashboard.
 ### Health Check
 
 ```bash
-curl https://flownexus.com/api/ingest
+curl https://flownexus.work/api/ingest
 ```
 
 Expected response:
@@ -89,7 +89,7 @@ Expected response:
 ### Send Test Data
 
 ```bash
-curl -X POST https://flownexus.com/api/ingest \
+curl -X POST https://flownexus.work/api/ingest \
   -H "Content-Type: application/json" \
   -H "x-api-key: YOUR_API_SECRET_KEY" \
   -d '{
@@ -115,7 +115,7 @@ curl -X POST https://flownexus.com/api/ingest \
 
 3. **Configure Data to Server:**
    - Go to Services > Data to Server
-   - **URL:** https://flownexus.com/api/ingest
+   - **URL:** https://flownexus.work/api/ingest
    - **Method:** POST
    - **Headers:** x-api-key: YOUR_API_SECRET_KEY
    - **Body Format:** JSON
@@ -142,19 +142,19 @@ curl -X POST https://flownexus.com/api/ingest \
 ### View Deployment Logs
 
 ```bash
-vercel logs flownexus.com
+vercel logs flownexus.work
 ```
 
 ### View Real-time Logs
 
 ```bash
-vercel logs flownexus.com --follow
+vercel logs flownexus.work --follow
 ```
 
 ### Inspect Deployment
 
 ```bash
-vercel inspect flownexus.com
+vercel inspect flownexus.work
 ```
 
 ---

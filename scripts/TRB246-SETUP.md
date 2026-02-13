@@ -167,7 +167,7 @@ If you don't have actual Nivus 750 transmitters connected, use the Modbus simula
 ## API Endpoint
 
 The sender scripts send data to:
-- **URL:** https://www.flownexus.com/api/ingest
+- **URL:** https://www.flownexus.work/api/ingest
 - **Method:** POST
 - **Authentication:** x-api-key header
 

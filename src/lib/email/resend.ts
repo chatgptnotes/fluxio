@@ -39,7 +39,7 @@ export interface SendEmailResult {
 
 // Send email using Resend API
 export async function sendEmail(options: SendEmailOptions): Promise<SendEmailResult> {
-  const fromAddress = process.env.EMAIL_FROM || 'FlowNexus Reports <reports@flownexus.com>'
+  const fromAddress = process.env.EMAIL_FROM || 'FlowNexus Reports <reports@flownexus.work>'
 
   // Get Resend client (lazy initialization)
   const resend = getResendClient()

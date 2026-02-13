@@ -160,7 +160,7 @@ Four metric badges in a horizontal row:
 
 **FOOTER (92-100%)**
 - FlowNexus logo small
-- Website: flownexus.com
+- Website: flownexus.work
 - "One Platform. Every Protocol."
 
 === VISUAL STYLE GUIDELINES ===
@@ -259,7 +259,7 @@ Highlighted box with key statistics:
 
 **FOOTER CTA (92-100%)**
 - "Modernize Your SCADA Today"
-- Website: flownexus.com
+- Website: flownexus.work
 - Include QR code placeholder area
 - FlowNexus logo
 

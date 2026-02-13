@@ -32,7 +32,7 @@ SKIP_MODBUS=false
 SKIP_SENDER=false
 
 # FluxIO API configuration
-FLUXIO_API_URL="https://www.fluxio.work/api/ingest"
+FLUXIO_API_URL="https://www.flownexus.work/api/ingest"
 FLUXIO_API_KEY="fluxio_secure_key_2025_production"
 
 # Polling interval in seconds (5 minutes)
@@ -343,7 +343,7 @@ main() {
     echo "  sshpass -p '$TRB246_PASSWORD' ssh $TRB246_USER@$TRB246_HOST"
     echo ""
     echo "Monitor FluxIO dashboard:"
-    echo "  https://www.fluxio.work"
+    echo "  https://www.flownexus.work"
     echo ""
 }
 

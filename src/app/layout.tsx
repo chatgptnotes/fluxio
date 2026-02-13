@@ -6,7 +6,7 @@ import Providers from '@/components/providers/Providers'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.flownexus.com'),
+  metadataBase: new URL('https://www.flownexus.work'),
   title: {
     default:
       'FlowNexus - Industrial IoT Flow Monitoring | Real-Time Nivus Transmitter Analytics',
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     'water treatment monitoring',
     'sewage flow monitoring',
   ],
-  authors: [{ name: 'FlowNexus Team', url: 'https://www.flownexus.com' }],
+  authors: [{ name: 'FlowNexus Team', url: 'https://www.flownexus.work' }],
   creator: 'FlowNexus Industrial IoT Solutions',
   publisher: 'FlowNexus',
   applicationName: 'FlowNexus',
@@ -52,13 +52,13 @@ export const metadata: Metadata = {
     title: 'FlowNexus - Industrial IoT Flow Monitoring Platform',
     description:
       'Monitor Nivus flow transmitters in real-time with intelligent alerts, comprehensive analytics, and cloud-based dashboard. Perfect for wastewater and industrial applications.',
-    url: 'https://www.flownexus.com',
+    url: 'https://www.flownexus.work',
     siteName: 'FlowNexus',
     locale: 'en_US',
     type: 'website',
     images: [
       {
-        url: 'https://www.flownexus.com/og-image.png',
+        url: 'https://www.flownexus.work/og-image.png',
         width: 1200,
         height: 630,
         alt: 'FlowNexus Industrial IoT Flow Monitoring Platform',
@@ -72,7 +72,7 @@ export const metadata: Metadata = {
       'Real-time monitoring of Nivus flow transmitters with instant alerts and comprehensive analytics.',
     creator: '@flownexus',
     site: '@flownexus',
-    images: ['https://www.flownexus.com/twitter-image.png'],
+    images: ['https://www.flownexus.work/twitter-image.png'],
   },
   robots: {
     index: true,
@@ -88,7 +88,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: 'https://www.flownexus.com',
+    canonical: 'https://www.flownexus.work',
   },
   verification: {
     google: 'google-site-verification-code',
@@ -108,8 +108,8 @@ export default function RootLayout({
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'FlowNexus',
-    url: 'https://www.flownexus.com',
-    logo: 'https://www.flownexus.com/logo.png',
+    url: 'https://www.flownexus.work',
+    logo: 'https://www.flownexus.work/logo.png',
     description:
       'FlowNexus provides industrial IoT solutions for real-time flow monitoring and management.',
     sameAs: [
@@ -123,12 +123,12 @@ export default function RootLayout({
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'FlowNexus',
-    url: 'https://www.flownexus.com',
+    url: 'https://www.flownexus.work',
     potentialAction: {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: 'https://www.flownexus.com/search?q={search_term_string}',
+        urlTemplate: 'https://www.flownexus.work/search?q={search_term_string}',
       },
       'query-input': 'required name=search_term_string',
     },

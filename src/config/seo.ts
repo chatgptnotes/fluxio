@@ -1,6 +1,6 @@
 export const seoConfig = {
   siteName: 'FlowNexus',
-  siteUrl: 'https://www.flownexus.com',
+  siteUrl: 'https://www.flownexus.work',
   defaultTitle: 'FlowNexus - Industrial IoT Flow Monitoring System',
   defaultDescription:
     'FlowNexus is a professional Industrial IoT platform for real-time monitoring of Nivus flow transmitters. Monitor flow rates, totalizers, and receive instant alerts for wastewater and industrial applications.',
@@ -21,7 +21,7 @@ export const seoConfig = {
     'smart water management',
     'industrial telemetry',
   ],
-  ogImage: 'https://www.flownexus.com/og-image.png',
+  ogImage: 'https://www.flownexus.work/og-image.png',
   twitterHandle: '@flownexus',
   author: 'FlowNexus Team',
   locale: 'en_US',
@@ -32,15 +32,15 @@ export const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'FlowNexus',
-  url: 'https://www.flownexus.com',
-  logo: 'https://www.flownexus.com/logo.png',
+  url: 'https://www.flownexus.work',
+  logo: 'https://www.flownexus.work/logo.png',
   description:
     'FlowNexus provides industrial IoT solutions for real-time flow monitoring and management.',
   foundingDate: '2025',
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'Customer Service',
-    email: 'support@flownexus.com',
+    email: 'support@flownexus.work',
     availableLanguage: ['English'],
   },
   sameAs: [
@@ -159,7 +159,7 @@ export const productSchema = {
     price: '0',
     priceCurrency: 'USD',
     availability: 'https://schema.org/InStock',
-    url: 'https://www.flownexus.com',
+    url: 'https://www.flownexus.work',
   },
   aggregateRating: {
     '@type': 'AggregateRating',

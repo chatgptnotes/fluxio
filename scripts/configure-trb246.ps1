@@ -37,7 +37,7 @@ param(
 )
 
 # FluxIO API configuration (preferred over direct Supabase)
-$FluxioApiUrl = "https://www.fluxio.work/api/ingest"
+$FluxioApiUrl = "https://www.flownexus.work/api/ingest"
 $FluxioApiKey = "fluxio_secure_key_2025_production"
 
 # Supabase configuration (backup, if direct API fails)

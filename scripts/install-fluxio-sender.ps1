@@ -204,7 +204,7 @@ Write-Host "  plink -ssh -l $User -pw `"$Password`" $HostIP"
 Write-Host ""
 Write-Host "Monitor FluxIO dashboard for incoming data:"
 Write-Host "  http://localhost:3000 (local dev)"
-Write-Host "  https://www.fluxio.work (production)"
+Write-Host "  https://www.flownexus.work (production)"
 Write-Host ""
 
 # Version footer
