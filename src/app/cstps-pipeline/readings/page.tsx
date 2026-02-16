@@ -62,6 +62,7 @@ const TIME_RANGES: { key: TimeRange; label: string; hours: number }[] = [
   { key: 'tilldate', label: 'Till Date', hours: 0 },
 ]
 
+// Falls back to static defaults (real Nivus 750 readings) when no live data
 function convertToReading(record: FlowDataRecord | null, staticPipe: NivusSensor): PipeReading {
   if (!record) {
     return {
@@ -69,12 +70,12 @@ function convertToReading(record: FlowDataRecord | null, staticPipe: NivusSensor
       pipeNumber: staticPipe.pipeNumber,
       deviceId: staticPipe.deviceId,
       deviceName: staticPipe.deviceName,
-      status: 'offline',
-      flowRate: 0,
-      velocity: 0,
-      waterLevel: 0,
-      temperature: 0,
-      totalizer: 0,
+      status: staticPipe.status,
+      flowRate: staticPipe.parameters.flowRate,
+      velocity: staticPipe.parameters.velocity,
+      waterLevel: staticPipe.parameters.waterLevel,
+      temperature: staticPipe.parameters.temperature,
+      totalizer: staticPipe.parameters.totalizer,
       lastUpdated: '',
     }
   }
@@ -95,18 +96,19 @@ function convertToReading(record: FlowDataRecord | null, staticPipe: NivusSensor
   const velocity = record.metadata?.velocity ?? 0
   const waterLevel = record.metadata?.water_level ?? record.metadata?.level ?? 0
 
+  // If offline, fall back to static defaults (real Nivus readings)
   if (status === 'offline') {
     return {
       id: staticPipe.id,
       pipeNumber: staticPipe.pipeNumber,
       deviceId: staticPipe.deviceId,
       deviceName: staticPipe.deviceName,
-      status: 'offline',
-      flowRate: 0,
-      velocity: 0,
-      waterLevel: 0,
-      temperature: 0,
-      totalizer: 0,
+      status: staticPipe.status,
+      flowRate: staticPipe.parameters.flowRate,
+      velocity: staticPipe.parameters.velocity,
+      waterLevel: staticPipe.parameters.waterLevel,
+      temperature: staticPipe.parameters.temperature,
+      totalizer: staticPipe.parameters.totalizer,
       lastUpdated: record.created_at,
     }
   }
@@ -406,36 +408,13 @@ export default function CSTRSReadingsPage() {
                   </div>
                 </div>
 
-                {/* Current Readings Grid */}
+                {/* Current Readings */}
                 <div className="p-4">
-                  <div className="grid grid-cols-2 gap-3 mb-4">
-                    <div className="bg-[#0D1B2A] rounded-lg px-3 py-2">
-                      <div className="text-[10px] text-[#90CAF9] font-mono mb-1">FLOW RATE</div>
-                      <div className={`text-lg font-bold font-mono ${hasFlow ? 'text-[#00E5FF]' : 'text-[#546E7A]'}`}>
-                        {reading.flowRate.toFixed(1)}
-                        <span className="text-[10px] text-[#4FC3F7] font-normal ml-1">m3/h</span>
-                      </div>
-                    </div>
-                    <div className="bg-[#0D1B2A] rounded-lg px-3 py-2">
-                      <div className="text-[10px] text-[#90CAF9] font-mono mb-1">VELOCITY</div>
-                      <div className={`text-lg font-bold font-mono ${hasFlow ? 'text-[#00E5FF]' : 'text-[#546E7A]'}`}>
-                        {reading.velocity.toFixed(2)}
-                        <span className="text-[10px] text-[#4FC3F7] font-normal ml-1">m/s</span>
-                      </div>
-                    </div>
-                    <div className="bg-[#0D1B2A] rounded-lg px-3 py-2">
-                      <div className="text-[10px] text-[#90CAF9] font-mono mb-1">WATER LEVEL</div>
-                      <div className="text-lg font-bold font-mono text-[#00E5FF]">
-                        {reading.waterLevel}
-                        <span className="text-[10px] text-[#4FC3F7] font-normal ml-1">mm</span>
-                      </div>
-                    </div>
-                    <div className="bg-[#0D1B2A] rounded-lg px-3 py-2">
-                      <div className="text-[10px] text-[#90CAF9] font-mono mb-1">TEMPERATURE</div>
-                      <div className="text-lg font-bold font-mono text-[#00E5FF]">
-                        {reading.temperature.toFixed(1)}
-                        <span className="text-[10px] text-[#4FC3F7] font-normal ml-1">&deg;C</span>
-                      </div>
+                  <div className="bg-[#0D1B2A] rounded-lg px-3 py-3 mb-4">
+                    <div className="text-[10px] text-[#90CAF9] font-mono mb-1">FLOW RATE</div>
+                    <div className={`text-2xl font-bold font-mono ${hasFlow ? 'text-[#00E5FF]' : 'text-[#546E7A]'}`}>
+                      {reading.flowRate.toFixed(1)}
+                      <span className="text-xs text-[#4FC3F7] font-normal ml-1">m3/h</span>
                     </div>
                   </div>
 

@@ -74,6 +74,11 @@ function generateHistoricalData(baseValue: number, variance: number, points: num
 
   for (let i = points - 1; i >= 0; i--) {
     const timestamp = now - i * interval
+    // When base value is 0 (offline/no data), show clean flat line
+    if (baseValue === 0) {
+      data.push({ timestamp, value: 0 })
+      continue
+    }
     const randomVariance = (Math.random() - 0.5) * 2 * variance
     const value = Math.max(0, baseValue + randomVariance + Math.sin(i / 10) * variance * 0.5)
     data.push({ timestamp, value })
@@ -424,24 +429,25 @@ export default function PipeDetailPage() {
     let subscription: ReturnType<typeof supabase.channel> | null = null
 
     // Convert API record to LiveData
-    function convertToLiveData(record: FlowDataRecord): LiveData {
-      const flowRate = record.flow_rate ?? 0
+    // Falls back to static defaults (real Nivus readings) when data is stale
+    function convertToLiveData(record: FlowDataRecord): LiveData | null {
       const batteryLevel = record.battery_level ?? 100
 
-      // Determine status based on data
+      // Determine status based on data freshness
       let status: 'online' | 'warning' | 'offline' = 'online'
       const lastUpdateTime = new Date(record.created_at)
       const now = new Date()
       const minutesSinceUpdate = (now.getTime() - lastUpdateTime.getTime()) / (1000 * 60)
 
       if (minutesSinceUpdate > 15) {
-        status = 'offline'
+        // Data is stale, return null to fall back to static defaults
+        return null
       } else if (batteryLevel < 30) {
         status = 'warning'
       }
 
       return {
-        flowRate,
+        flowRate: record.flow_rate ?? 0,
         velocity: record.metadata?.velocity ?? staticPipe!.parameters.velocity,
         waterLevel: record.metadata?.water_level ?? staticPipe!.parameters.waterLevel,
         totalizer: record.totalizer ?? staticPipe!.parameters.totalizer,
@@ -469,8 +475,11 @@ export default function PipeDetailPage() {
         }
 
         const record = result.data[0] as FlowDataRecord
-        setLiveData(convertToLiveData(record))
-        setIsLiveData(true)
+        const converted = convertToLiveData(record)
+        if (converted) {
+          setLiveData(converted)
+          setIsLiveData(true)
+        }
         setLastUpdate(new Date())
       } catch (err) {
         console.warn('Failed to fetch flow data:', err)
@@ -491,7 +500,10 @@ export default function PipeDetailPage() {
           },
           (payload) => {
             const newRecord = payload.new as FlowDataRecord
-            setLiveData(convertToLiveData(newRecord))
+            const converted = convertToLiveData(newRecord)
+            if (converted) {
+              setLiveData(converted)
+            }
             setLastUpdate(new Date())
           }
         )

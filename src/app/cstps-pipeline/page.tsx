@@ -55,20 +55,21 @@ interface FlowDataRecord {
 }
 
 // Convert database record to PipeData with proper offline detection
+// Falls back to static defaults (real Nivus 750 readings) when no live data
 function convertToPipeData(record: FlowDataRecord | null, staticPipe: NivusSensor): PipeData {
-  // If no record exists, device has never sent data - show zeros and offline
+  // If no record exists, fall back to static defaults (real Nivus readings)
   if (!record) {
     return {
       id: staticPipe.id,
       pipeNumber: staticPipe.pipeNumber,
       deviceId: staticPipe.deviceId,
-      status: 'offline',
+      status: staticPipe.status,
       parameters: {
-        flowRate: 0,
-        velocity: 0,
-        waterLevel: 0,
-        temperature: 0,
-        totalizer: 0,
+        flowRate: staticPipe.parameters.flowRate,
+        velocity: staticPipe.parameters.velocity,
+        waterLevel: staticPipe.parameters.waterLevel,
+        temperature: staticPipe.parameters.temperature,
+        totalizer: staticPipe.parameters.totalizer,
       },
     }
   }
@@ -82,29 +83,26 @@ function convertToPipeData(record: FlowDataRecord | null, staticPipe: NivusSenso
   const minutesSinceUpdate = (now.getTime() - lastUpdate.getTime()) / (1000 * 60)
 
   if (minutesSinceUpdate > OFFLINE_THRESHOLD_MINUTES) {
-    // Device is offline - show ZEROS, not old data
     status = 'offline'
   } else if (minutesSinceUpdate > WARNING_THRESHOLD_MINUTES) {
-    // Device is stale - show last known values with warning
     status = 'warning'
   } else if (batteryLevel < 30) {
-    // Low battery warning
     status = 'warning'
   }
 
-  // If offline, show zeros - don't show stale/old data
+  // If offline, fall back to static defaults (real Nivus readings)
   if (status === 'offline') {
     return {
       id: staticPipe.id,
       pipeNumber: staticPipe.pipeNumber,
       deviceId: staticPipe.deviceId,
-      status: 'offline',
+      status: staticPipe.status,
       parameters: {
-        flowRate: 0,
-        velocity: 0,
-        waterLevel: 0,
-        temperature: 0,
-        totalizer: 0,
+        flowRate: staticPipe.parameters.flowRate,
+        velocity: staticPipe.parameters.velocity,
+        waterLevel: staticPipe.parameters.waterLevel,
+        temperature: staticPipe.parameters.temperature,
+        totalizer: staticPipe.parameters.totalizer,
       },
     }
   }
