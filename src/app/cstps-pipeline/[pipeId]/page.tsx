@@ -429,8 +429,8 @@ export default function PipeDetailPage() {
     let subscription: ReturnType<typeof supabase.channel> | null = null
 
     // Convert API record to LiveData
-    // Returns null when data is stale to fall back to static defaults
-    function convertToLiveData(record: FlowDataRecord): LiveData | null {
+    function convertToLiveData(record: FlowDataRecord): LiveData {
+      const flowRate = record.flow_rate ?? 0
       const batteryLevel = record.battery_level ?? 100
 
       let status: 'online' | 'warning' | 'offline' = 'online'
@@ -439,13 +439,13 @@ export default function PipeDetailPage() {
       const minutesSinceUpdate = (now.getTime() - lastUpdateTime.getTime()) / (1000 * 60)
 
       if (minutesSinceUpdate > 15) {
-        return null
+        status = 'offline'
       } else if (batteryLevel < 30) {
         status = 'warning'
       }
 
       return {
-        flowRate: record.flow_rate ?? 0,
+        flowRate,
         velocity: record.metadata?.velocity ?? staticPipe!.parameters.velocity,
         waterLevel: record.metadata?.water_level ?? staticPipe!.parameters.waterLevel,
         totalizer: record.totalizer ?? staticPipe!.parameters.totalizer,
@@ -473,11 +473,8 @@ export default function PipeDetailPage() {
         }
 
         const record = result.data[0] as FlowDataRecord
-        const converted = convertToLiveData(record)
-        if (converted) {
-          setLiveData(converted)
-          setIsLiveData(true)
-        }
+        setLiveData(convertToLiveData(record))
+        setIsLiveData(true)
         setLastUpdate(new Date())
       } catch (err) {
         console.warn('Failed to fetch flow data:', err)
@@ -498,10 +495,7 @@ export default function PipeDetailPage() {
           },
           (payload) => {
             const newRecord = payload.new as FlowDataRecord
-            const converted = convertToLiveData(newRecord)
-            if (converted) {
-              setLiveData(converted)
-            }
+            setLiveData(convertToLiveData(newRecord))
             setLastUpdate(new Date())
           }
         )
