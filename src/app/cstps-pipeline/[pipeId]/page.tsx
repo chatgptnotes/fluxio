@@ -429,24 +429,23 @@ export default function PipeDetailPage() {
     let subscription: ReturnType<typeof supabase.channel> | null = null
 
     // Convert API record to LiveData
-    function convertToLiveData(record: FlowDataRecord): LiveData {
-      const flowRate = record.flow_rate ?? 0
+    // Returns null when data is stale to fall back to static defaults
+    function convertToLiveData(record: FlowDataRecord): LiveData | null {
       const batteryLevel = record.battery_level ?? 100
 
-      // Determine status based on data
       let status: 'online' | 'warning' | 'offline' = 'online'
       const lastUpdateTime = new Date(record.created_at)
       const now = new Date()
       const minutesSinceUpdate = (now.getTime() - lastUpdateTime.getTime()) / (1000 * 60)
 
       if (minutesSinceUpdate > 15) {
-        status = 'offline'
+        return null
       } else if (batteryLevel < 30) {
         status = 'warning'
       }
 
       return {
-        flowRate,
+        flowRate: record.flow_rate ?? 0,
         velocity: record.metadata?.velocity ?? staticPipe!.parameters.velocity,
         waterLevel: record.metadata?.water_level ?? staticPipe!.parameters.waterLevel,
         totalizer: record.totalizer ?? staticPipe!.parameters.totalizer,
@@ -474,8 +473,11 @@ export default function PipeDetailPage() {
         }
 
         const record = result.data[0] as FlowDataRecord
-        setLiveData(convertToLiveData(record))
-        setIsLiveData(true)
+        const converted = convertToLiveData(record)
+        if (converted) {
+          setLiveData(converted)
+          setIsLiveData(true)
+        }
         setLastUpdate(new Date())
       } catch (err) {
         console.warn('Failed to fetch flow data:', err)
@@ -496,7 +498,10 @@ export default function PipeDetailPage() {
           },
           (payload) => {
             const newRecord = payload.new as FlowDataRecord
-            setLiveData(convertToLiveData(newRecord))
+            const converted = convertToLiveData(newRecord)
+            if (converted) {
+              setLiveData(converted)
+            }
             setLastUpdate(new Date())
           }
         )

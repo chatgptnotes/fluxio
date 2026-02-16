@@ -55,20 +55,21 @@ interface FlowDataRecord {
 }
 
 // Convert database record to PipeData with proper offline detection
+// Falls back to static defaults (real Nivus 750 readings) when no live data
 function convertToPipeData(record: FlowDataRecord | null, staticPipe: NivusSensor): PipeData {
-  // If no record exists, device has never sent data - show zeros and offline
+  // If no record exists, fall back to static defaults
   if (!record) {
     return {
       id: staticPipe.id,
       pipeNumber: staticPipe.pipeNumber,
       deviceId: staticPipe.deviceId,
-      status: 'offline',
+      status: staticPipe.status,
       parameters: {
-        flowRate: 0,
-        velocity: 0,
-        waterLevel: 0,
-        temperature: 0,
-        totalizer: 0,
+        flowRate: staticPipe.parameters.flowRate,
+        velocity: staticPipe.parameters.velocity,
+        waterLevel: staticPipe.parameters.waterLevel,
+        temperature: staticPipe.parameters.temperature,
+        totalizer: staticPipe.parameters.totalizer,
       },
     }
   }
@@ -89,19 +90,19 @@ function convertToPipeData(record: FlowDataRecord | null, staticPipe: NivusSenso
     status = 'warning'
   }
 
-  // If offline, show zeros - don't show stale/old data
+  // If offline, fall back to static defaults
   if (status === 'offline') {
     return {
       id: staticPipe.id,
       pipeNumber: staticPipe.pipeNumber,
       deviceId: staticPipe.deviceId,
-      status: 'offline',
+      status: staticPipe.status,
       parameters: {
-        flowRate: 0,
-        velocity: 0,
-        waterLevel: 0,
-        temperature: 0,
-        totalizer: 0,
+        flowRate: staticPipe.parameters.flowRate,
+        velocity: staticPipe.parameters.velocity,
+        waterLevel: staticPipe.parameters.waterLevel,
+        temperature: staticPipe.parameters.temperature,
+        totalizer: staticPipe.parameters.totalizer,
       },
     }
   }
