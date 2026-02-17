@@ -110,6 +110,13 @@ export default function AdminDashboard() {
       href: '/admin/companies/new',
       color: 'purple',
     },
+    {
+      title: 'Remote Shell',
+      description: 'Execute commands on TRB246 gateway',
+      icon: 'terminal',
+      href: '/admin/remote',
+      color: 'cyan',
+    },
   ];
 
   const colorClasses: Record<string, { bg: string; icon: string; border: string }> = {

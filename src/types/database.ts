@@ -12,6 +12,9 @@ export interface CompanySettings {
   reportRecipients?: 'operators' | 'admins' | 'all'
 }
 
+// Remote Command Status
+export type RemoteCommandStatus = 'pending' | 'running' | 'completed' | 'failed' | 'timeout' | 'cancelled'
+
 // Email Report Log Status
 export type EmailReportStatus = 'pending' | 'sent' | 'failed'
 
@@ -446,6 +449,53 @@ export interface Database {
           details?: Json
           ip_address?: string | null
           created_at?: string
+        }
+      }
+      remote_commands: {
+        Row: {
+          id: string
+          device_id: string
+          command: string
+          status: RemoteCommandStatus
+          exit_code: number | null
+          output: string | null
+          error_message: string | null
+          submitted_by: string | null
+          timeout_secs: number
+          created_at: string
+          started_at: string | null
+          completed_at: string | null
+          metadata: Json
+        }
+        Insert: {
+          id?: string
+          device_id: string
+          command: string
+          status?: RemoteCommandStatus
+          exit_code?: number | null
+          output?: string | null
+          error_message?: string | null
+          submitted_by?: string | null
+          timeout_secs?: number
+          created_at?: string
+          started_at?: string | null
+          completed_at?: string | null
+          metadata?: Json
+        }
+        Update: {
+          id?: string
+          device_id?: string
+          command?: string
+          status?: RemoteCommandStatus
+          exit_code?: number | null
+          output?: string | null
+          error_message?: string | null
+          submitted_by?: string | null
+          timeout_secs?: number
+          created_at?: string
+          started_at?: string | null
+          completed_at?: string | null
+          metadata?: Json
         }
       }
     }
