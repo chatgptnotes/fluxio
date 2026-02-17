@@ -156,56 +156,56 @@ generate_config() {
         commands+="uci set modbus.device_${i}.enabled='1'\n"
         commands+="uci set modbus.device_${i}.timeout='5'\n"
 
-        # Register requests for each device (1-based addressing for TRB246)
+        # Register requests (FC4 Input Registers, Nivus 750)
 
-        # Flow Rate - Register 1 (2 registers for Float32)
+        # Flow Rate - Register 11 (FC4, 2 registers for Float32)
         commands+="uci set modbus.req_${i}_flow=request\n"
         commands+="uci set modbus.req_${i}_flow.device='device_${i}'\n"
         commands+="uci set modbus.req_${i}_flow.name='flow_rate'\n"
-        commands+="uci set modbus.req_${i}_flow.function='3'\n"
-        commands+="uci set modbus.req_${i}_flow.first_reg='1'\n"
+        commands+="uci set modbus.req_${i}_flow.function='4'\n"
+        commands+="uci set modbus.req_${i}_flow.first_reg='11'\n"
         commands+="uci set modbus.req_${i}_flow.reg_count='2'\n"
-        commands+="uci set modbus.req_${i}_flow.data_type='32bit_float_cdab'\n"
+        commands+="uci set modbus.req_${i}_flow.data_type='32bit_float3412'\n"
         commands+="uci set modbus.req_${i}_flow.enabled='1'\n"
 
-        # Totalizer - Register 3
+        # Totalizer - Register 5201 (FC4)
         commands+="uci set modbus.req_${i}_total=request\n"
         commands+="uci set modbus.req_${i}_total.device='device_${i}'\n"
         commands+="uci set modbus.req_${i}_total.name='totalizer'\n"
-        commands+="uci set modbus.req_${i}_total.function='3'\n"
-        commands+="uci set modbus.req_${i}_total.first_reg='3'\n"
+        commands+="uci set modbus.req_${i}_total.function='4'\n"
+        commands+="uci set modbus.req_${i}_total.first_reg='5201'\n"
         commands+="uci set modbus.req_${i}_total.reg_count='2'\n"
-        commands+="uci set modbus.req_${i}_total.data_type='32bit_float_cdab'\n"
+        commands+="uci set modbus.req_${i}_total.data_type='32bit_float3412'\n"
         commands+="uci set modbus.req_${i}_total.enabled='1'\n"
 
-        # Temperature - Register 5
+        # Temperature - Register 17 (FC4)
         commands+="uci set modbus.req_${i}_temp=request\n"
         commands+="uci set modbus.req_${i}_temp.device='device_${i}'\n"
         commands+="uci set modbus.req_${i}_temp.name='temperature'\n"
-        commands+="uci set modbus.req_${i}_temp.function='3'\n"
-        commands+="uci set modbus.req_${i}_temp.first_reg='5'\n"
+        commands+="uci set modbus.req_${i}_temp.function='4'\n"
+        commands+="uci set modbus.req_${i}_temp.first_reg='17'\n"
         commands+="uci set modbus.req_${i}_temp.reg_count='2'\n"
-        commands+="uci set modbus.req_${i}_temp.data_type='32bit_float_cdab'\n"
+        commands+="uci set modbus.req_${i}_temp.data_type='32bit_float3412'\n"
         commands+="uci set modbus.req_${i}_temp.enabled='1'\n"
 
-        # Water Level - Register 7
+        # Water Level - Register 13 (FC4)
         commands+="uci set modbus.req_${i}_level=request\n"
         commands+="uci set modbus.req_${i}_level.device='device_${i}'\n"
         commands+="uci set modbus.req_${i}_level.name='water_level'\n"
-        commands+="uci set modbus.req_${i}_level.function='3'\n"
-        commands+="uci set modbus.req_${i}_level.first_reg='7'\n"
+        commands+="uci set modbus.req_${i}_level.function='4'\n"
+        commands+="uci set modbus.req_${i}_level.first_reg='13'\n"
         commands+="uci set modbus.req_${i}_level.reg_count='2'\n"
-        commands+="uci set modbus.req_${i}_level.data_type='32bit_float_cdab'\n"
+        commands+="uci set modbus.req_${i}_level.data_type='32bit_float3412'\n"
         commands+="uci set modbus.req_${i}_level.enabled='1'\n"
 
-        # Velocity - Register 9
+        # Velocity - Register 15 (FC4)
         commands+="uci set modbus.req_${i}_vel=request\n"
         commands+="uci set modbus.req_${i}_vel.device='device_${i}'\n"
         commands+="uci set modbus.req_${i}_vel.name='velocity'\n"
-        commands+="uci set modbus.req_${i}_vel.function='3'\n"
-        commands+="uci set modbus.req_${i}_vel.first_reg='9'\n"
+        commands+="uci set modbus.req_${i}_vel.function='4'\n"
+        commands+="uci set modbus.req_${i}_vel.first_reg='15'\n"
         commands+="uci set modbus.req_${i}_vel.reg_count='2'\n"
-        commands+="uci set modbus.req_${i}_vel.data_type='32bit_float_cdab'\n"
+        commands+="uci set modbus.req_${i}_vel.data_type='32bit_float3412'\n"
         commands+="uci set modbus.req_${i}_vel.enabled='1'\n"
     done
 

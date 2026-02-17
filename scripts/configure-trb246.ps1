@@ -130,56 +130,56 @@ function Generate-ModbusConfig {
         $commands += "uci set modbus.device_$i.enabled='1'"
         $commands += "uci set modbus.device_$i.timeout='5'"
 
-        # Register requests (1-based addressing for TRB246)
+        # Register requests (FC4 Input Registers, Nivus 750)
 
-        # Flow Rate - Register 1
+        # Flow Rate - Register 11 (FC4)
         $commands += "uci set modbus.req_${i}_flow=request"
         $commands += "uci set modbus.req_${i}_flow.device='device_$i'"
         $commands += "uci set modbus.req_${i}_flow.name='flow_rate'"
-        $commands += "uci set modbus.req_${i}_flow.function='3'"
-        $commands += "uci set modbus.req_${i}_flow.first_reg='1'"
+        $commands += "uci set modbus.req_${i}_flow.function='4'"
+        $commands += "uci set modbus.req_${i}_flow.first_reg='11'"
         $commands += "uci set modbus.req_${i}_flow.reg_count='2'"
-        $commands += "uci set modbus.req_${i}_flow.data_type='32bit_float_cdab'"
+        $commands += "uci set modbus.req_${i}_flow.data_type='32bit_float3412'"
         $commands += "uci set modbus.req_${i}_flow.enabled='1'"
 
-        # Totalizer - Register 3
+        # Totalizer - Register 5201 (FC4)
         $commands += "uci set modbus.req_${i}_total=request"
         $commands += "uci set modbus.req_${i}_total.device='device_$i'"
         $commands += "uci set modbus.req_${i}_total.name='totalizer'"
-        $commands += "uci set modbus.req_${i}_total.function='3'"
-        $commands += "uci set modbus.req_${i}_total.first_reg='3'"
+        $commands += "uci set modbus.req_${i}_total.function='4'"
+        $commands += "uci set modbus.req_${i}_total.first_reg='5201'"
         $commands += "uci set modbus.req_${i}_total.reg_count='2'"
-        $commands += "uci set modbus.req_${i}_total.data_type='32bit_float_cdab'"
+        $commands += "uci set modbus.req_${i}_total.data_type='32bit_float3412'"
         $commands += "uci set modbus.req_${i}_total.enabled='1'"
 
-        # Temperature - Register 5
+        # Temperature - Register 17 (FC4)
         $commands += "uci set modbus.req_${i}_temp=request"
         $commands += "uci set modbus.req_${i}_temp.device='device_$i'"
         $commands += "uci set modbus.req_${i}_temp.name='temperature'"
-        $commands += "uci set modbus.req_${i}_temp.function='3'"
-        $commands += "uci set modbus.req_${i}_temp.first_reg='5'"
+        $commands += "uci set modbus.req_${i}_temp.function='4'"
+        $commands += "uci set modbus.req_${i}_temp.first_reg='17'"
         $commands += "uci set modbus.req_${i}_temp.reg_count='2'"
-        $commands += "uci set modbus.req_${i}_temp.data_type='32bit_float_cdab'"
+        $commands += "uci set modbus.req_${i}_temp.data_type='32bit_float3412'"
         $commands += "uci set modbus.req_${i}_temp.enabled='1'"
 
-        # Water Level - Register 7
+        # Water Level - Register 13 (FC4)
         $commands += "uci set modbus.req_${i}_level=request"
         $commands += "uci set modbus.req_${i}_level.device='device_$i'"
         $commands += "uci set modbus.req_${i}_level.name='water_level'"
-        $commands += "uci set modbus.req_${i}_level.function='3'"
-        $commands += "uci set modbus.req_${i}_level.first_reg='7'"
+        $commands += "uci set modbus.req_${i}_level.function='4'"
+        $commands += "uci set modbus.req_${i}_level.first_reg='13'"
         $commands += "uci set modbus.req_${i}_level.reg_count='2'"
-        $commands += "uci set modbus.req_${i}_level.data_type='32bit_float_cdab'"
+        $commands += "uci set modbus.req_${i}_level.data_type='32bit_float3412'"
         $commands += "uci set modbus.req_${i}_level.enabled='1'"
 
-        # Velocity - Register 9
+        # Velocity - Register 15 (FC4)
         $commands += "uci set modbus.req_${i}_vel=request"
         $commands += "uci set modbus.req_${i}_vel.device='device_$i'"
         $commands += "uci set modbus.req_${i}_vel.name='velocity'"
-        $commands += "uci set modbus.req_${i}_vel.function='3'"
-        $commands += "uci set modbus.req_${i}_vel.first_reg='9'"
+        $commands += "uci set modbus.req_${i}_vel.function='4'"
+        $commands += "uci set modbus.req_${i}_vel.first_reg='15'"
         $commands += "uci set modbus.req_${i}_vel.reg_count='2'"
-        $commands += "uci set modbus.req_${i}_vel.data_type='32bit_float_cdab'"
+        $commands += "uci set modbus.req_${i}_vel.data_type='32bit_float3412'"
         $commands += "uci set modbus.req_${i}_vel.enabled='1'"
     }
 

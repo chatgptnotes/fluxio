@@ -76,46 +76,46 @@
         "device_1_flow_rate": {
           "device": "device_1",
           "name": "flow_rate",
-          "function": 3,
-          "first_reg": 1,
+          "function": 4,
+          "first_reg": 11,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_1_totalizer": {
           "device": "device_1",
           "name": "totalizer",
-          "function": 3,
-          "first_reg": 3,
+          "function": 4,
+          "first_reg": 5201,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_1_temperature": {
           "device": "device_1",
           "name": "temperature",
-          "function": 3,
-          "first_reg": 5,
+          "function": 4,
+          "first_reg": 17,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_1_water_level": {
           "device": "device_1",
-          "name": "water_level",
-          "function": 3,
-          "first_reg": 7,
+          "name": "level",
+          "function": 4,
+          "first_reg": 13,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_1_velocity": {
           "device": "device_1",
           "name": "velocity",
-          "function": 3,
-          "first_reg": 9,
+          "function": 4,
+          "first_reg": 15,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         }
       },
@@ -124,46 +124,46 @@
         "device_2_flow_rate": {
           "device": "device_2",
           "name": "flow_rate",
-          "function": 3,
-          "first_reg": 1,
+          "function": 4,
+          "first_reg": 11,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_2_totalizer": {
           "device": "device_2",
           "name": "totalizer",
-          "function": 3,
-          "first_reg": 3,
+          "function": 4,
+          "first_reg": 5201,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_2_temperature": {
           "device": "device_2",
           "name": "temperature",
-          "function": 3,
-          "first_reg": 5,
+          "function": 4,
+          "first_reg": 17,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_2_water_level": {
           "device": "device_2",
-          "name": "water_level",
-          "function": 3,
-          "first_reg": 7,
+          "name": "level",
+          "function": 4,
+          "first_reg": 13,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_2_velocity": {
           "device": "device_2",
           "name": "velocity",
-          "function": 3,
-          "first_reg": 9,
+          "function": 4,
+          "first_reg": 15,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         }
       },
@@ -172,46 +172,46 @@
         "device_3_flow_rate": {
           "device": "device_3",
           "name": "flow_rate",
-          "function": 3,
-          "first_reg": 1,
+          "function": 4,
+          "first_reg": 11,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_3_totalizer": {
           "device": "device_3",
           "name": "totalizer",
-          "function": 3,
-          "first_reg": 3,
+          "function": 4,
+          "first_reg": 5201,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_3_temperature": {
           "device": "device_3",
           "name": "temperature",
-          "function": 3,
-          "first_reg": 5,
+          "function": 4,
+          "first_reg": 17,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_3_water_level": {
           "device": "device_3",
-          "name": "water_level",
-          "function": 3,
-          "first_reg": 7,
+          "name": "level",
+          "function": 4,
+          "first_reg": 13,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_3_velocity": {
           "device": "device_3",
           "name": "velocity",
-          "function": 3,
-          "first_reg": 9,
+          "function": 4,
+          "first_reg": 15,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         }
       },
@@ -220,46 +220,46 @@
         "device_4_flow_rate": {
           "device": "device_4",
           "name": "flow_rate",
-          "function": 3,
-          "first_reg": 1,
+          "function": 4,
+          "first_reg": 11,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_4_totalizer": {
           "device": "device_4",
           "name": "totalizer",
-          "function": 3,
-          "first_reg": 3,
+          "function": 4,
+          "first_reg": 5201,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_4_temperature": {
           "device": "device_4",
           "name": "temperature",
-          "function": 3,
-          "first_reg": 5,
+          "function": 4,
+          "first_reg": 17,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_4_water_level": {
           "device": "device_4",
-          "name": "water_level",
-          "function": 3,
-          "first_reg": 7,
+          "name": "level",
+          "function": 4,
+          "first_reg": 13,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_4_velocity": {
           "device": "device_4",
           "name": "velocity",
-          "function": 3,
-          "first_reg": 9,
+          "function": 4,
+          "first_reg": 15,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         }
       },
@@ -268,46 +268,46 @@
         "device_5_flow_rate": {
           "device": "device_5",
           "name": "flow_rate",
-          "function": 3,
-          "first_reg": 1,
+          "function": 4,
+          "first_reg": 11,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_5_totalizer": {
           "device": "device_5",
           "name": "totalizer",
-          "function": 3,
-          "first_reg": 3,
+          "function": 4,
+          "first_reg": 5201,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_5_temperature": {
           "device": "device_5",
           "name": "temperature",
-          "function": 3,
-          "first_reg": 5,
+          "function": 4,
+          "first_reg": 17,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_5_water_level": {
           "device": "device_5",
-          "name": "water_level",
-          "function": 3,
-          "first_reg": 7,
+          "name": "level",
+          "function": 4,
+          "first_reg": 13,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_5_velocity": {
           "device": "device_5",
           "name": "velocity",
-          "function": 3,
-          "first_reg": 9,
+          "function": 4,
+          "first_reg": 15,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         }
       },
@@ -316,46 +316,46 @@
         "device_6_flow_rate": {
           "device": "device_6",
           "name": "flow_rate",
-          "function": 3,
-          "first_reg": 1,
+          "function": 4,
+          "first_reg": 11,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_6_totalizer": {
           "device": "device_6",
           "name": "totalizer",
-          "function": 3,
-          "first_reg": 3,
+          "function": 4,
+          "first_reg": 5201,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_6_temperature": {
           "device": "device_6",
           "name": "temperature",
-          "function": 3,
-          "first_reg": 5,
+          "function": 4,
+          "first_reg": 17,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_6_water_level": {
           "device": "device_6",
-          "name": "water_level",
-          "function": 3,
-          "first_reg": 7,
+          "name": "level",
+          "function": 4,
+          "first_reg": 13,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         },
         "device_6_velocity": {
           "device": "device_6",
           "name": "velocity",
-          "function": 3,
-          "first_reg": 9,
+          "function": 4,
+          "first_reg": 15,
           "reg_count": 2,
-          "data_type": "32bit_float_cdab",
+          "data_type": "32bit_float3412",
           "enabled": true
         }
       }
@@ -397,57 +397,74 @@
   },
 
   "register_mapping": {
-    "_description": "Nivus 750 Modbus Register Map (1-based addressing for TRB246)",
+    "_description": "Nivus 750 Modbus Register Map - IEEE754 Float Input Registers (FC4, Measurement Place 1)",
+    "_source": "Nivus PDF NF-NP_TB_Modbus_TCP-RTU_Rev04_en.pdf (Nov 2024)",
+    "_byte_order": "CDAB (least significant register first) = 32bit_float3412 on TRB246",
     "registers": [
       {
         "name": "flow_rate",
-        "address_1based": 1,
-        "address_0based": 40001,
+        "address_1based": 11,
+        "modicon_tag": 30011,
+        "protocol_addr_0based": 10,
+        "function_code": 4,
         "count": 2,
-        "data_type": "Float32",
+        "data_type": "IEEE754_Float32",
         "byte_order": "CDAB",
-        "unit": "m3/h",
-        "description": "Current flow rate"
+        "trb246_data_type": "32bit_float3412",
+        "unit": "m3/s",
+        "description": "Flow rate (Measurement Place 1)"
       },
       {
-        "name": "totalizer",
-        "address_1based": 3,
-        "address_0based": 40003,
+        "name": "level",
+        "address_1based": 13,
+        "modicon_tag": 30013,
+        "protocol_addr_0based": 12,
+        "function_code": 4,
         "count": 2,
-        "data_type": "Float32",
+        "data_type": "IEEE754_Float32",
         "byte_order": "CDAB",
-        "unit": "m3",
-        "description": "Total volume accumulated"
-      },
-      {
-        "name": "temperature",
-        "address_1based": 5,
-        "address_0based": 40005,
-        "count": 2,
-        "data_type": "Float32",
-        "byte_order": "CDAB",
-        "unit": "C",
-        "description": "Medium temperature"
-      },
-      {
-        "name": "water_level",
-        "address_1based": 7,
-        "address_0based": 40007,
-        "count": 2,
-        "data_type": "Float32",
-        "byte_order": "CDAB",
-        "unit": "mm",
-        "description": "Water level in pipe"
+        "trb246_data_type": "32bit_float3412",
+        "unit": "m",
+        "description": "Water level (Measurement Place 1)"
       },
       {
         "name": "velocity",
-        "address_1based": 9,
-        "address_0based": 40009,
+        "address_1based": 15,
+        "modicon_tag": 30015,
+        "protocol_addr_0based": 14,
+        "function_code": 4,
         "count": 2,
-        "data_type": "Float32",
+        "data_type": "IEEE754_Float32",
         "byte_order": "CDAB",
+        "trb246_data_type": "32bit_float3412",
         "unit": "m/s",
-        "description": "Flow velocity"
+        "description": "Flow velocity (Measurement Place 1)"
+      },
+      {
+        "name": "temperature",
+        "address_1based": 17,
+        "modicon_tag": 30017,
+        "protocol_addr_0based": 16,
+        "function_code": 4,
+        "count": 2,
+        "data_type": "IEEE754_Float32",
+        "byte_order": "CDAB",
+        "trb246_data_type": "32bit_float3412",
+        "unit": "C",
+        "description": "Water temperature (Measurement Place 1)"
+      },
+      {
+        "name": "totalizer",
+        "address_1based": 5201,
+        "modicon_tag": 35201,
+        "protocol_addr_0based": 5200,
+        "function_code": 4,
+        "count": 2,
+        "data_type": "IEEE754_Float32",
+        "byte_order": "CDAB",
+        "trb246_data_type": "32bit_float3412",
+        "unit": "m3",
+        "description": "Totalizer volume (Measurement Place 1)"
       }
     ]
   },
@@ -477,19 +494,30 @@
       "uci set modbus.device_1.enabled='1'",
       "uci commit modbus"
     ],
-    "example_request": [
-      "uci set modbus.req_1_flow=request",
-      "uci set modbus.req_1_flow.device='device_1'",
-      "uci set modbus.req_1_flow.name='flow_rate'",
-      "uci set modbus.req_1_flow.function='3'",
-      "uci set modbus.req_1_flow.first_reg='1'",
-      "uci set modbus.req_1_flow.reg_count='2'",
-      "uci set modbus.req_1_flow.data_type='32bit_float_cdab'",
-      "uci set modbus.req_1_flow.enabled='1'",
-      "uci commit modbus"
+    "example_request_flow": [
+      "uci set modbus_client.req_1_flow=request",
+      "uci set modbus_client.req_1_flow.device='device_1'",
+      "uci set modbus_client.req_1_flow.name='flow_rate'",
+      "uci set modbus_client.req_1_flow.function='4'",
+      "uci set modbus_client.req_1_flow.first_reg='11'",
+      "uci set modbus_client.req_1_flow.reg_count='2'",
+      "uci set modbus_client.req_1_flow.data_type='32bit_float3412'",
+      "uci set modbus_client.req_1_flow.enabled='1'",
+      "uci commit modbus_client"
+    ],
+    "example_request_totalizer": [
+      "uci set modbus_client.req_1_total=request",
+      "uci set modbus_client.req_1_total.device='device_1'",
+      "uci set modbus_client.req_1_total.name='totalizer'",
+      "uci set modbus_client.req_1_total.function='4'",
+      "uci set modbus_client.req_1_total.first_reg='5201'",
+      "uci set modbus_client.req_1_total.reg_count='2'",
+      "uci set modbus_client.req_1_total.data_type='32bit_float3412'",
+      "uci set modbus_client.req_1_total.enabled='1'",
+      "uci commit modbus_client"
     ],
     "restart_services": [
-      "/etc/init.d/modbus restart",
+      "/etc/init.d/modbus_client restart",
       "/etc/init.d/data_sender restart"
     ]
   }

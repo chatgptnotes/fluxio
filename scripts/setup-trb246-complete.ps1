@@ -126,55 +126,55 @@ function Configure-Modbus {
         Invoke-SSH "uci set modbus.device_$i.enabled='1'" | Out-Null
         Invoke-SSH "uci set modbus.device_$i.timeout='5'" | Out-Null
 
-        # Register requests (1-based addressing for TRB246)
-        # Flow Rate - Register 1
+        # Register requests (FC4 Input Registers, Nivus 750)
+        # Flow Rate - Register 11 (FC4)
         Invoke-SSH "uci set modbus.req_${i}_flow=request" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_flow.device='device_$i'" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_flow.name='flow_rate'" | Out-Null
-        Invoke-SSH "uci set modbus.req_${i}_flow.function='3'" | Out-Null
-        Invoke-SSH "uci set modbus.req_${i}_flow.first_reg='1'" | Out-Null
+        Invoke-SSH "uci set modbus.req_${i}_flow.function='4'" | Out-Null
+        Invoke-SSH "uci set modbus.req_${i}_flow.first_reg='11'" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_flow.reg_count='2'" | Out-Null
-        Invoke-SSH "uci set modbus.req_${i}_flow.data_type='32bit_float_cdab'" | Out-Null
+        Invoke-SSH "uci set modbus.req_${i}_flow.data_type='32bit_float3412'" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_flow.enabled='1'" | Out-Null
 
-        # Totalizer - Register 3
+        # Totalizer - Register 5201 (FC4)
         Invoke-SSH "uci set modbus.req_${i}_total=request" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_total.device='device_$i'" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_total.name='totalizer'" | Out-Null
-        Invoke-SSH "uci set modbus.req_${i}_total.function='3'" | Out-Null
-        Invoke-SSH "uci set modbus.req_${i}_total.first_reg='3'" | Out-Null
+        Invoke-SSH "uci set modbus.req_${i}_total.function='4'" | Out-Null
+        Invoke-SSH "uci set modbus.req_${i}_total.first_reg='5201'" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_total.reg_count='2'" | Out-Null
-        Invoke-SSH "uci set modbus.req_${i}_total.data_type='32bit_float_cdab'" | Out-Null
+        Invoke-SSH "uci set modbus.req_${i}_total.data_type='32bit_float3412'" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_total.enabled='1'" | Out-Null
 
-        # Temperature - Register 5
+        # Temperature - Register 17 (FC4)
         Invoke-SSH "uci set modbus.req_${i}_temp=request" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_temp.device='device_$i'" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_temp.name='temperature'" | Out-Null
-        Invoke-SSH "uci set modbus.req_${i}_temp.function='3'" | Out-Null
-        Invoke-SSH "uci set modbus.req_${i}_temp.first_reg='5'" | Out-Null
+        Invoke-SSH "uci set modbus.req_${i}_temp.function='4'" | Out-Null
+        Invoke-SSH "uci set modbus.req_${i}_temp.first_reg='17'" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_temp.reg_count='2'" | Out-Null
-        Invoke-SSH "uci set modbus.req_${i}_temp.data_type='32bit_float_cdab'" | Out-Null
+        Invoke-SSH "uci set modbus.req_${i}_temp.data_type='32bit_float3412'" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_temp.enabled='1'" | Out-Null
 
-        # Water Level - Register 7
+        # Water Level - Register 13 (FC4)
         Invoke-SSH "uci set modbus.req_${i}_level=request" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_level.device='device_$i'" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_level.name='water_level'" | Out-Null
-        Invoke-SSH "uci set modbus.req_${i}_level.function='3'" | Out-Null
-        Invoke-SSH "uci set modbus.req_${i}_level.first_reg='7'" | Out-Null
+        Invoke-SSH "uci set modbus.req_${i}_level.function='4'" | Out-Null
+        Invoke-SSH "uci set modbus.req_${i}_level.first_reg='13'" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_level.reg_count='2'" | Out-Null
-        Invoke-SSH "uci set modbus.req_${i}_level.data_type='32bit_float_cdab'" | Out-Null
+        Invoke-SSH "uci set modbus.req_${i}_level.data_type='32bit_float3412'" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_level.enabled='1'" | Out-Null
 
-        # Velocity - Register 9
+        # Velocity - Register 15 (FC4)
         Invoke-SSH "uci set modbus.req_${i}_vel=request" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_vel.device='device_$i'" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_vel.name='velocity'" | Out-Null
-        Invoke-SSH "uci set modbus.req_${i}_vel.function='3'" | Out-Null
-        Invoke-SSH "uci set modbus.req_${i}_vel.first_reg='9'" | Out-Null
+        Invoke-SSH "uci set modbus.req_${i}_vel.function='4'" | Out-Null
+        Invoke-SSH "uci set modbus.req_${i}_vel.first_reg='15'" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_vel.reg_count='2'" | Out-Null
-        Invoke-SSH "uci set modbus.req_${i}_vel.data_type='32bit_float_cdab'" | Out-Null
+        Invoke-SSH "uci set modbus.req_${i}_vel.data_type='32bit_float3412'" | Out-Null
         Invoke-SSH "uci set modbus.req_${i}_vel.enabled='1'" | Out-Null
     }
 

@@ -2,27 +2,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 // Map TRB246 Modbus register addresses to field names
-// Based on Nivus 750 register layout (32-bit float values, 2 registers each)
-// Supports both 0-based (standard) and 1-based (TRB246 default) addressing
+// Based on Nivus 750 PDF Rev04 (Nov 2024) - IEEE754 float Input Registers (FC4)
+// Measurement Place 1, 1-based addressing (as sent by TRB246 full_addr)
+// Byte order: CDAB (least significant register first) = 32bit_float3412 on TRB246
 const MODBUS_REGISTER_MAP: Record<string, string> = {
-  // Hex format (0-based)
-  '0x0000': 'flow_rate',
-  '0x0002': 'totalizer',
-  '0x0004': 'temperature',
-  '0x0006': 'level',
-  '0x0008': 'velocity',
-  // Decimal format (0-based)
-  '0': 'flow_rate',
-  '2': 'totalizer',
-  '4': 'temperature',
-  '6': 'level',
-  '8': 'velocity',
-  // Decimal format (1-based - TRB246 default addressing)
-  '1': 'flow_rate',
-  '3': 'totalizer',
-  '5': 'temperature',
-  '7': 'level',
-  '9': 'velocity',
+  '11': 'flow_rate',       // Nivus 30011: Flow (m3/s), 2 regs IEEE754
+  '13': 'level',           // Nivus 30013: Level (m), 2 regs IEEE754
+  '15': 'velocity',        // Nivus 30015: Velocity (m/s), 2 regs IEEE754
+  '17': 'temperature',     // Nivus 30017: Water Temperature (C), 2 regs IEEE754
+  '5201': 'totalizer',     // Nivus 35201: Totalizer (m3), 2 regs IEEE754
 }
 
 // Interface for TRB246 Modbus data format
@@ -138,7 +126,9 @@ function validateData(data: unknown): data is IngestData {
     typeof d.flow_rate === 'number' ||
     typeof d.totalizer === 'number' ||
     typeof d.temperature === 'number' ||
-    typeof d.pressure === 'number'
+    typeof d.pressure === 'number' ||
+    typeof d.level === 'number' ||
+    typeof d.velocity === 'number'
 
   return hasMeasurement
 }

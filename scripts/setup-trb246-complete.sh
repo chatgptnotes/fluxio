@@ -151,55 +151,55 @@ configure_modbus() {
         ssh_exec "uci set modbus.device_${idx}.enabled='1'"
         ssh_exec "uci set modbus.device_${idx}.timeout='5'"
 
-        # Register requests (1-based addressing for TRB246)
-        # Flow Rate - Register 1
+        # Register requests (FC4 Input Registers, Nivus 750)
+        # Flow Rate - Register 11 (FC4)
         ssh_exec "uci set modbus.req_${idx}_flow=request"
         ssh_exec "uci set modbus.req_${idx}_flow.device='device_${idx}'"
         ssh_exec "uci set modbus.req_${idx}_flow.name='flow_rate'"
-        ssh_exec "uci set modbus.req_${idx}_flow.function='3'"
-        ssh_exec "uci set modbus.req_${idx}_flow.first_reg='1'"
+        ssh_exec "uci set modbus.req_${idx}_flow.function='4'"
+        ssh_exec "uci set modbus.req_${idx}_flow.first_reg='11'"
         ssh_exec "uci set modbus.req_${idx}_flow.reg_count='2'"
-        ssh_exec "uci set modbus.req_${idx}_flow.data_type='32bit_float_cdab'"
+        ssh_exec "uci set modbus.req_${idx}_flow.data_type='32bit_float3412'"
         ssh_exec "uci set modbus.req_${idx}_flow.enabled='1'"
 
-        # Totalizer - Register 3
+        # Totalizer - Register 5201 (FC4)
         ssh_exec "uci set modbus.req_${idx}_total=request"
         ssh_exec "uci set modbus.req_${idx}_total.device='device_${idx}'"
         ssh_exec "uci set modbus.req_${idx}_total.name='totalizer'"
-        ssh_exec "uci set modbus.req_${idx}_total.function='3'"
-        ssh_exec "uci set modbus.req_${idx}_total.first_reg='3'"
+        ssh_exec "uci set modbus.req_${idx}_total.function='4'"
+        ssh_exec "uci set modbus.req_${idx}_total.first_reg='5201'"
         ssh_exec "uci set modbus.req_${idx}_total.reg_count='2'"
-        ssh_exec "uci set modbus.req_${idx}_total.data_type='32bit_float_cdab'"
+        ssh_exec "uci set modbus.req_${idx}_total.data_type='32bit_float3412'"
         ssh_exec "uci set modbus.req_${idx}_total.enabled='1'"
 
-        # Temperature - Register 5
+        # Temperature - Register 17 (FC4)
         ssh_exec "uci set modbus.req_${idx}_temp=request"
         ssh_exec "uci set modbus.req_${idx}_temp.device='device_${idx}'"
         ssh_exec "uci set modbus.req_${idx}_temp.name='temperature'"
-        ssh_exec "uci set modbus.req_${idx}_temp.function='3'"
-        ssh_exec "uci set modbus.req_${idx}_temp.first_reg='5'"
+        ssh_exec "uci set modbus.req_${idx}_temp.function='4'"
+        ssh_exec "uci set modbus.req_${idx}_temp.first_reg='17'"
         ssh_exec "uci set modbus.req_${idx}_temp.reg_count='2'"
-        ssh_exec "uci set modbus.req_${idx}_temp.data_type='32bit_float_cdab'"
+        ssh_exec "uci set modbus.req_${idx}_temp.data_type='32bit_float3412'"
         ssh_exec "uci set modbus.req_${idx}_temp.enabled='1'"
 
-        # Water Level - Register 7
+        # Water Level - Register 13 (FC4)
         ssh_exec "uci set modbus.req_${idx}_level=request"
         ssh_exec "uci set modbus.req_${idx}_level.device='device_${idx}'"
         ssh_exec "uci set modbus.req_${idx}_level.name='water_level'"
-        ssh_exec "uci set modbus.req_${idx}_level.function='3'"
-        ssh_exec "uci set modbus.req_${idx}_level.first_reg='7'"
+        ssh_exec "uci set modbus.req_${idx}_level.function='4'"
+        ssh_exec "uci set modbus.req_${idx}_level.first_reg='13'"
         ssh_exec "uci set modbus.req_${idx}_level.reg_count='2'"
-        ssh_exec "uci set modbus.req_${idx}_level.data_type='32bit_float_cdab'"
+        ssh_exec "uci set modbus.req_${idx}_level.data_type='32bit_float3412'"
         ssh_exec "uci set modbus.req_${idx}_level.enabled='1'"
 
-        # Velocity - Register 9
+        # Velocity - Register 15 (FC4)
         ssh_exec "uci set modbus.req_${idx}_vel=request"
         ssh_exec "uci set modbus.req_${idx}_vel.device='device_${idx}'"
         ssh_exec "uci set modbus.req_${idx}_vel.name='velocity'"
-        ssh_exec "uci set modbus.req_${idx}_vel.function='3'"
-        ssh_exec "uci set modbus.req_${idx}_vel.first_reg='9'"
+        ssh_exec "uci set modbus.req_${idx}_vel.function='4'"
+        ssh_exec "uci set modbus.req_${idx}_vel.first_reg='15'"
         ssh_exec "uci set modbus.req_${idx}_vel.reg_count='2'"
-        ssh_exec "uci set modbus.req_${idx}_vel.data_type='32bit_float_cdab'"
+        ssh_exec "uci set modbus.req_${idx}_vel.data_type='32bit_float3412'"
         ssh_exec "uci set modbus.req_${idx}_vel.enabled='1'"
     done
 

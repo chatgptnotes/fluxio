@@ -73,51 +73,53 @@ NO watermarks. Professional enterprise quality. Dark theme with neon glows.`,
 
 STYLE: Modern storytelling infographic, dark gradient background (#0F172A to #1E1B4B), cinematic feel with glowing elements.
 
-LAYOUT: Vertical timeline flowing top to bottom with 6 stages, each connected by glowing data path lines.
+LAYOUT: STRICT single-column vertical timeline. All 6 stages must be stacked directly on top of each other in ONE column, centered on the page, flowing from top to bottom. Each stage is a horizontal row spanning the full width. Stages are numbered 1 through 6 from TOP to BOTTOM. A single glowing cyan vertical line runs down the center-left connecting all stages in order. Do NOT scatter stages across left and right. Do NOT use a zigzag or S-curve layout.
 
-STAGE 1 (Top) - "MEASUREMENT"
+ROW 1 (Top of page) - "STAGE 1 - MEASUREMENT"
 - Underwater ultrasonic sensor in a pipe cross-section
 - Sound waves bouncing off water flow (cyan waves)
 - Caption: "Ultrasonic pulses measure flow velocity"
 - Time indicator: "T+0ms"
 
-STAGE 2 - "DIGITIZATION"
+ROW 2 (Below Row 1) - "STAGE 2 - DIGITIZATION"
 - Nivus 750 transmitter converts analog to Modbus registers
 - Show register values: Flow=124.7, Level=1580, Temp=24.2
 - Caption: "Analog signal converted to Modbus registers"
 - Time: "T+10ms"
 
-STAGE 3 - "TRANSMISSION"
+ROW 3 (Below Row 2) - "STAGE 3 - TRANSMISSION"
 - TRB246 gateway reads Modbus, packages as JSON
 - Shows JSON payload being encrypted (lock icon)
 - 4G tower sending data to cloud
 - Caption: "Gateway encrypts and transmits via 4G"
 - Time: "T+1s"
 
-STAGE 4 - "INGESTION"
+ROW 4 (Below Row 3) - "STAGE 4 - INGESTION"
 - Cloud API receiving POST request
 - Data validated, stored in PostgreSQL
 - Real-time engine broadcasts to subscribers
 - Caption: "API validates, stores, and broadcasts"
 - Time: "T+1.2s"
 
-STAGE 5 - "VISUALIZATION"
+ROW 5 (Below Row 4) - "STAGE 5 - VISUALIZATION"
 - Dashboard showing live gauge updating
 - Chart line extending with new data point
 - Map pin showing device location
 - Caption: "Dashboard updates in real-time"
 - Time: "T+1.5s"
 
-STAGE 6 (Bottom) - "ACTION"
+ROW 6 (Bottom of page) - "STAGE 6 - ACTION"
 - Phone receiving push notification
 - Email alert with high-flow warning
 - Engineer's tablet showing alert details
 - Caption: "Intelligent alerts trigger instant action"
 - Time: "T+2s"
 
-GLOWING DATA PATH: A continuous glowing cyan line connecting all 6 stages, with animated particle dots flowing downward.
+CRITICAL LAYOUT RULE: Stages MUST appear in numerical order from top to bottom: 1, 2, 3, 4, 5, 6. Each row directly below the previous. No stage should appear above a lower-numbered stage.
 
-SIDE LABEL: "From sensor to action in under 2 seconds"
+GLOWING DATA PATH: A continuous glowing cyan vertical line on the left side connecting all 6 stages from top to bottom, with animated particle dots flowing downward.
+
+RIGHT SIDE LABEL (vertical text): "From sensor to action in under 2 seconds"
 
 Professional, cinematic, enterprise quality. No watermarks.`,
   },
