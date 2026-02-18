@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import PermissionMatrix from '@/components/admin/PermissionMatrix';
 
@@ -33,8 +33,7 @@ interface User {
   pipelineAccess: PipelineAccess[];
 }
 
-export default function UserPermissionsPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params);
+export default function UserPermissionsPage({ params }: { params: { id: string } }) {
   const [user, setUser] = useState<User | null>(null);
   const [pipelines, setPipelines] = useState<Pipeline[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -44,7 +43,7 @@ export default function UserPermissionsPage({ params }: { params: Promise<{ id: 
     const fetchData = async () => {
       try {
         const [userRes, pipelinesRes] = await Promise.all([
-          fetch(`/api/admin/users/${resolvedParams.id}`),
+          fetch(`/api/admin/users/${params.id}`),
           fetch('/api/admin/pipelines'),
         ]);
 
@@ -67,7 +66,7 @@ export default function UserPermissionsPage({ params }: { params: Promise<{ id: 
     };
 
     fetchData();
-  }, [resolvedParams.id]);
+  }, [params.id]);
 
   if (isLoading) {
     return (
@@ -119,7 +118,7 @@ export default function UserPermissionsPage({ params }: { params: Promise<{ id: 
         <span className="material-icons text-xs">chevron_right</span>
         <Link href="/admin/users" className="hover:text-blue-600">Users</Link>
         <span className="material-icons text-xs">chevron_right</span>
-        <Link href={`/admin/users/${resolvedParams.id}`} className="hover:text-blue-600">
+        <Link href={`/admin/users/${params.id}`} className="hover:text-blue-600">
           {user.full_name}
         </Link>
         <span className="material-icons text-xs">chevron_right</span>
@@ -140,7 +139,7 @@ export default function UserPermissionsPage({ params }: { params: Promise<{ id: 
           </div>
         </div>
         <Link
-          href={`/admin/users/${resolvedParams.id}`}
+          href={`/admin/users/${params.id}`}
           className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
         >
           <span className="material-icons text-sm">arrow_back</span>
@@ -200,7 +199,7 @@ export default function UserPermissionsPage({ params }: { params: Promise<{ id: 
         </div>
 
         <PermissionMatrix
-          userId={resolvedParams.id}
+          userId={params.id}
           pipelines={pipelines}
           initialAccess={initialAccess}
           readOnly={user.is_superadmin}

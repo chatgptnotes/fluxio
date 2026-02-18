@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import UserForm from '@/components/admin/UserForm';
 
@@ -23,8 +23,7 @@ interface User {
   created_at: string;
 }
 
-export default function EditUserPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params);
+export default function EditUserPage({ params }: { params: { id: string } }) {
   const [user, setUser] = useState<User | null>(null);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -34,7 +33,7 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
     const fetchData = async () => {
       try {
         const [userRes, companiesRes] = await Promise.all([
-          fetch(`/api/admin/users/${resolvedParams.id}`),
+          fetch(`/api/admin/users/${params.id}`),
           fetch('/api/admin/companies'),
         ]);
 
@@ -57,7 +56,7 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
     };
 
     fetchData();
-  }, [resolvedParams.id]);
+  }, [params.id]);
 
   if (isLoading) {
     return (
@@ -130,7 +129,7 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
           </div>
         </div>
         <Link
-          href={`/admin/users/${resolvedParams.id}/permissions`}
+          href={`/admin/users/${params.id}/permissions`}
           className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
         >
           <span className="material-icons text-sm">security</span>
