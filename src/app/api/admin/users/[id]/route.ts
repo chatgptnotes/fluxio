@@ -22,27 +22,10 @@ export async function GET(
 
     const supabase = createAdminClient();
 
-    const { data: user, error } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: user, error } = await (supabase as any)
       .from('users')
-      .select(`
-        id,
-        username,
-        email,
-        full_name,
-        role,
-        is_superadmin,
-        company_id,
-        permissions,
-        is_active,
-        last_login,
-        created_at,
-        updated_at,
-        companies (
-          id,
-          name,
-          code
-        )
-      `)
+      .select('id, username, email, full_name, role, is_superadmin, company_id, permissions, is_active, last_login, created_at, updated_at')
       .eq('id', id)
       .single();
 
@@ -60,9 +43,22 @@ export async function GET(
       .select('pipeline_id, permissions')
       .eq('user_id', id);
 
+    // Fetch company info separately if user has a company
+    let company = null;
+    if (user.company_id) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: companyData } = await (supabase as any)
+        .from('companies')
+        .select('id, name, code')
+        .eq('id', user.company_id)
+        .single();
+      company = companyData;
+    }
+
     return NextResponse.json({
       user: {
-        ...(user as object),
+        ...user,
+        companies: company,
         pipelineAccess: pipelineAccess || [],
       },
     });

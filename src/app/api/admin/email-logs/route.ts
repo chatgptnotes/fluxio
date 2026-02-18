@@ -46,23 +46,10 @@ export async function GET() {
       )
     }
 
-    // Fetch email report logs with company names
+    // Fetch email report logs (without join - PostgREST schema cache issue)
     const { data: logs, error } = await supabase
       .from('email_report_logs')
-      .select(`
-        id,
-        company_id,
-        report_date,
-        recipients,
-        status,
-        error_message,
-        file_path,
-        sent_at,
-        created_at,
-        companies (
-          name
-        )
-      `)
+      .select('id, company_id, report_date, recipients, status, error_message, file_path, sent_at, created_at')
       .order('created_at', { ascending: false })
       .limit(100)
 
@@ -74,12 +61,25 @@ export async function GET() {
       )
     }
 
+    // Fetch companies separately
+    const { data: companies } = await supabase
+      .from('companies')
+      .select('id, name')
+
+    const companyMap = new Map<string, string>()
+    if (companies) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for (const c of companies as any[]) {
+        companyMap.set(c.id, c.name)
+      }
+    }
+
     // Transform to include company name
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const transformedLogs = (logs || []).map((log: any) => ({
       id: log.id,
       company_id: log.company_id,
-      company_name: log.companies?.name || 'Unknown',
+      company_name: companyMap.get(log.company_id) || 'Unknown',
       report_date: log.report_date,
       recipients: log.recipients || [],
       status: log.status,
