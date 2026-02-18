@@ -14,6 +14,7 @@ const navItems = [
   { href: '/admin/email-logs', label: 'Email Logs', icon: 'mail' },
   { href: '/admin/audit', label: 'Audit Logs', icon: 'history' },
   { href: '/admin/infographics', label: 'Infographics', icon: 'auto_awesome' },
+  { href: '/admin/device-health', label: 'Device Health', icon: 'monitor_heart' },
 ];
 
 function AdminNav() {
