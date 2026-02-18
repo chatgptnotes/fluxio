@@ -33,8 +33,8 @@ const deviceToPipeMap: Record<string, { pipeNumber: number; staticIndex: number 
 }
 
 // Timeout thresholds (in minutes)
-const OFFLINE_THRESHOLD_MINUTES = 5 // Mark as offline if no data for 5 minutes
-const WARNING_THRESHOLD_MINUTES = 3 // Mark as warning if no data for 3 minutes
+const OFFLINE_THRESHOLD_MINUTES = 60 // Mark as offline if no data for 1 hour
+const WARNING_THRESHOLD_MINUTES = 30 // Mark as warning if no data for 30 minutes
 
 // Convert database flow_data record to PipeData
 interface FlowDataRecord {
@@ -55,6 +55,8 @@ interface FlowDataRecord {
 }
 
 // Convert database record to PipeData with proper offline detection
+// Shows LAST KNOWN values with warning/offline status instead of zeros.
+// Only shows zeros if device has NEVER sent any data.
 function convertToPipeData(record: FlowDataRecord | null, staticPipe: NivusSensor): PipeData {
   // If no record exists, device has never sent data - show zeros and offline
   if (!record) {
@@ -89,37 +91,27 @@ function convertToPipeData(record: FlowDataRecord | null, staticPipe: NivusSenso
     status = 'warning'
   }
 
-  // If offline, show zeros - don't show stale/old data
-  if (status === 'offline') {
-    return {
-      id: staticPipe.id,
-      pipeNumber: staticPipe.pipeNumber,
-      deviceId: staticPipe.deviceId,
-      status: 'offline',
-      parameters: {
-        flowRate: 0,
-        velocity: 0,
-        waterLevel: 0,
-        temperature: 0,
-        totalizer: 0,
-      },
-    }
-  }
-
   // Extract velocity and water level from metadata
   const velocity = record.metadata?.velocity ?? 0
-  const waterLevel = record.metadata?.water_level ?? record.metadata?.level ?? 0
+  const waterLevelMeters = record.metadata?.water_level ?? record.metadata?.level ?? 0
 
-  // Return live data only when online or warning
+  // Unit conversions:
+  // - flow_rate from Nivus 750 register 30011 arrives in m3/s, convert to m3/h
+  // - water_level from Nivus 750 register 30013 arrives in meters, convert to mm
+  const flowRateM3H = (record.flow_rate ?? 0) * 3600
+  const waterLevelMM = waterLevelMeters * 1000
+
+  // Always return last known values from Supabase, with the appropriate status.
+  // If offline/warning, the UI will display a warning badge on top of the values.
   return {
     id: staticPipe.id,
     pipeNumber: staticPipe.pipeNumber,
     deviceId: staticPipe.deviceId,
     status,
     parameters: {
-      flowRate: record.flow_rate ?? 0,
+      flowRate: flowRateM3H,
       velocity,
-      waterLevel,
+      waterLevel: waterLevelMM,
       temperature: record.temperature ?? 0,
       totalizer: record.totalizer ?? 0,
     },
@@ -166,6 +158,9 @@ export default function CSTPSPipelinePage() {
     const supabase = createClient()
     let subscription: ReturnType<typeof supabase.channel> | null = null
 
+    // Track whether we've ever loaded real data (to avoid resetting to zeros on error)
+    let hasLoadedData = false
+
     // Fetch latest flow data for each CSTPS device via API (bypasses RLS)
     async function fetchLatestData() {
       try {
@@ -175,12 +170,7 @@ export default function CSTPSPipelinePage() {
         const response = await fetch(`/api/flow-data?limit=100`)
         if (!response.ok) {
           console.warn('Error fetching flow data:', response.statusText)
-          // Even on error, show devices as offline with zeros
-          const offlinePipes: PipeData[] = staticCstpsPipes.map((staticPipe) =>
-            convertToPipeData(null, staticPipe)
-          )
-          setCstpsPipes(offlinePipes)
-          setSensorOrder(offlinePipes)
+          // Keep previous state - do NOT reset to zeros
           return
         }
 
@@ -210,6 +200,7 @@ export default function CSTPSPipelinePage() {
 
         setCstpsPipes(updatedPipes)
         setSensorOrder(updatedPipes)
+        hasLoadedData = true
 
         // Check if we have any live data
         const hasLiveData = updatedPipes.some(p => p.status === 'online')
@@ -217,12 +208,15 @@ export default function CSTPSPipelinePage() {
         setLastDataUpdate(new Date())
       } catch (err) {
         console.warn('Failed to fetch flow data:', err)
-        // On error, show all devices as offline with zeros
-        const offlinePipes: PipeData[] = staticCstpsPipes.map((staticPipe) =>
-          convertToPipeData(null, staticPipe)
-        )
-        setCstpsPipes(offlinePipes)
-        setSensorOrder(offlinePipes)
+        // Keep previous state - do NOT reset to zeros after initial load
+        // Only set zeros if we've NEVER loaded data (first load failure)
+        if (!hasLoadedData) {
+          const offlinePipes: PipeData[] = staticCstpsPipes.map((staticPipe) =>
+            convertToPipeData(null, staticPipe)
+          )
+          setCstpsPipes(offlinePipes)
+          setSensorOrder(offlinePipes)
+        }
       }
     }
 
@@ -680,7 +674,8 @@ export default function CSTPSPipelinePage() {
 
                   {/* FT Value Overlays - Click to view details */}
                   {cstpsPipes.map((pipe, index) => {
-                    const hasFlow = pipe.status !== 'offline' && pipe.parameters.flowRate > 0
+                    const hasFlow = pipe.status === 'online' && pipe.parameters.flowRate > 0
+                    const isStale = pipe.status === 'warning' || pipe.status === 'offline'
                     const statusColor = pipe.status === 'online' ? '#4CAF50' : pipe.status === 'warning' ? '#FFC107' : '#F44336'
                     const pos = fixedFtPositions[index]
 
@@ -700,8 +695,8 @@ export default function CSTPSPipelinePage() {
                         <div className={`relative bg-[#0D1B2A] rounded px-1 py-0.5 md:px-2 md:py-1 border ${
                           hoveredPipe === pipe.id
                             ? 'border-[#00E5FF] shadow-[0_0_10px_#00E5FF]'
-                            : 'border-[#1565C0]'
-                        } transition-all`}>
+                            : isStale ? 'border-[#F57F17] border-dashed' : 'border-[#1565C0]'
+                        } transition-all ${isStale ? 'opacity-80' : ''}`}>
                           {/* Status LED */}
                           <div
                             className="absolute -top-1 -right-1 h-1.5 w-1.5 md:h-2.5 md:w-2.5 rounded-full"
@@ -711,13 +706,23 @@ export default function CSTPSPipelinePage() {
                               animation: hasFlow ? 'pulse 1.5s infinite' : 'none'
                             }}
                           />
+                          {/* Stale data warning icon */}
+                          {isStale && pipe.parameters.flowRate > 0 && (
+                            <div className="absolute -top-2 -left-2 flex items-center justify-center h-3.5 w-3.5 md:h-4 md:w-4 rounded-full bg-[#F57F17] text-white text-[7px] md:text-[8px] font-bold" title="Last known value - no new data">
+                              <span className="material-icons" style={{ fontSize: '10px' }}>warning</span>
+                            </div>
+                          )}
                           {/* FT Label */}
                           <div className="text-[6px] md:text-[8px] text-[#90CAF9] font-mono">FT-{String(pipe.pipeNumber).padStart(3, '0')}</div>
                           {/* Flow Value */}
-                          <div className={`text-[10px] md:text-sm font-bold font-mono ${hasFlow ? 'text-[#00E5FF]' : 'text-[#546E7A]'}`}>
+                          <div className={`text-[10px] md:text-sm font-bold font-mono ${hasFlow ? 'text-[#00E5FF]' : isStale && pipe.parameters.flowRate > 0 ? 'text-[#FFC107]' : 'text-[#546E7A]'}`}>
                             {pipe.parameters.flowRate.toFixed(1)}
                             <span className="text-[6px] md:text-[8px] text-[#4FC3F7] ml-0.5">m3/h</span>
                           </div>
+                          {/* Stale label */}
+                          {isStale && pipe.parameters.flowRate > 0 && (
+                            <div className="text-[5px] md:text-[7px] text-[#F57F17] font-mono text-center">LAST KNOWN</div>
+                          )}
                         </div>
                         {/* Tooltip on hover */}
                         {hoveredPipe === pipe.id && (
@@ -725,6 +730,12 @@ export default function CSTPSPipelinePage() {
                             className="absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-white rounded shadow-lg border border-[#E0E0E0] p-2 z-20 whitespace-nowrap"
                           >
                             <div className="text-xs font-bold text-[#1565C0]">{pipe.deviceId}</div>
+                            {isStale && (
+                              <div className="text-[10px] text-[#F57F17] font-semibold flex items-center gap-1">
+                                <span className="material-icons" style={{ fontSize: '12px' }}>warning</span>
+                                {pipe.status === 'offline' ? 'Offline - showing last known values' : 'Warning - data may be stale'}
+                              </div>
+                            )}
                             <div className="text-[10px] text-[#757575]">Click to view details</div>
                           </div>
                         )}
@@ -834,7 +845,8 @@ export default function CSTPSPipelinePage() {
 
                   {/* FT Value Overlays - Click to view details */}
                   {cstpsPipes.map((pipe, index) => {
-                    const hasFlow = pipe.status !== 'offline' && pipe.parameters.flowRate > 0
+                    const hasFlow = pipe.status === 'online' && pipe.parameters.flowRate > 0
+                    const isStale = pipe.status === 'warning' || pipe.status === 'offline'
                     const statusColor = pipe.status === 'online' ? '#4CAF50' : pipe.status === 'warning' ? '#FFC107' : '#F44336'
                     const pos = initial2DPositions[index]
 
@@ -854,8 +866,8 @@ export default function CSTPSPipelinePage() {
                         <div className={`relative bg-[#0D1B2A]/90 rounded px-1.5 py-0.5 border ${
                           hoveredPipe === pipe.id
                             ? 'border-[#00E5FF] shadow-[0_0_8px_#00E5FF]'
-                            : 'border-[#00ACC1]'
-                        } transition-all`}>
+                            : isStale ? 'border-[#F57F17] border-dashed' : 'border-[#00ACC1]'
+                        } transition-all ${isStale ? 'opacity-80' : ''}`}>
                           {/* Status LED - smaller */}
                           <div
                             className="absolute -top-1 -right-1 h-2 w-2 rounded-full border border-white"
@@ -868,9 +880,12 @@ export default function CSTPSPipelinePage() {
                           {/* FT Label - smaller */}
                           <div className="text-[7px] text-[#90CAF9] font-mono font-bold leading-tight">FT-{String(pipe.pipeNumber).padStart(3, '0')}</div>
                           {/* Flow Value - compact */}
-                          <div className={`text-[11px] font-bold font-mono leading-tight ${hasFlow ? 'text-[#00E5FF]' : 'text-[#546E7A]'}`}>
+                          <div className={`text-[11px] font-bold font-mono leading-tight ${hasFlow ? 'text-[#00E5FF]' : isStale && pipe.parameters.flowRate > 0 ? 'text-[#FFC107]' : 'text-[#546E7A]'}`}>
                             {pipe.parameters.flowRate.toFixed(1)}<span className="text-[7px] text-[#4FC3F7]">m3/h</span>
                           </div>
+                          {isStale && pipe.parameters.flowRate > 0 && (
+                            <div className="text-[6px] text-[#F57F17] font-mono text-center leading-tight">LAST KNOWN</div>
+                          )}
                         </div>
                         {/* Tooltip on hover */}
                         {hoveredPipe === pipe.id && (
@@ -878,8 +893,14 @@ export default function CSTPSPipelinePage() {
                             className="absolute left-full ml-1 top-1/2 -translate-y-1/2 bg-white rounded shadow-lg border border-[#E0E0E0] p-1.5 z-20 whitespace-nowrap"
                           >
                             <div className="text-[10px] font-bold text-[#1565C0]">{pipe.deviceId}</div>
+                            {isStale && (
+                              <div className="text-[9px] text-[#F57F17] font-semibold flex items-center gap-0.5">
+                                <span className="material-icons" style={{ fontSize: '10px' }}>warning</span>
+                                {pipe.status === 'offline' ? 'Offline - last known values' : 'Stale data'}
+                              </div>
+                            )}
                             <div className="text-[8px] text-[#757575]">Vel: {pipe.parameters.velocity.toFixed(2)} m/s</div>
-                            <div className="text-[8px] text-[#757575]">Level: {pipe.parameters.waterLevel} mm</div>
+                            <div className="text-[8px] text-[#757575]">Level: {pipe.parameters.waterLevel.toFixed(1)} mm</div>
                             <div className="text-[8px] text-[#1565C0] mt-0.5 font-medium">Click to view details</div>
                           </div>
                         )}
@@ -1199,7 +1220,8 @@ export default function CSTPSPipelinePage() {
                 {cstpsPipes.map((pipe, index) => {
                   const yPos = 130 + index * 58
                   const isHovered = hoveredPipe === pipe.id
-                  const hasFlow = pipe.status !== 'offline' && pipe.parameters.flowRate > 0
+                  const hasFlow = pipe.status === 'online' && pipe.parameters.flowRate > 0
+                    const isStale = pipe.status === 'warning' || pipe.status === 'offline'
                   const statusColor = pipe.status === 'online' ? '#4CAF50' : pipe.status === 'warning' ? '#FFC107' : '#F44336'
                   const flowSpeed = Math.max(0.5, Math.min(3, pipe.parameters.flowRate / 30))
 
@@ -1313,11 +1335,14 @@ export default function CSTPSPipelinePage() {
 
                         {/* Digital Display - positioned to the right of FT */}
                         <g transform="translate(55, 0)">
-                          <rect x="-5" y="-16" width="70" height="32" fill={isHovered ? '#0A1929' : '#0D1B2A'} stroke={isHovered ? '#00E5FF' : '#1565C0'} strokeWidth={isHovered ? 2 : 1.5} rx="4"/>
-                          <text x="30" y="0" textAnchor="middle" fill="#00E5FF" fontSize="15" fontFamily="monospace" fontWeight="bold" filter={hasFlow ? 'url(#glowBlue)' : ''}>
+                          <rect x="-5" y="-16" width="70" height={isStale && pipe.parameters.flowRate > 0 ? '42' : '32'} fill={isHovered ? '#0A1929' : '#0D1B2A'} stroke={isStale ? '#F57F17' : isHovered ? '#00E5FF' : '#1565C0'} strokeWidth={isHovered ? 2 : 1.5} rx="4" strokeDasharray={isStale ? '4 2' : 'none'}/>
+                          <text x="30" y="0" textAnchor="middle" fill={isStale && pipe.parameters.flowRate > 0 ? '#FFC107' : '#00E5FF'} fontSize="15" fontFamily="monospace" fontWeight="bold" filter={hasFlow ? 'url(#glowBlue)' : ''}>
                             {pipe.parameters.flowRate.toFixed(1)}
                           </text>
                           <text x="30" y="12" textAnchor="middle" fill="#4FC3F7" fontSize="8" fontFamily="monospace">m3/h</text>
+                          {isStale && pipe.parameters.flowRate > 0 && (
+                            <text x="30" y="23" textAnchor="middle" fill="#F57F17" fontSize="7" fontFamily="monospace">LAST KNOWN</text>
+                          )}
                         </g>
                       </g>
 
@@ -1417,7 +1442,8 @@ export default function CSTPSPipelinePage() {
               </div>
               <div className="p-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2 lg:space-y-0 max-h-[300px] lg:max-h-[520px] overflow-y-auto">
                 {sensorOrder.map((pipe, index) => {
-                  const hasFlow = pipe.status !== 'offline' && pipe.parameters.flowRate > 0
+                  const hasFlow = pipe.status === 'online' && pipe.parameters.flowRate > 0
+                    const isStale = pipe.status === 'warning' || pipe.status === 'offline'
                   const statusColor = pipe.status === 'online' ? '#4CAF50' : pipe.status === 'warning' ? '#FFC107' : '#F44336'
                   const isDragging = draggedIndex === index
                   const isDragOver = dragOverIndex === index
@@ -1449,6 +1475,9 @@ export default function CSTPSPipelinePage() {
                           FT-{String(pipe.pipeNumber).padStart(3, '0')}
                         </Link>
                         <div className="flex items-center space-x-1">
+                          {isStale && pipe.parameters.flowRate > 0 && (
+                            <span className="text-[8px] font-mono font-bold text-[#F57F17] bg-[#FFF8E1] px-1 rounded">LAST KNOWN</span>
+                          )}
                           {hasFlow && (
                             <div className="h-1.5 w-4 rounded-full bg-[#01579B] overflow-hidden">
                               <div className="h-full w-1/2 bg-[#29B6F6] animate-pulse"></div>
@@ -1471,14 +1500,14 @@ export default function CSTPSPipelinePage() {
                         <div className="grid grid-cols-2 gap-2 text-[10px]">
                           <div className="bg-[#0D1B2A] rounded px-1.5 py-1">
                             <span className="text-[#90CAF9] block">FLOW</span>
-                            <div className={`font-mono font-bold ${hasFlow ? 'text-[#00E5FF]' : 'text-[#546E7A]'}`}>
+                            <div className={`font-mono font-bold ${hasFlow ? 'text-[#00E5FF]' : isStale && pipe.parameters.flowRate > 0 ? 'text-[#FFC107]' : 'text-[#546E7A]'}`}>
                               {pipe.parameters.flowRate.toFixed(1)}
                               <span className="text-[#4FC3F7] font-normal ml-0.5">m3/h</span>
                             </div>
                           </div>
                           <div className="bg-[#0D1B2A] rounded px-1.5 py-1">
                             <span className="text-[#90CAF9] block">VEL</span>
-                            <div className={`font-mono font-bold ${hasFlow ? 'text-[#00E5FF]' : 'text-[#546E7A]'}`}>
+                            <div className={`font-mono font-bold ${hasFlow ? 'text-[#00E5FF]' : isStale && pipe.parameters.velocity > 0 ? 'text-[#FFC107]' : 'text-[#546E7A]'}`}>
                               {pipe.parameters.velocity.toFixed(2)}
                               <span className="text-[#4FC3F7] font-normal ml-0.5">m/s</span>
                             </div>
@@ -1486,7 +1515,7 @@ export default function CSTPSPipelinePage() {
                           <div className="bg-[#0D1B2A] rounded px-1.5 py-1">
                             <span className="text-[#90CAF9] block">LEVEL</span>
                             <div className="font-mono font-bold text-[#00E5FF]">
-                              {pipe.parameters.waterLevel}
+                              {pipe.parameters.waterLevel.toFixed(1)}
                               <span className="text-[#4FC3F7] font-normal ml-0.5">mm</span>
                             </div>
                           </div>
