@@ -1,91 +1,19 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import Link from 'next/link'
-import {
-  User,
-  Mail,
-  Lock,
-  AlertCircle,
-  CheckCircle2,
-  ArrowLeft,
-} from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function ProfilePage() {
-  const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+  const { user, isLoading } = useAuth()
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-  })
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
   })
-
-  const router = useRouter()
-  const supabase = createClient()
-
-  useEffect(() => {
-    fetchUser()
-  }, [])
-
-  async function fetchUser() {
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-
-      if (!user) {
-        router.push('/login')
-        return
-      }
-
-      setUser(user)
-      setFormData({
-        fullName: user.user_metadata?.full_name || '',
-        email: user.email || '',
-      })
-    } catch (err) {
-      console.error('Error fetching user:', err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleUpdateProfile = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setUpdating(true)
-    setError('')
-    setSuccess('')
-
-    try {
-      const { error } = await supabase.auth.updateUser({
-        email: formData.email,
-        data: {
-          full_name: formData.fullName,
-        },
-      })
-
-      if (error) {
-        setError(error.message)
-        return
-      }
-
-      setSuccess('Profile updated successfully!')
-      setTimeout(() => setSuccess(''), 3000)
-    } catch (err) {
-      setError('An unexpected error occurred. Please try again.')
-    } finally {
-      setUpdating(false)
-    }
-  }
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -106,12 +34,19 @@ export default function ProfilePage() {
     }
 
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: passwordData.newPassword,
+      const response = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword,
+        }),
       })
 
-      if (error) {
-        setError(error.message)
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Failed to update password')
         return
       }
 
@@ -122,17 +57,25 @@ export default function ProfilePage() {
         confirmPassword: '',
       })
       setTimeout(() => setSuccess(''), 3000)
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred. Please try again.')
     } finally {
       setUpdating(false)
     }
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
+        <span className="material-icons text-blue-600 text-4xl animate-spin">refresh</span>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p className="text-gray-600">Not authenticated</p>
       </div>
     )
   }
@@ -147,7 +90,7 @@ export default function ProfilePage() {
               href="/dashboard"
               className="rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <span className="material-icons">arrow_back</span>
             </Link>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
@@ -163,14 +106,14 @@ export default function ProfilePage() {
       <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
         {error && (
           <div className="mb-6 flex items-start space-x-3 rounded-lg bg-red-50 p-4">
-            <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-600" />
+            <span className="material-icons text-red-600 text-xl">error</span>
             <p className="text-sm text-red-800">{error}</p>
           </div>
         )}
 
         {success && (
           <div className="mb-6 flex items-start space-x-3 rounded-lg bg-green-50 p-4">
-            <CheckCircle2 className="h-5 w-5 flex-shrink-0 text-green-600" />
+            <span className="material-icons text-green-600 text-xl">check_circle</span>
             <p className="text-sm text-green-800">{success}</p>
           </div>
         )}
@@ -181,71 +124,40 @@ export default function ProfilePage() {
             Profile Information
           </h2>
 
-          <form onSubmit={handleUpdateProfile} className="space-y-5">
-            <div>
-              <label htmlFor="fullName" className="label">
-                Full name
-              </label>
-              <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <User className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="fullName"
-                  name="fullName"
-                  type="text"
-                  required
-                  value={formData.fullName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, fullName: e.target.value })
-                  }
-                  className="input pl-10"
-                  placeholder="John Doe"
-                />
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                <span className="material-icons text-blue-600 text-3xl">person</span>
+              </div>
+              <div>
+                <p className="text-lg font-semibold text-gray-900">{user.fullName}</p>
+                <p className="text-sm text-gray-500">@{user.username}</p>
               </div>
             </div>
 
-            <div>
-              <label htmlFor="email" className="label">
-                Email address
-              </label>
-              <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Mail className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                  className="input pl-10"
-                  placeholder="you@example.com"
-                />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-xs text-gray-500 uppercase tracking-wider">Email</p>
+                <p className="mt-1 text-sm font-medium text-gray-900">{user.email}</p>
               </div>
-              <p className="mt-1 text-xs text-gray-500">
-                Changing your email will require verification
-              </p>
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-xs text-gray-500 uppercase tracking-wider">Role</p>
+                <p className="mt-1 text-sm font-medium text-gray-900 capitalize">
+                  {user.isSuperadmin ? 'Superadmin' : user.role}
+                </p>
+              </div>
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-xs text-gray-500 uppercase tracking-wider">Company</p>
+                <p className="mt-1 text-sm font-medium text-gray-900">
+                  {user.companyId || 'All Companies'}
+                </p>
+              </div>
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-xs text-gray-500 uppercase tracking-wider">User ID</p>
+                <p className="mt-1 text-xs font-mono text-gray-700 break-all">{user.id}</p>
+              </div>
             </div>
-
-            <button
-              type="submit"
-              disabled={updating}
-              className="btn-primary w-full"
-            >
-              {updating ? (
-                <div className="flex items-center justify-center space-x-2">
-                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                  <span>Updating...</span>
-                </div>
-              ) : (
-                'Update Profile'
-              )}
-            </button>
-          </form>
+          </div>
         </div>
 
         {/* Password Change */}
@@ -256,12 +168,38 @@ export default function ProfilePage() {
 
           <form onSubmit={handleUpdatePassword} className="space-y-5">
             <div>
-              <label htmlFor="newPassword" className="label">
+              <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                Current password
+              </label>
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <span className="material-icons text-gray-400 text-xl">lock</span>
+                </div>
+                <input
+                  id="currentPassword"
+                  name="currentPassword"
+                  type="password"
+                  required
+                  value={passwordData.currentPassword}
+                  onChange={(e) =>
+                    setPasswordData({
+                      ...passwordData,
+                      currentPassword: e.target.value,
+                    })
+                  }
+                  className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="Enter current password"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-1">
                 New password
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                  <span className="material-icons text-gray-400 text-xl">lock_reset</span>
                 </div>
                 <input
                   id="newPassword"
@@ -275,8 +213,8 @@ export default function ProfilePage() {
                       newPassword: e.target.value,
                     })
                   }
-                  className="input pl-10"
-                  placeholder="••••••••"
+                  className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="Enter new password"
                 />
               </div>
               <p className="mt-1 text-xs text-gray-500">
@@ -285,12 +223,12 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="label">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
                 Confirm new password
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                  <span className="material-icons text-gray-400 text-xl">lock</span>
                 </div>
                 <input
                   id="confirmPassword"
@@ -304,8 +242,8 @@ export default function ProfilePage() {
                       confirmPassword: e.target.value,
                     })
                   }
-                  className="input pl-10"
-                  placeholder="••••••••"
+                  className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="Confirm new password"
                 />
               </div>
             </div>
@@ -313,11 +251,11 @@ export default function ProfilePage() {
             <button
               type="submit"
               disabled={updating}
-              className="btn-primary w-full"
+              className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 transition-colors disabled:opacity-50"
             >
               {updating ? (
                 <div className="flex items-center justify-center space-x-2">
-                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                  <span className="material-icons text-sm animate-spin">refresh</span>
                   <span>Updating...</span>
                 </div>
               ) : (
@@ -326,53 +264,13 @@ export default function ProfilePage() {
             </button>
           </form>
         </div>
-
-        {/* Account Information */}
-        <div className="mt-6 rounded-2xl bg-white p-8 shadow-sm">
-          <h2 className="mb-4 text-xl font-semibold text-gray-900">
-            Account Information
-          </h2>
-          <div className="space-y-3 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-600">User ID:</span>
-              <span className="font-mono text-gray-900">{user?.id}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Account created:</span>
-              <span className="text-gray-900">
-                {new Date(user?.created_at).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Last sign in:</span>
-              <span className="text-gray-900">
-                {user?.last_sign_in_at
-                  ? new Date(user.last_sign_in_at).toLocaleDateString(
-                      'en-US',
-                      {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      }
-                    )
-                  : 'Never'}
-              </span>
-            </div>
-          </div>
-        </div>
       </main>
 
       {/* Footer */}
       <footer className="mt-12 border-t border-gray-200 bg-white py-6">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          <p className="text-xs text-gray-500">
-            FlowNexus v1.5 | January 9, 2025 | flownexus
+          <p className="text-xs text-gray-400">
+            FlowNexus v1.5 | February 18, 2026 | fluxio
           </p>
         </div>
       </footer>
