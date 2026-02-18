@@ -9,9 +9,16 @@ export async function GET(request: NextRequest) {
   try {
     const user = await getCurrentUser();
 
-    if (!user || !canManagePermissions(user)) {
+    if (!user) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Not authenticated. Please log in again.' },
+        { status: 401 }
+      );
+    }
+
+    if (!canManagePermissions(user)) {
+      return NextResponse.json(
+        { error: `Insufficient permissions. Role: ${user.role}, Superadmin: ${user.isSuperadmin}` },
         { status: 403 }
       );
     }
@@ -21,26 +28,10 @@ export async function GET(request: NextRequest) {
     const companyId = searchParams.get('companyId');
     const includeInactive = searchParams.get('includeInactive') === 'true';
 
-    let query = supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let query = (supabase as any)
       .from('users')
-      .select(`
-        id,
-        username,
-        email,
-        full_name,
-        role,
-        is_superadmin,
-        company_id,
-        permissions,
-        is_active,
-        last_login,
-        created_at,
-        companies (
-          id,
-          name,
-          code
-        )
-      `)
+      .select('id, username, email, full_name, role, is_superadmin, company_id, permissions, is_active, last_login, created_at, companies(id, name, code)')
       .order('created_at', { ascending: false });
 
     if (companyId) {
@@ -56,12 +47,12 @@ export async function GET(request: NextRequest) {
     if (error) {
       console.error('Error fetching users:', error);
       return NextResponse.json(
-        { error: 'Failed to fetch users' },
+        { error: `Failed to fetch users: ${error.message}` },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ users });
+    return NextResponse.json({ users: users || [] });
   } catch (error) {
     console.error('Error in GET /api/admin/users:', error);
     return NextResponse.json(
