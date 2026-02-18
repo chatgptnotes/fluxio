@@ -12,6 +12,7 @@ interface PipeData {
   pipeNumber: number
   deviceId: string
   status: 'online' | 'warning' | 'offline'
+  lastDataAt: string | null // ISO timestamp of last received data
   parameters: {
     flowRate: number
     velocity: number
@@ -65,6 +66,7 @@ function convertToPipeData(record: FlowDataRecord | null, staticPipe: NivusSenso
       pipeNumber: staticPipe.pipeNumber,
       deviceId: staticPipe.deviceId,
       status: 'offline',
+      lastDataAt: null,
       parameters: {
         flowRate: 0,
         velocity: 0,
@@ -108,6 +110,7 @@ function convertToPipeData(record: FlowDataRecord | null, staticPipe: NivusSenso
     pipeNumber: staticPipe.pipeNumber,
     deviceId: staticPipe.deviceId,
     status,
+    lastDataAt: record.created_at,
     parameters: {
       flowRate: flowRateM3H,
       velocity,
@@ -116,6 +119,36 @@ function convertToPipeData(record: FlowDataRecord | null, staticPipe: NivusSenso
       totalizer: record.totalizer ?? 0,
     },
   }
+}
+
+// Format last data timestamp as relative time + IST time
+function formatLastDataTime(isoTimestamp: string | null): { relative: string; ist: string } {
+  if (!isoTimestamp) return { relative: 'Never', ist: '--' }
+  const date = new Date(isoTimestamp)
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const diffMin = Math.floor(diffMs / 60000)
+  const diffHr = Math.floor(diffMin / 60)
+  const diffDays = Math.floor(diffHr / 24)
+
+  let relative: string
+  if (diffMin < 1) relative = 'Just now'
+  else if (diffMin < 60) relative = `${diffMin}m ago`
+  else if (diffHr < 24) relative = `${diffHr}h ${diffMin % 60}m ago`
+  else relative = `${diffDays}d ${diffHr % 24}h ago`
+
+  const ist = date.toLocaleTimeString('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  }) + ' ' + date.toLocaleDateString('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    day: '2-digit',
+    month: '2-digit',
+  })
+
+  return { relative, ist }
 }
 
 // Fixed FT box positions for 3D view (in percentages) - permanently positioned
@@ -143,8 +176,12 @@ export default function CSTPSPipelinePage() {
   const [hoveredPipe, setHoveredPipe] = useState<string | null>(null)
   const [currentTime, setCurrentTime] = useState<Date | null>(null)
   const [viewMode, setViewMode] = useState<'pid' | '3d' | '2d'>('3d')
-  const [cstpsPipes, setCstpsPipes] = useState<PipeData[]>(staticCstpsPipes as PipeData[])
-  const [sensorOrder, setSensorOrder] = useState<PipeData[]>(staticCstpsPipes as PipeData[])
+  const initialPipes: PipeData[] = staticCstpsPipes.map(sp => ({
+    id: sp.id, pipeNumber: sp.pipeNumber, deviceId: sp.deviceId,
+    status: sp.status, lastDataAt: null, parameters: sp.parameters,
+  }))
+  const [cstpsPipes, setCstpsPipes] = useState<PipeData[]>(initialPipes)
+  const [sensorOrder, setSensorOrder] = useState<PipeData[]>(initialPipes)
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   const [isLiveData, setIsLiveData] = useState(false)
@@ -1447,6 +1484,7 @@ export default function CSTPSPipelinePage() {
                   const statusColor = pipe.status === 'online' ? '#4CAF50' : pipe.status === 'warning' ? '#FFC107' : '#F44336'
                   const isDragging = draggedIndex === index
                   const isDragOver = dragOverIndex === index
+                  const lastTime = formatLastDataTime(pipe.lastDataAt)
                   return (
                     <div
                       key={pipe.id}
@@ -1466,7 +1504,7 @@ export default function CSTPSPipelinePage() {
                       onMouseEnter={() => setHoveredPipe(pipe.id)}
                       onMouseLeave={() => setHoveredPipe(null)}
                     >
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center justify-between mb-1">
                         <Link
                           href={`/cstps-pipeline/${pipe.id}`}
                           className="text-xs font-bold text-[#263238] font-mono hover:text-[#1565C0]"
@@ -1491,6 +1529,13 @@ export default function CSTPSPipelinePage() {
                             }}
                           ></div>
                         </div>
+                      </div>
+                      {/* Last received timestamp */}
+                      <div className="flex items-center gap-1 mb-1.5">
+                        <span className="material-icons text-[#9E9E9E]" style={{ fontSize: '10px' }}>schedule</span>
+                        <span className={`text-[9px] font-mono ${isStale ? 'text-[#F57F17]' : 'text-[#9E9E9E]'}`}>
+                          {pipe.lastDataAt ? `${lastTime.ist} (${lastTime.relative})` : 'No data received'}
+                        </span>
                       </div>
                       <Link
                         href={`/cstps-pipeline/${pipe.id}`}
