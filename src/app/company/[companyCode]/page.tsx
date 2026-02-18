@@ -358,7 +358,7 @@ export default function CompanyDashboardPage() {
                         <div className="text-right">
                           {device.latest_data?.flow_rate !== undefined ? (
                             <p className="text-sm font-semibold text-gray-900">
-                              {device.latest_data.flow_rate?.toFixed(2)} m³/h
+                              {((device.latest_data.flow_rate ?? 0) * 3600).toFixed(2)} m³/h
                             </p>
                           ) : (
                             <p className="text-xs text-gray-400">No data</p>
@@ -492,7 +492,7 @@ export default function CompanyDashboardPage() {
                         <td className="py-4 px-4">
                           {device.latest_data?.flow_rate !== undefined ? (
                             <span className="font-semibold text-gray-900">
-                              {device.latest_data.flow_rate?.toFixed(2)} m³/h
+                              {((device.latest_data.flow_rate ?? 0) * 3600).toFixed(2)} m³/h
                             </span>
                           ) : (
                             <span className="text-gray-400">-</span>

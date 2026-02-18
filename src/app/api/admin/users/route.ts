@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { getCurrentUser } from '@/lib/auth/session';
 import { canCreateUsers, canManagePermissions } from '@/lib/auth/permissions';
 import { hashPassword, validatePasswordStrength } from '@/lib/auth/password';
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const supabase = createClient();
+    const supabase = createAdminClient();
     const { searchParams } = new URL(request.url);
     const companyId = searchParams.get('companyId');
     const includeInactive = searchParams.get('includeInactive') === 'true';
@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = createClient();
+    const supabase = createAdminClient();
 
     // Check if username already exists
     const { data: existingUsername } = await supabase

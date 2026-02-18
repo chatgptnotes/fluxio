@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { verifyPassword, hashPassword, SUPERADMIN_PASSWORD_HASH } from '@/lib/auth/password';
 import { createSession } from '@/lib/auth/session';
 
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = createClient();
+    const supabase = createAdminClient();
 
     // Find user by username or email (without checking is_active first)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

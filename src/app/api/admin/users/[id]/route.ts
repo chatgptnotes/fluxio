@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { getCurrentUser } from '@/lib/auth/session';
 import { canManagePermissions } from '@/lib/auth/permissions';
 import { hashPassword, validatePasswordStrength } from '@/lib/auth/password';
@@ -20,7 +20,7 @@ export async function GET(
       );
     }
 
-    const supabase = createClient();
+    const supabase = createAdminClient();
 
     const { data: user, error } = await supabase
       .from('users')
@@ -102,7 +102,7 @@ export async function PATCH(
       isActive,
     } = body;
 
-    const supabase = createClient();
+    const supabase = createAdminClient();
 
     // Get existing user
     const { data: existingUser, error: fetchError } = await supabase
@@ -288,7 +288,7 @@ export async function DELETE(
       );
     }
 
-    const supabase = createClient();
+    const supabase = createAdminClient();
 
     // Check if user exists
     const { data: user, error: fetchError } = await supabase

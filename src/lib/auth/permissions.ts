@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 export interface PipelinePermissions {
   view: boolean;
@@ -137,7 +137,7 @@ export function canEditPipeline(
 export async function getUserPipelinePermissions(
   userId: string
 ): Promise<Record<string, PipelinePermissions>> {
-  const supabase = createClient();
+  const supabase = createAdminClient();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabase as any)
@@ -165,7 +165,7 @@ export async function getAccessiblePipelines(
   user: SessionUser
 ): Promise<string[]> {
   if (user.isSuperadmin || user.permissions?.all || user.permissions?.canAccessAllPipelines) {
-    const supabase = createClient();
+    const supabase = createAdminClient();
     const { data } = await supabase.from('devices').select('device_id');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return data?.map((d: any) => d.device_id) || [];

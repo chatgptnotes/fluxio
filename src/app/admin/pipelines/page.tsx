@@ -36,7 +36,7 @@ export default function AdminPipelinesPage() {
 
           return {
             ...pipe,
-            liveFlowRate: liveData?.flow_rate ?? pipe.parameters.flowRate,
+            liveFlowRate: liveData ? (liveData.flow_rate ?? 0) * 3600 : pipe.parameters.flowRate,
             liveTotalizer: liveData?.totalizer ?? pipe.parameters.totalizer,
             status: liveData ? (liveData.flow_rate > 0 ? 'online' : 'warning') : pipe.status,
           } as PipelineWithLiveData;

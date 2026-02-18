@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import { destroySession, getSession } from '@/lib/auth/session';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 export async function POST() {
   try {
     const session = await getSession();
 
     if (session) {
-      const supabase = createClient();
+      const supabase = createAdminClient();
 
       // Log logout action
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

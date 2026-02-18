@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const isResolved = searchParams.get('is_resolved')
     const limit = parseInt(searchParams.get('limit') || '100')
 
-    const supabase = createClient()
+    const supabase = createAdminClient()
 
     let query = supabase
       .from('alerts')
@@ -62,7 +62,7 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
-    const supabase = createClient()
+    const supabase = createAdminClient()
 
     const updateData: Record<string, boolean | string | null> = {}
 

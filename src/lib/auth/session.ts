@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { generateSessionToken } from './password';
 import { buildSessionUser, type SessionUser } from './permissions';
 
@@ -16,7 +16,7 @@ export interface Session {
  * Create a new session for a user
  */
 export async function createSession(userId: string): Promise<Session | null> {
-  const supabase = createClient();
+  const supabase = createAdminClient();
   const token = generateSessionToken();
   const expiresAt = new Date(Date.now() + SESSION_DURATION_MINUTES * 60 * 1000);
 
@@ -84,7 +84,7 @@ export async function getSession(): Promise<Session | null> {
     return null;
   }
 
-  const supabase = createClient();
+  const supabase = createAdminClient();
 
   // Get session from database
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -144,7 +144,7 @@ export async function destroySession(): Promise<void> {
   const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
 
   if (token) {
-    const supabase = createClient();
+    const supabase = createAdminClient();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await (supabase as any).from('user_sessions').delete().eq('session_token', token);
     cookieStore.delete(SESSION_COOKIE_NAME);
@@ -158,7 +158,7 @@ export async function refreshSession(): Promise<Session | null> {
   const session = await getSession();
   if (!session) return null;
 
-  const supabase = createClient();
+  const supabase = createAdminClient();
   const newExpiresAt = new Date(Date.now() + SESSION_DURATION_MINUTES * 60 * 1000);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { getCurrentUser } from '@/lib/auth/session';
 import { canManagePermissions } from '@/lib/auth/permissions';
 
@@ -15,7 +15,7 @@ export async function GET() {
       );
     }
 
-    const supabase = createClient();
+    const supabase = createAdminClient();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: companies, error } = await (supabase as any)
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = createClient();
+    const supabase = createAdminClient();
 
     // Check if code already exists
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -429,25 +429,29 @@ export default function PipeDetailPage() {
     let subscription: ReturnType<typeof supabase.channel> | null = null
 
     // Convert API record to LiveData
+    // Unit conversions:
+    // - flow_rate from Nivus 750 register 30011 arrives in m3/s, convert to m3/h
+    // - water_level from Nivus 750 register 30013 arrives in meters, convert to mm
     function convertToLiveData(record: FlowDataRecord): LiveData {
-      const flowRate = record.flow_rate ?? 0
+      const flowRateM3H = (record.flow_rate ?? 0) * 3600
       const batteryLevel = record.battery_level ?? 100
+      const waterLevelMM = ((record.metadata?.water_level ?? record.metadata?.level ?? 0) as number) * 1000
 
       let status: 'online' | 'warning' | 'offline' = 'online'
       const lastUpdateTime = new Date(record.created_at)
       const now = new Date()
       const minutesSinceUpdate = (now.getTime() - lastUpdateTime.getTime()) / (1000 * 60)
 
-      if (minutesSinceUpdate > 15) {
+      if (minutesSinceUpdate > 60) { // 1 hour offline threshold
         status = 'offline'
       } else if (batteryLevel < 30) {
         status = 'warning'
       }
 
       return {
-        flowRate,
+        flowRate: flowRateM3H,
         velocity: record.metadata?.velocity ?? staticPipe!.parameters.velocity,
-        waterLevel: record.metadata?.water_level ?? staticPipe!.parameters.waterLevel,
+        waterLevel: waterLevelMM || staticPipe!.parameters.waterLevel,
         totalizer: record.totalizer ?? staticPipe!.parameters.totalizer,
         temperature: record.temperature ?? staticPipe!.parameters.temperature,
         batteryLevel,

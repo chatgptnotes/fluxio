@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { getCurrentUser } from '@/lib/auth/session';
 import { canManagePermissions } from '@/lib/auth/permissions';
 
@@ -19,7 +19,7 @@ export async function GET(
       );
     }
 
-    const supabase = createClient();
+    const supabase = createAdminClient();
 
     // Get user's pipeline access
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -72,7 +72,7 @@ export async function PUT(
       );
     }
 
-    const supabase = createClient();
+    const supabase = createAdminClient();
 
     // Verify user exists
     const { data: user, error: userError } = await supabase
@@ -179,7 +179,7 @@ export async function POST(
       );
     }
 
-    const supabase = createClient();
+    const supabase = createAdminClient();
 
     // Verify user exists and is not superadmin
     const { data: user, error: userError } = await supabase
@@ -277,7 +277,7 @@ export async function DELETE(
       );
     }
 
-    const supabase = createClient();
+    const supabase = createAdminClient();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error: deleteError } = await (supabase as any)

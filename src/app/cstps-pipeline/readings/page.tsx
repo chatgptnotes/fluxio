@@ -18,8 +18,8 @@ const deviceToPipeMap: Record<string, { pipeNumber: number; staticIndex: number 
 }
 
 // Timeout thresholds (in minutes)
-const OFFLINE_THRESHOLD_MINUTES = 5
-const WARNING_THRESHOLD_MINUTES = 3
+const OFFLINE_THRESHOLD_MINUTES = 60 // Mark as offline if no data for 1 hour
+const WARNING_THRESHOLD_MINUTES = 30 // Mark as warning if no data for 30 minutes
 
 interface FlowDataRecord {
   device_id: string
@@ -93,33 +93,25 @@ function convertToReading(record: FlowDataRecord | null, staticPipe: NivusSensor
   }
 
   const velocity = record.metadata?.velocity ?? 0
-  const waterLevel = record.metadata?.water_level ?? record.metadata?.level ?? 0
+  const waterLevelMeters = record.metadata?.water_level ?? record.metadata?.level ?? 0
 
-  if (status === 'offline') {
-    return {
-      id: staticPipe.id,
-      pipeNumber: staticPipe.pipeNumber,
-      deviceId: staticPipe.deviceId,
-      deviceName: staticPipe.deviceName,
-      status: 'offline',
-      flowRate: 0,
-      velocity: 0,
-      waterLevel: 0,
-      temperature: 0,
-      totalizer: 0,
-      lastUpdated: record.created_at,
-    }
-  }
+  // Unit conversions:
+  // - flow_rate from Nivus 750 register 30011 arrives in m3/s, convert to m3/h
+  // - water_level from Nivus 750 register 30013 arrives in meters, convert to mm
+  const flowRateM3H = (record.flow_rate ?? 0) * 3600
+  const waterLevelMM = waterLevelMeters * 1000
 
+  // Always return last known values with appropriate status.
+  // If offline/warning, the UI shows a warning badge on top of values.
   return {
     id: staticPipe.id,
     pipeNumber: staticPipe.pipeNumber,
     deviceId: staticPipe.deviceId,
     deviceName: staticPipe.deviceName,
     status,
-    flowRate: record.flow_rate ?? 0,
+    flowRate: flowRateM3H,
     velocity,
-    waterLevel,
+    waterLevel: waterLevelMM,
     temperature: record.temperature ?? 0,
     totalizer: record.totalizer ?? 0,
     lastUpdated: record.created_at,
@@ -364,7 +356,8 @@ export default function CSTRSReadingsPage() {
         {/* Flow Meter Cards - 2x3 Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {readings.map((reading) => {
-            const hasFlow = reading.status !== 'offline' && reading.flowRate > 0
+            const hasFlow = reading.status === 'online' && reading.flowRate > 0
+            const isStale = reading.status === 'warning' || reading.status === 'offline'
             const totVal = totalizerValues[reading.deviceId] ?? 0
             return (
               <div
@@ -385,6 +378,12 @@ export default function CSTRSReadingsPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
+                    {isStale && reading.flowRate > 0 && (
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-[#FFF8E1] text-[#F57F17] font-mono flex items-center gap-0.5">
+                        <span className="material-icons" style={{ fontSize: '11px' }}>warning</span>
+                        LAST KNOWN
+                      </span>
+                    )}
                     <span
                       className="text-[10px] font-bold px-2 py-0.5 rounded-full"
                       style={{
@@ -410,7 +409,7 @@ export default function CSTRSReadingsPage() {
                 <div className="p-4">
                   <div className="bg-[#0D1B2A] rounded-lg px-3 py-3 mb-4">
                     <div className="text-[10px] text-[#90CAF9] font-mono mb-1">FLOW RATE</div>
-                    <div className={`text-2xl font-bold font-mono ${hasFlow ? 'text-[#00E5FF]' : 'text-[#546E7A]'}`}>
+                    <div className={`text-2xl font-bold font-mono ${hasFlow ? 'text-[#00E5FF]' : isStale && reading.flowRate > 0 ? 'text-[#FFC107]' : 'text-[#546E7A]'}`}>
                       {reading.flowRate.toFixed(1)}
                       <span className="text-xs text-[#4FC3F7] font-normal ml-1">m3/h</span>
                     </div>
