@@ -86,11 +86,11 @@ export async function getSession(): Promise<Session | null> {
 
   const supabase = createAdminClient();
 
-  // Get session from database
+  // Get session from database (without join - PostgREST schema cache issue)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: session, error: sessionError } = await (supabase as any)
     .from('user_sessions')
-    .select('*, users(*)')
+    .select('id, user_id, session_token, expires_at')
     .eq('session_token', token)
     .gt('expires_at', new Date().toISOString())
     .single();
@@ -101,19 +101,15 @@ export async function getSession(): Promise<Session | null> {
     return null;
   }
 
-  const user = session.users as {
-    id: string;
-    username: string;
-    email: string;
-    full_name: string;
-    role: 'admin' | 'operator' | 'viewer';
-    is_superadmin: boolean;
-    company_id: string | null;
-    permissions: Record<string, unknown>;
-    is_active: boolean;
-  };
+  // Fetch user separately
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: user, error: userError } = await (supabase as any)
+    .from('users')
+    .select('id, username, email, full_name, role, is_superadmin, company_id, permissions, is_active')
+    .eq('id', session.user_id)
+    .single();
 
-  if (!user || !user.is_active) {
+  if (userError || !user || !user.is_active) {
     cookieStore.delete(SESSION_COOKIE_NAME);
     return null;
   }
