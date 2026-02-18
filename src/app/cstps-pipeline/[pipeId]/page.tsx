@@ -66,25 +66,10 @@ interface LiveData {
   lastUpdated: string
 }
 
-// Generate mock historical data for trends
-function generateHistoricalData(baseValue: number, variance: number, points: number = 60) {
-  const now = Date.now()
-  const interval = 5 * 60 * 1000 // 5 minutes
-  const data: { timestamp: number; value: number }[] = []
-
-  for (let i = points - 1; i >= 0; i--) {
-    const timestamp = now - i * interval
-    // When base value is 0 (offline/no data), show clean flat line
-    if (baseValue === 0) {
-      data.push({ timestamp, value: 0 })
-      continue
-    }
-    const randomVariance = (Math.random() - 0.5) * 2 * variance
-    const value = Math.max(0, baseValue + randomVariance + Math.sin(i / 10) * variance * 0.5)
-    data.push({ timestamp, value })
-  }
-
-  return data
+// Interface for historical data point
+interface HistoricalPoint {
+  timestamp: number
+  value: number
 }
 
 // SCADA Trend Chart Component
@@ -104,8 +89,11 @@ function TrendChart({
   showGrid?: boolean
 }) {
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null)
+  const hasData = data && data.length >= 2
 
   const { points, yLabels, timeLabels } = useMemo(() => {
+    if (!hasData) return { points: [], yLabels: [], timeLabels: [] }
+
     const values = data.map((d) => d.value)
     const min = Math.min(...values)
     const max = Math.max(...values)
@@ -146,7 +134,29 @@ function TrendChart({
     .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`)
     .join(' ')
 
-  const areaD = `${pathD} L 100 100 L 0 100 Z`
+  const areaD = hasData ? `${pathD} L 100 100 L 0 100 Z` : ''
+
+  if (!hasData) {
+    return (
+      <div className="rounded-lg border border-cyan-900/50 bg-slate-100 overflow-hidden">
+        <div className="flex items-center justify-between border-b border-cyan-900/50 bg-cyan-900/20 px-3 py-2">
+          <div className="flex items-center space-x-2">
+            <TrendingUp className="h-4 w-4 text-cyan-400" />
+            <span className="text-xs font-bold tracking-wider text-cyan-400">{label}</span>
+          </div>
+          <div className="flex items-center space-x-3 text-[10px] text-red-400 font-bold">
+            <span>NO DATA AVAILABLE</span>
+          </div>
+        </div>
+        <div className="flex items-center justify-center bg-[#060a10]" style={{ height: height + 40 }}>
+          <div className="text-center">
+            <span className="material-icons text-3xl text-gray-600">signal_disconnected</span>
+            <p className="text-xs text-gray-500 mt-2 font-bold">Waiting for device data...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="rounded-lg border border-cyan-900/50 bg-slate-100 overflow-hidden">
@@ -157,9 +167,9 @@ function TrendChart({
           <span className="text-xs font-bold tracking-wider text-cyan-400">{label}</span>
         </div>
         <div className="flex items-center space-x-3 text-[10px] text-white font-bold">
-          <span>5 MIN INTERVAL</span>
+          <span>{data.length} RECORDS</span>
           <span>|</span>
-          <span>5 HOUR HISTORY</span>
+          <span>REAL DATA</span>
         </div>
       </div>
 
@@ -418,6 +428,12 @@ export default function PipeDetailPage() {
   const [liveData, setLiveData] = useState<LiveData | null>(null)
   const [isLiveData, setIsLiveData] = useState(false)
 
+  // Real historical data from API
+  const [flowHistory, setFlowHistory] = useState<HistoricalPoint[]>([])
+  const [velocityHistory, setVelocityHistory] = useState<HistoricalPoint[]>([])
+  const [levelHistory, setLevelHistory] = useState<HistoricalPoint[]>([])
+  const [tempHistory, setTempHistory] = useState<HistoricalPoint[]>([])
+
   // Get device ID for this pipe
   const deviceId = pipeToDeviceMap[pipeId]
 
@@ -461,10 +477,34 @@ export default function PipeDetailPage() {
       }
     }
 
-    // Fetch latest flow data for this device
+    // Convert an array of flow data records into historical trend arrays
+    function buildHistoricalTrends(records: FlowDataRecord[]) {
+      const flow: HistoricalPoint[] = []
+      const velocity: HistoricalPoint[] = []
+      const level: HistoricalPoint[] = []
+      const temp: HistoricalPoint[] = []
+
+      // Records come newest-first from API, reverse for chronological order
+      const sorted = [...records].reverse()
+
+      for (const r of sorted) {
+        const ts = new Date(r.created_at).getTime()
+        flow.push({ timestamp: ts, value: (r.flow_rate ?? 0) * 3600 })
+        velocity.push({ timestamp: ts, value: (r.metadata?.velocity ?? 0) as number })
+        level.push({ timestamp: ts, value: ((r.metadata?.water_level ?? r.metadata?.level ?? 0) as number) * 1000 })
+        temp.push({ timestamp: ts, value: r.temperature ?? 0 })
+      }
+
+      setFlowHistory(flow)
+      setVelocityHistory(velocity)
+      setLevelHistory(level)
+      setTempHistory(temp)
+    }
+
+    // Fetch latest flow data for this device (current + historical)
     async function fetchLatestData() {
       try {
-        const response = await fetch(`/api/flow-data?device_id=${deviceId}&limit=1`)
+        const response = await fetch(`/api/flow-data?device_id=${deviceId}&limit=60`)
         if (!response.ok) {
           console.warn('Error fetching flow data:', response.statusText)
           return
@@ -476,10 +516,15 @@ export default function PipeDetailPage() {
           return
         }
 
-        const record = result.data[0] as FlowDataRecord
-        setLiveData(convertToLiveData(record))
+        const records = result.data as FlowDataRecord[]
+
+        // Set live data from the most recent record
+        setLiveData(convertToLiveData(records[0]))
         setIsLiveData(true)
         setLastUpdate(new Date())
+
+        // Build historical trends from all records
+        buildHistoricalTrends(records)
       } catch (err) {
         console.warn('Failed to fetch flow data:', err)
       }
@@ -501,6 +546,13 @@ export default function PipeDetailPage() {
             const newRecord = payload.new as FlowDataRecord
             setLiveData(convertToLiveData(newRecord))
             setLastUpdate(new Date())
+
+            // Append new point to trends (keep last 60)
+            const ts = new Date(newRecord.created_at).getTime()
+            setFlowHistory(prev => [...prev.slice(-59), { timestamp: ts, value: (newRecord.flow_rate ?? 0) * 3600 }])
+            setVelocityHistory(prev => [...prev.slice(-59), { timestamp: ts, value: (newRecord.metadata?.velocity ?? 0) as number }])
+            setLevelHistory(prev => [...prev.slice(-59), { timestamp: ts, value: ((newRecord.metadata?.water_level ?? newRecord.metadata?.level ?? 0) as number) * 1000 }])
+            setTempHistory(prev => [...prev.slice(-59), { timestamp: ts, value: newRecord.temperature ?? 0 }])
           }
         )
         .subscribe()
@@ -554,44 +606,6 @@ export default function PipeDetailPage() {
 
     return staticPipe
   }, [staticPipe, liveData])
-
-  // Generate historical data for trends - use live values when available
-  const flowHistory = useMemo(
-    () => {
-      if (!pipe) return []
-      const flowRate = pipe.parameters.flowRate
-      return generateHistoricalData(flowRate, Math.max(flowRate * 0.15, 1))
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [pipe?.parameters.flowRate]
-  )
-  const velocityHistory = useMemo(
-    () => {
-      if (!pipe) return []
-      const velocity = pipe.parameters.velocity
-      return generateHistoricalData(velocity, Math.max(velocity * 0.1, 0.1))
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [pipe?.parameters.velocity]
-  )
-  const levelHistory = useMemo(
-    () => {
-      if (!pipe) return []
-      const waterLevel = pipe.parameters.waterLevel
-      return generateHistoricalData(waterLevel, Math.max(waterLevel * 0.05, 10))
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [pipe?.parameters.waterLevel]
-  )
-  const tempHistory = useMemo(
-    () => {
-      if (!pipe) return []
-      const temperature = pipe.parameters.temperature
-      return generateHistoricalData(temperature, 2)
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [pipe?.parameters.temperature]
-  )
 
   if (!pipe) {
     return (
