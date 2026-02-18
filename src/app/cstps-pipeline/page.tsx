@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/hooks/useAuth'
 import { createClient } from '@/lib/supabase/client'
 import { cstpsPipes as staticCstpsPipes, NivusSensor } from '@/lib/cstps-data'
 
@@ -173,6 +174,7 @@ const initial2DPositions = [
 
 export default function CSTPSPipelinePage() {
   const router = useRouter()
+  const { user: authUser } = useAuth()
   const [hoveredPipe, setHoveredPipe] = useState<string | null>(null)
   const [currentTime, setCurrentTime] = useState<Date | null>(null)
   const [viewMode, setViewMode] = useState<'pid' | '3d' | '2d'>('3d')
@@ -378,6 +380,16 @@ export default function CSTPSPipelinePage() {
               <span className="material-icons text-xs mr-1">logout</span>
               <span className="font-medium">Sign Out</span>
             </button>
+            <div className="h-6 w-px bg-white/30 hidden sm:block"></div>
+            {authUser && (
+              <div className="hidden sm:flex items-center space-x-1.5">
+                <span className="material-icons text-white/80 text-sm">person</span>
+                <span className="text-xs md:text-sm text-white font-medium">{authUser.fullName || authUser.username}</span>
+                <span className="text-[10px] md:text-xs text-white/70 bg-white/15 px-1.5 py-0.5 rounded capitalize">
+                  {authUser.isSuperadmin ? 'Superadmin' : authUser.role}
+                </span>
+              </div>
+            )}
             <div className="h-6 w-px bg-white/30 hidden sm:block"></div>
             <div className="flex items-center space-x-1 md:space-x-2">
               <div className="relative">
