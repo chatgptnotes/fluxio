@@ -28,10 +28,11 @@ export async function GET(request: NextRequest) {
     const companyId = searchParams.get('companyId');
     const includeInactive = searchParams.get('includeInactive') === 'true';
 
+    // Fetch users (without join - PostgREST schema cache doesn't detect the FK)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let query = (supabase as any)
       .from('users')
-      .select('id, username, email, full_name, role, is_superadmin, company_id, permissions, is_active, last_login, created_at, companies(id, name, code)')
+      .select('id, username, email, full_name, role, is_superadmin, company_id, permissions, is_active, last_login, created_at')
       .order('created_at', { ascending: false });
 
     if (companyId) {
@@ -52,7 +53,27 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ users: users || [] });
+    // Fetch companies separately and attach to users
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: companies } = await (supabase as any)
+      .from('companies')
+      .select('id, name, code');
+
+    const companyMap = new Map<string, { id: string; name: string; code: string }>();
+    if (companies) {
+      for (const c of companies) {
+        companyMap.set(c.id, c);
+      }
+    }
+
+    // Attach company info to each user
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const usersWithCompanies = (users || []).map((u: any) => ({
+      ...u,
+      companies: u.company_id ? companyMap.get(u.company_id) || null : null,
+    }));
+
+    return NextResponse.json({ users: usersWithCompanies });
   } catch (error) {
     console.error('Error in GET /api/admin/users:', error);
     return NextResponse.json(
