@@ -99,10 +99,18 @@ export async function PUT(
 
     // Delete existing permissions
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase as any)
+    const { error: deleteError } = await (supabase as any)
       .from('user_pipeline_access')
       .delete()
       .eq('user_id', id);
+
+    if (deleteError) {
+      console.error('Error deleting existing permissions:', deleteError);
+      return NextResponse.json(
+        { error: `Failed to clear existing permissions: ${deleteError.message}` },
+        { status: 500 }
+      );
+    }
 
     // Insert new permissions
     if (pipelines.length > 0) {
@@ -125,7 +133,7 @@ export async function PUT(
       if (insertError) {
         console.error('Error inserting permissions:', insertError);
         return NextResponse.json(
-          { error: 'Failed to update permissions' },
+          { error: `Failed to save permissions: ${insertError.message}` },
           { status: 500 }
         );
       }

@@ -134,7 +134,7 @@ export default function PermissionMatrix({
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || 'Failed to save permissions');
+        setError(data.error || 'Failed to update permissions');
         return;
       }
 
