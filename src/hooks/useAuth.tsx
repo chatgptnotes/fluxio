@@ -122,15 +122,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
       setUser(null);
-      // Redirect to login page after logout
-      router.push('/login');
+      window.location.href = '/';
     } catch (error) {
       console.error('Logout error:', error);
-      // Still redirect on error to ensure user is logged out on client side
       setUser(null);
-      router.push('/login');
+      window.location.href = '/';
     }
-  }, [router]);
+  }, []);
 
   return (
     <AuthContext.Provider

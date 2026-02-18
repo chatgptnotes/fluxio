@@ -372,7 +372,7 @@ export default function CSTPSPipelinePage() {
                 } catch (e) {
                   console.error('Logout error:', e)
                 } finally {
-                  window.location.href = '/login'
+                  window.location.href = '/'
                 }
               }}
               className="flex items-center rounded bg-white/20 px-3 py-1 md:px-4 md:py-1.5 text-xs md:text-sm text-white transition-all hover:bg-white/30 border border-white/30"
