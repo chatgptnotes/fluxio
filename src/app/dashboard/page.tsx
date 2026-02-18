@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import {
   Activity,
   AlertTriangle,
@@ -15,6 +16,7 @@ import {
 } from 'lucide-react'
 import { Card } from '@/components/ui/Card'
 import { LogoutButton } from '@/components/auth/LogoutButton'
+import { useAuth } from '@/hooks/useAuth'
 import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database'
 
@@ -34,8 +36,20 @@ export default function DashboardPage() {
   const [companies, setCompanies] = useState<Company[]>([])
   const [summary, setSummary] = useState<DashboardSummary | null>(null)
   const [loading, setLoading] = useState(true)
+  const { user: authUser, isLoading: authLoading } = useAuth()
+  const router = useRouter()
 
   const supabase = createClient()
+
+  // Redirect non-admin users to pipeline view
+  useEffect(() => {
+    if (!authLoading && authUser) {
+      if (!authUser.isSuperadmin && authUser.role !== 'admin') {
+        router.replace('/cstps-pipeline')
+        return
+      }
+    }
+  }, [authUser, authLoading, router])
 
   useEffect(() => {
     fetchData()
@@ -120,13 +134,15 @@ export default function DashboardPage() {
                 <div className="h-2 w-2 animate-pulse rounded-full bg-green-600"></div>
                 <span className="text-sm font-medium text-green-800">Live</span>
               </div>
-              <Link
-                href="/admin"
-                className="inline-flex items-center space-x-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-              >
-                <Settings className="h-4 w-4" />
-                <span>Admin</span>
-              </Link>
+              {authUser?.isSuperadmin || authUser?.role === 'admin' ? (
+                <Link
+                  href="/admin"
+                  className="inline-flex items-center space-x-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                >
+                  <Settings className="h-4 w-4" />
+                  <span>Admin</span>
+                </Link>
+              ) : null}
               <Link
                 href="/dashboard/profile"
                 className="inline-flex items-center space-x-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"

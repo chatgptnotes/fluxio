@@ -49,7 +49,18 @@ function LoginContent() {
         return
       }
 
-      router.push(redirectTo)
+      // Determine redirect based on user role
+      // Operators and viewers with a company go to pipeline view
+      // Superadmins and admins go to the main dashboard
+      let destination = redirectTo
+      if (redirectTo === '/dashboard' && data.user) {
+        const { role, isSuperadmin } = data.user
+        if (!isSuperadmin && role !== 'admin') {
+          destination = '/cstps-pipeline'
+        }
+      }
+
+      router.push(destination)
       router.refresh()
     } catch (err) {
       console.error('Login error:', err)

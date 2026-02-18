@@ -123,6 +123,7 @@ export async function POST(request: NextRequest) {
         fullName: session.user.fullName,
         role: session.user.role,
         isSuperadmin: session.user.isSuperadmin,
+        companyId: userData.company_id || null,
       },
     });
   } catch (error) {
