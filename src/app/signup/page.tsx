@@ -171,7 +171,7 @@ export default function SignupPage() {
           {/* Footer */}
           <div className="mt-8 text-center">
             <p className="text-xs text-white/60">
-              FlowNexus v1.6 | February 1, 2026 | flownexus
+              FlowNexus v1.7 | February 19, 2026 | flownexus
             </p>
           </div>
         </div>
@@ -435,7 +435,7 @@ export default function SignupPage() {
         {/* Footer */}
         <div className="mt-8 text-center">
           <p className="text-xs text-white/60">
-            FlowNexus v1.6 | February 1, 2026 | flownexus
+            FlowNexus v1.7 | February 19, 2026 | flownexus
           </p>
         </div>
       </div>

@@ -322,7 +322,7 @@ export default function DashboardPage() {
       <footer className="mt-16 border-t border-gray-200 bg-white py-4">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="text-center text-xs text-gray-400">
-            FlowNexus v1.6 | February 1, 2026 | flownexus
+            FlowNexus v1.7 | February 19, 2026 | flownexus
           </p>
         </div>
       </footer>

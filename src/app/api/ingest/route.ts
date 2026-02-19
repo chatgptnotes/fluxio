@@ -234,7 +234,7 @@ export async function POST(request: NextRequest) {
     // Get default device_id from header or query param (for TRB246 compatibility)
     const defaultDeviceId = request.headers.get('x-device-id') ||
                            request.nextUrl.searchParams.get('device_id') ||
-                           'NIVUS_750_01'
+                           'NIVUS_750_001'
 
     // Parse request body
     const body = await request.json()

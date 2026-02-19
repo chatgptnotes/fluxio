@@ -5,7 +5,6 @@ import {
   Activity,
   AlertTriangle,
   ArrowRight,
-  CheckCircle2,
   Cloud,
   Database,
   Droplet,
@@ -591,7 +590,7 @@ export default function LandingPage() {
 
           <div className="mt-12 border-t border-gray-200 pt-8 text-center">
             <p className="text-xs text-gray-400">
-              FlowNexus v1.4 | January 9, 2025 | flownexus
+              FlowNexus v1.7 | February 19, 2026 | flownexus
             </p>
           </div>
         </div>

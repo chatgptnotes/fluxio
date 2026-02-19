@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { getCurrentUser } from '@/lib/auth/session'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -7,11 +8,16 @@ export const fetchCache = 'force-no-store'
 
 export async function GET(request: NextRequest) {
   try {
+    const user = await getCurrentUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const searchParams = request.nextUrl.searchParams
     const deviceId = searchParams.get('device_id')
     const startTime = searchParams.get('start_time')
     const endTime = searchParams.get('end_time')
-    const limit = parseInt(searchParams.get('limit') || '1000')
+    const limit = Math.min(Math.max(parseInt(searchParams.get('limit') || '1000') || 1, 1), 10000)
 
     const supabase = createAdminClient()
 

@@ -3,7 +3,7 @@
 // Deletes flow_data records older than 1 year (365 days)
 
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 const CRON_SECRET = process.env.CRON_SECRET
 const RETENTION_DAYS = 365
@@ -22,19 +22,7 @@ export async function GET(request: Request) {
 
     console.log('Starting data retention cleanup...')
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-    if (!supabaseUrl || !supabaseServiceKey) {
-      console.log('Supabase not configured, skipping cleanup')
-      return NextResponse.json({
-        success: true,
-        message: 'Supabase not configured, cleanup skipped',
-        deleted_count: 0,
-      })
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    const supabase = createAdminClient()
 
     // Calculate cutoff date
     const cutoffDate = new Date()
@@ -61,7 +49,8 @@ export async function GET(request: Request) {
 
     // Log to audit_logs if records were deleted
     if (deletedCount > 0) {
-      await supabase.from('audit_logs').insert({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any).from('audit_logs').insert({
         action: 'data_retention_cleanup',
         resource_type: 'flow_data',
         details: {

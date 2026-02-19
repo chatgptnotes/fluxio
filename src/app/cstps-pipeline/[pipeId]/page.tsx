@@ -1017,7 +1017,7 @@ export default function PipeDetailPage() {
             </div>
           </div>
           <div className="text-[10px] md:text-xs text-white font-bold font-mono hidden sm:block">
-            FlowNexus v3.0
+            FlowNexus v1.7 | February 19, 2026 | flownexus
           </div>
         </div>
       </footer>

@@ -413,7 +413,7 @@ export default function InfographicsPage() {
       {/* Footer */}
       <footer className="text-center py-4">
         <p className="text-xs text-gray-400">
-          Version 1.4 | February 2, 2026 | flownexus
+          FlowNexus v1.7 | February 19, 2026 | flownexus
         </p>
       </footer>
     </div>

@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { useAuth } from './useAuth';
-import type { SessionUser, PipelinePermissions } from '@/lib/auth/permissions';
+import type { PipelinePermissions } from '@/lib/auth/permissions';
 
 export function usePermissions() {
   const { user, isAuthenticated } = useAuth();

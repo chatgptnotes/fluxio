@@ -546,7 +546,7 @@ export default function ExplorePage() {
 
       {/* Footer */}
       <div className="mt-12 border-t border-white/5 py-4 text-center text-xs text-white/20">
-        Version 1.3 | February 11, 2026 | github.com/chatgptnotes/flownexus
+        FlowNexus v1.7 | February 19, 2026 | flownexus
       </div>
     </div>
   )

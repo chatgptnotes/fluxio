@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { formatDateTimeIST } from '@/lib/timezone';
 
 interface User {
   id: string;
@@ -157,18 +158,12 @@ export default function UserList({ users, onRefresh }: UserListProps) {
 
   const formatDate = (date: string | null) => {
     if (!date) return 'Never';
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    return formatDateTimeIST(new Date(date));
   };
 
   // Separate pending users from others
   const pendingUsers = users.filter(u => !u.is_active && !u.last_login);
-  const otherUsers = users.filter(u => u.is_active || u.last_login);
+  const _otherUsers = users.filter(u => u.is_active || u.last_login);
 
   return (
     <div className="space-y-6">

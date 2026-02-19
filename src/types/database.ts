@@ -123,6 +123,7 @@ export interface Database {
             | 'no_data'
             | 'device_offline'
             | 'battery_low'
+            | 'zero_flow'
             | 'custom'
           severity: 'info' | 'warning' | 'critical'
           message: string
@@ -143,6 +144,7 @@ export interface Database {
             | 'no_data'
             | 'device_offline'
             | 'battery_low'
+            | 'zero_flow'
             | 'custom'
           severity?: 'info' | 'warning' | 'critical'
           message: string
@@ -163,6 +165,7 @@ export interface Database {
             | 'no_data'
             | 'device_offline'
             | 'battery_low'
+            | 'zero_flow'
             | 'custom'
           severity?: 'info' | 'warning' | 'critical'
           message?: string
@@ -186,6 +189,7 @@ export interface Database {
             | 'no_data'
             | 'device_offline'
             | 'battery_low'
+            | 'zero_flow'
           threshold_value: number | null
           duration_minutes: number
           severity: 'info' | 'warning' | 'critical'
@@ -204,6 +208,7 @@ export interface Database {
             | 'no_data'
             | 'device_offline'
             | 'battery_low'
+            | 'zero_flow'
           threshold_value?: number | null
           duration_minutes?: number
           severity?: 'info' | 'warning' | 'critical'
@@ -222,6 +227,7 @@ export interface Database {
             | 'no_data'
             | 'device_offline'
             | 'battery_low'
+            | 'zero_flow'
           threshold_value?: number | null
           duration_minutes?: number
           severity?: 'info' | 'warning' | 'critical'
@@ -448,6 +454,38 @@ export interface Database {
           resource_id?: string | null
           details?: Json
           ip_address?: string | null
+          created_at?: string
+        }
+      }
+      reports: {
+        Row: {
+          id: string
+          report_type: string
+          report_date: string
+          file_path: string
+          file_size: number | null
+          generated_at: string
+          summary: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          report_type?: string
+          report_date: string
+          file_path: string
+          file_size?: number | null
+          generated_at?: string
+          summary?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          report_type?: string
+          report_date?: string
+          file_path?: string
+          file_size?: number | null
+          generated_at?: string
+          summary?: Json
           created_at?: string
         }
       }

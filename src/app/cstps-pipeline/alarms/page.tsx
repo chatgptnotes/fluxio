@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { cstpsPipes } from '@/lib/cstps-data'
+import { formatFullDateTimeIST, formatTimeIST } from '@/lib/timezone'
 
 // Alarm severity types
 type AlarmSeverity = 'critical' | 'warning' | 'info'
@@ -178,28 +179,9 @@ export default function AlarmsPage() {
     }
   }
 
-  const formatDateTime = (date: Date) => {
-    return date.toLocaleString('en-IN', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-      timeZone: 'Asia/Kolkata'
-    })
-  }
+  const formatDateTime = (date: Date) => formatFullDateTimeIST(date)
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-IN', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-      timeZone: 'Asia/Kolkata'
-    })
-  }
+  const formatTime = (date: Date) => formatTimeIST(date)
 
   const getTimeSince = (date: Date) => {
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000)

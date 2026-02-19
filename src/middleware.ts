@@ -4,13 +4,13 @@ import { NextResponse, type NextRequest } from 'next/server'
 const SESSION_COOKIE_NAME = 'flownexus_session'
 
 // Routes that require custom session authentication
-const protectedRoutes = ['/admin']
+const _protectedRoutes = ['/admin']
 
 // Routes that require admin role
-const adminRoutes = ['/admin']
+const _adminRoutes = ['/admin']
 
 // Public routes (no auth required)
-const publicRoutes = ['/', '/login', '/signup', '/forgot-password', '/unauthorized']
+const _publicRoutes = ['/', '/login', '/signup', '/forgot-password', '/unauthorized']
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({

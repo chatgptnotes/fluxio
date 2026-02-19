@@ -2,21 +2,9 @@
 // GET/PATCH company settings (including daily report configuration)
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { getCurrentUser } from '@/lib/auth/session'
 import { CompanySettings } from '@/types/database'
-
-// Create admin client with service role key for bypassing RLS
-function createAdminClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-  if (!supabaseUrl || !supabaseServiceKey) {
-    return null
-  }
-
-  return createClient(supabaseUrl, supabaseServiceKey)
-}
 
 interface RouteContext {
   params: Promise<{ id: string }>
@@ -47,13 +35,6 @@ export async function GET(
     }
 
     const supabase = createAdminClient()
-
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database not configured' },
-        { status: 500 }
-      )
-    }
 
     const { data: company, error } = await supabase
       .from('companies')
@@ -131,13 +112,6 @@ export async function PATCH(
 
     const supabase = createAdminClient()
 
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database not configured' },
-        { status: 500 }
-      )
-    }
-
     // Get current settings
     const { data: current, error: fetchError } = await supabase
       .from('companies')
@@ -165,7 +139,7 @@ export async function PATCH(
     // Update settings
     const { data: updated, error: updateError } = await supabase
       .from('companies')
-      .update({ settings: newSettings })
+      .update({ settings: newSettings } as never)
       .eq('id', companyId)
       .select('id, name, code, settings')
       .single()
@@ -179,7 +153,8 @@ export async function PATCH(
     }
 
     // Log the action
-    await supabase.from('audit_logs').insert({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any).from('audit_logs').insert({
       user_id: user.id,
       action: 'update_company_settings',
       resource_type: 'company',

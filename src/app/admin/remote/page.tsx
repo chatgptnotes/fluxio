@@ -77,7 +77,7 @@ export default function RemoteShellPage() {
 
       {/* Footer */}
       <p className="text-xs text-gray-400 text-right">
-        v1.3 | 2026-02-17 | github.com/chatgptnotes/fluxio
+        FlowNexus v1.7 | February 19, 2026 | flownexus
       </p>
     </div>
   );

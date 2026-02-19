@@ -40,6 +40,65 @@ interface HealthSummary {
 
 const SESSION_GAP_MINUTES = 5
 
+function detectSessions(timestamps: string[]): PollingSession[] {
+  if (timestamps.length === 0) return []
+
+  const sessions: PollingSession[] = []
+  let sessionStart = timestamps[0]
+  let sessionEnd = timestamps[0]
+  let sessionPoints = 1
+
+  for (let i = 1; i < timestamps.length; i++) {
+    const prev = new Date(timestamps[i - 1]).getTime()
+    const curr = new Date(timestamps[i]).getTime()
+    const gapMinutes = (curr - prev) / (1000 * 60)
+
+    if (gapMinutes <= SESSION_GAP_MINUTES) {
+      sessionEnd = timestamps[i]
+      sessionPoints++
+    } else {
+      const sStart = new Date(sessionStart).getTime()
+      const sEnd = new Date(sessionEnd).getTime()
+      const dur = Math.max((sEnd - sStart) / (1000 * 60), 1)
+      const gb =
+        sessions.length > 0
+          ? (sStart - new Date(sessions[sessions.length - 1].end).getTime()) / (1000 * 60)
+          : null
+
+      sessions.push({
+        start: sessionStart,
+        end: sessionEnd,
+        durationMinutes: Math.round(dur * 10) / 10,
+        dataPoints: sessionPoints,
+        gapBeforeMinutes: gb !== null ? Math.round(gb * 10) / 10 : null,
+      })
+
+      sessionStart = timestamps[i]
+      sessionEnd = timestamps[i]
+      sessionPoints = 1
+    }
+  }
+
+  // Push the last session
+  const sStart = new Date(sessionStart).getTime()
+  const sEnd = new Date(sessionEnd).getTime()
+  const dur = Math.max((sEnd - sStart) / (1000 * 60), 1)
+  const gb =
+    sessions.length > 0
+      ? (sStart - new Date(sessions[sessions.length - 1].end).getTime()) / (1000 * 60)
+      : null
+
+  sessions.push({
+    start: sessionStart,
+    end: sessionEnd,
+    durationMinutes: Math.round(dur * 10) / 10,
+    dataPoints: sessionPoints,
+    gapBeforeMinutes: gb !== null ? Math.round(gb * 10) / 10 : null,
+  })
+
+  return sessions
+}
+
 export async function GET(request: NextRequest) {
   try {
     const user = await getCurrentUser()
@@ -59,7 +118,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url)
     const deviceIdFilter = searchParams.get('device_id')
-    const days = parseInt(searchParams.get('days') || '7', 10)
+    const days = Math.min(Math.max(parseInt(searchParams.get('days') || '7', 10) || 1, 1), 90)
 
     const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString()
     const now = new Date()
@@ -122,61 +181,7 @@ export async function GET(request: NextRequest) {
       }
 
       // Detect polling sessions
-      const sessions: PollingSession[] = []
-      let sessionStart = timestamps[0]
-      let sessionEnd = timestamps[0]
-      let sessionPoints = 1
-
-      for (let i = 1; i < timestamps.length; i++) {
-        const prev = new Date(timestamps[i - 1]).getTime()
-        const curr = new Date(timestamps[i]).getTime()
-        const gapMinutes = (curr - prev) / (1000 * 60)
-
-        if (gapMinutes <= SESSION_GAP_MINUTES) {
-          // Same session
-          sessionEnd = timestamps[i]
-          sessionPoints++
-        } else {
-          // End current session, start new one
-          const startTime = new Date(sessionStart).getTime()
-          const endTime = new Date(sessionEnd).getTime()
-          const durationMinutes = Math.max((endTime - startTime) / (1000 * 60), 1)
-
-          const gapBefore =
-            sessions.length > 0
-              ? (startTime - new Date(sessions[sessions.length - 1].end).getTime()) / (1000 * 60)
-              : null
-
-          sessions.push({
-            start: sessionStart,
-            end: sessionEnd,
-            durationMinutes: Math.round(durationMinutes * 10) / 10,
-            dataPoints: sessionPoints,
-            gapBeforeMinutes: gapBefore !== null ? Math.round(gapBefore * 10) / 10 : null,
-          })
-
-          sessionStart = timestamps[i]
-          sessionEnd = timestamps[i]
-          sessionPoints = 1
-        }
-      }
-
-      // Push the last session
-      const startTime = new Date(sessionStart).getTime()
-      const endTime = new Date(sessionEnd).getTime()
-      const durationMinutes = Math.max((endTime - startTime) / (1000 * 60), 1)
-      const gapBefore =
-        sessions.length > 0
-          ? (startTime - new Date(sessions[sessions.length - 1].end).getTime()) / (1000 * 60)
-          : null
-
-      sessions.push({
-        start: sessionStart,
-        end: sessionEnd,
-        durationMinutes: Math.round(durationMinutes * 10) / 10,
-        dataPoints: sessionPoints,
-        gapBeforeMinutes: gapBefore !== null ? Math.round(gapBefore * 10) / 10 : null,
-      })
+      const sessions = detectSessions(timestamps)
 
       // Calculate uptime (sum of session durations)
       const uptimeMinutes = sessions.reduce((sum, s) => sum + s.durationMinutes, 0)
@@ -226,57 +231,7 @@ export async function GET(request: NextRequest) {
       if (knownDeviceIds.has(deviceId)) continue
 
       const totalDataPoints = timestamps.length
-      const sessions: PollingSession[] = []
-      let sessionStart = timestamps[0]
-      let sessionEnd = timestamps[0]
-      let sessionPoints = 1
-
-      for (let i = 1; i < timestamps.length; i++) {
-        const prev = new Date(timestamps[i - 1]).getTime()
-        const curr = new Date(timestamps[i]).getTime()
-        const gapMinutes = (curr - prev) / (1000 * 60)
-
-        if (gapMinutes <= SESSION_GAP_MINUTES) {
-          sessionEnd = timestamps[i]
-          sessionPoints++
-        } else {
-          const sStart = new Date(sessionStart).getTime()
-          const sEnd = new Date(sessionEnd).getTime()
-          const dur = Math.max((sEnd - sStart) / (1000 * 60), 1)
-          const gb =
-            sessions.length > 0
-              ? (sStart - new Date(sessions[sessions.length - 1].end).getTime()) / (1000 * 60)
-              : null
-
-          sessions.push({
-            start: sessionStart,
-            end: sessionEnd,
-            durationMinutes: Math.round(dur * 10) / 10,
-            dataPoints: sessionPoints,
-            gapBeforeMinutes: gb !== null ? Math.round(gb * 10) / 10 : null,
-          })
-
-          sessionStart = timestamps[i]
-          sessionEnd = timestamps[i]
-          sessionPoints = 1
-        }
-      }
-
-      const sStart = new Date(sessionStart).getTime()
-      const sEnd = new Date(sessionEnd).getTime()
-      const dur = Math.max((sEnd - sStart) / (1000 * 60), 1)
-      const gb =
-        sessions.length > 0
-          ? (sStart - new Date(sessions[sessions.length - 1].end).getTime()) / (1000 * 60)
-          : null
-
-      sessions.push({
-        start: sessionStart,
-        end: sessionEnd,
-        durationMinutes: Math.round(dur * 10) / 10,
-        dataPoints: sessionPoints,
-        gapBeforeMinutes: gb !== null ? Math.round(gb * 10) / 10 : null,
-      })
+      const sessions = detectSessions(timestamps)
 
       const uptimeMinutes = sessions.reduce((sum, s) => sum + s.durationMinutes, 0)
       const downtimeMinutes = Math.max(totalWindowMinutes - uptimeMinutes, 0)

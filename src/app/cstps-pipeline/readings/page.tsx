@@ -316,10 +316,10 @@ export default function CSTRSReadingsPage() {
           </div>
           <div className="flex items-center space-x-3 text-sm">
             <div className="hidden md:block rounded bg-white/20 px-3 py-1 font-mono text-white border border-white/30 text-xs">
-              {currentTime ? currentTime.toLocaleDateString('en-GB', { timeZone: 'Asia/Kolkata' }) : '--/--/----'}
+              {currentTime ? currentTime.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : '--/--/----'}
             </div>
             <div className="rounded bg-white/20 px-3 py-1 font-mono text-white border border-white/30 text-xs">
-              {currentTime ? currentTime.toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata' }) : '--:--:--'}
+              {currentTime ? currentTime.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }) : '--:--:--'}
             </div>
             <div className="flex items-center gap-2 text-white/80 text-xs">
               <span className="material-icons text-sm">person</span>
@@ -443,7 +443,7 @@ export default function CSTRSReadingsPage() {
 
       {/* Footer */}
       <footer className="text-center py-3 text-[10px] text-[#90A4AE]">
-        FlowNexus v1.4 | February 12, 2026 | flownexus
+        FlowNexus v1.7 | February 19, 2026 | flownexus
       </footer>
 
       <style jsx>{`

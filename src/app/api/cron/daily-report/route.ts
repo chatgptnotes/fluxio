@@ -1,7 +1,7 @@
 // Daily Report Cron API Endpoint
 // Triggered by Vercel Cron at midnight (00:00 UTC)
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { generateReportData, getDateRangePreset } from '@/lib/reports/report-data'
 import { generatePDFBuffer } from '@/lib/reports/pdf-generator'
 import { uploadReportPDF, getReportFilePath } from '@/lib/reports/storage'
@@ -48,15 +48,13 @@ export async function GET(request: Request) {
     }
 
     // Save metadata to database
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
     let reportId: string | null = null
 
-    if (supabaseUrl && supabaseServiceKey) {
-      const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    try {
+      const supabase = createAdminClient()
 
-      const { data, error } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (supabase as any)
         .from('reports')
         .insert({
           report_type: 'daily',
@@ -80,8 +78,8 @@ export async function GET(request: Request) {
         reportId = data.id
         console.log(`Report saved to database: ${reportId}`)
       }
-    } else {
-      console.log('Supabase not configured, skipping database insert')
+    } catch (dbError) {
+      console.error('Supabase not configured, skipping database insert:', dbError)
     }
 
     console.log('Daily report generation completed successfully')

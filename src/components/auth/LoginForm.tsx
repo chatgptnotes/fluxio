@@ -137,7 +137,7 @@ export default function LoginForm({ redirectTo = '/' }: LoginFormProps) {
 
         {/* Footer */}
         <p className="text-center text-xs text-gray-400 mt-6">
-          FlowNexus v1.3 - IIoT Flow Monitoring Platform
+          FlowNexus v1.7 | February 19, 2026 | flownexus
         </p>
       </div>
     </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { formatTimeIST, formatDateIST } from '@/lib/timezone';
 
 interface RemoteCommand {
   id: string;
@@ -153,15 +154,9 @@ export default function RemoteTerminal({
     });
   };
 
-  const formatTime = (dateStr: string) => {
-    const d = new Date(dateStr);
-    return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-  };
+  const formatTime = (dateStr: string) => formatTimeIST(new Date(dateStr));
 
-  const formatDate = (dateStr: string) => {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
-  };
+  const formatDate = (dateStr: string) => formatDateIST(new Date(dateStr));
 
   // Render commands in chronological order (oldest first)
   const sortedCommands = [...commands].reverse();

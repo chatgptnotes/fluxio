@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   eslint: {
-    // Allow production builds with warnings (pre-existing issues)
+    // Warnings (no-console, no-img-element) should not fail production builds
     ignoreDuringBuilds: true,
   },
   images: {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { getCurrentUser } from '@/lib/auth/session'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -16,6 +17,11 @@ const DEVICE_IDS = [
 
 export async function GET(request: NextRequest) {
   try {
+    const user = await getCurrentUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const searchParams = request.nextUrl.searchParams
     const hours = parseInt(searchParams.get('hours') || '0')
 

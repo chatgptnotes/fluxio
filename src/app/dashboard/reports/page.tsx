@@ -536,7 +536,7 @@ export default function ReportsPage() {
       <footer className="fixed bottom-0 left-0 right-0 border-t border-slate-700 bg-slate-800/90 backdrop-blur-sm px-6 py-2">
         <div className="flex items-center justify-between text-xs text-slate-500">
           <span>FlowNexus SCADA - Report Generation Module</span>
-          <span>Version 1.4 | January 2026 | github.com/chatgptnotes/flownexus</span>
+          <span>FlowNexus v1.7 | February 19, 2026 | flownexus</span>
         </div>
       </footer>
     </div>

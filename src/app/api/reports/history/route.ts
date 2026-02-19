@@ -1,7 +1,7 @@
 // Reports History API
 // GET: Fetch list of generated reports with download URLs
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { getReportDownloadUrl } from '@/lib/reports/storage'
 
 export const runtime = 'nodejs'
@@ -27,27 +27,10 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     const reportType = searchParams.get('type') // 'daily' | 'monthly' | null (all)
-    const limit = parseInt(searchParams.get('limit') || '20')
-    const offset = parseInt(searchParams.get('offset') || '0')
+    const limit = Math.min(Math.max(parseInt(searchParams.get('limit') || '20') || 1, 1), 100)
+    const offset = Math.max(parseInt(searchParams.get('offset') || '0') || 0, 0)
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-    if (!supabaseUrl || !supabaseKey) {
-      // Return mock data when Supabase not configured
-      return NextResponse.json({
-        success: true,
-        data: [],
-        pagination: {
-          total: 0,
-          limit,
-          offset,
-        },
-        message: 'Supabase not configured. No report history available.',
-      })
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseKey)
+    const supabase = createAdminClient()
 
     // Build query
     let query = supabase

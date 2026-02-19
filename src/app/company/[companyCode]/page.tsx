@@ -101,7 +101,7 @@ export default function CompanyDashboardPage() {
         <div className="text-center">
           <AlertTriangle className="mx-auto h-12 w-12 text-amber-500" />
           <h2 className="mt-4 text-xl font-semibold text-gray-900">Company Not Found</h2>
-          <p className="mt-2 text-gray-600">The company "{companyCode}" does not exist.</p>
+          <p className="mt-2 text-gray-600">The company &ldquo;{companyCode}&rdquo; does not exist.</p>
           <Link
             href="/dashboard"
             className="mt-4 inline-flex items-center space-x-2 text-primary-600 hover:text-primary-700"
@@ -522,7 +522,7 @@ export default function CompanyDashboardPage() {
       <footer className="mt-16 border-t border-gray-200 bg-white py-4">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="text-center text-xs text-gray-400">
-            FlowNexus v1.6 | February 1, 2026 | flownexus
+            FlowNexus v1.7 | February 19, 2026 | flownexus
           </p>
         </div>
       </footer>

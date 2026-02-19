@@ -2,20 +2,8 @@
 // GET email report logs for superadmin
 
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { getCurrentUser } from '@/lib/auth/session'
-
-// Create admin client with service role key
-function createAdminClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-  if (!supabaseUrl || !supabaseServiceKey) {
-    return null
-  }
-
-  return createClient(supabaseUrl, supabaseServiceKey)
-}
 
 // GET /api/admin/email-logs - Get email report logs
 export async function GET() {
@@ -38,13 +26,6 @@ export async function GET() {
     }
 
     const supabase = createAdminClient()
-
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database not configured' },
-        { status: 500 }
-      )
-    }
 
     // Fetch email report logs (without join - PostgREST schema cache issue)
     const { data: logs, error } = await supabase

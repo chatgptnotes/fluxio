@@ -410,10 +410,10 @@ export default function CSTPSPipelinePage() {
           <div className="flex items-center space-x-1 md:space-x-2 text-xs md:text-sm">
             {/* Date/Time - Hidden on mobile, shown on tablet+ (IST) */}
             <div className="hidden lg:block rounded bg-white/20 px-2 md:px-3 py-1 font-mono text-white border border-white/30 text-xs">
-              {currentTime ? currentTime.toLocaleDateString('en-GB', { timeZone: 'Asia/Kolkata' }) : '--/--/----'}
+              {currentTime ? currentTime.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : '--/--/----'}
             </div>
             <div className="hidden md:block rounded bg-white/20 px-2 md:px-3 py-1 font-mono text-white border border-white/30 text-xs">
-              {currentTime ? currentTime.toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata' }) : '--:--:--'}
+              {currentTime ? currentTime.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }) : '--:--:--'}
             </div>
             <Link
               href="/dashboard/reports"
@@ -716,20 +716,6 @@ export default function CSTPSPipelinePage() {
                     </div>
                   </div>
 
-                  {/* CSTPS Reservoir Total Consumption Display */}
-                  <div
-                    className="absolute z-20"
-                    style={{ left: `${totalizer3DPos.left}%`, top: `${totalizer3DPos.top}%`, transform: 'translateX(-50%)' }}
-                  >
-                    <div className="bg-[#0D1B2A] rounded-lg px-2 py-1.5 md:px-3 md:py-2 border border-[#2E7D32] shadow-lg">
-                      <div className="text-[8px] md:text-[10px] text-[#90CAF9] font-mono font-bold text-center">TOTAL RECEIVED</div>
-                      <div className="text-[10px] md:text-sm text-[#00E5FF] font-mono font-bold text-center mt-0.5">
-                        {totalConsumption.toLocaleString('en-IN')} m3
-                      </div>
-                    </div>
-                  </div>
-
-
                   {/* FT Value Overlays - Click to view details */}
                   {cstpsPipes.map((pipe, index) => {
                     const hasFlow = pipe.status === 'online' && pipe.parameters.flowRate > 0
@@ -845,14 +831,6 @@ export default function CSTPSPipelinePage() {
                       </div>
                     )
                   })}
-
-                  {/* Total Flow Display */}
-                  <div className="absolute bottom-2 left-2 md:bottom-4 md:left-4 bg-[#0D1B2A]/90 rounded md:rounded-lg px-2 py-1 md:px-4 md:py-2 border border-[#1565C0]">
-                    <div className="text-[8px] md:text-[10px] text-[#90CAF9] font-mono">TOTAL FLOW</div>
-                    <div className="text-sm md:text-xl font-bold text-[#00E5FF] font-mono">
-                      {totalFlow.toFixed(1)} <span className="text-xs md:text-sm text-[#4FC3F7]">m3/h</span>
-                    </div>
-                  </div>
 
                 </div>
               )}
@@ -1006,27 +984,6 @@ export default function CSTPSPipelinePage() {
                       </div>
                     )
                   })}
-
-                  {/* CSTPS Reservoir (2D) - Total Consumption Display */}
-                  <div
-                    className="absolute z-20"
-                    style={{ left: `${totalizer2DPos.left}%`, top: `${totalizer2DPos.top}%`, transform: 'translateX(-50%)' }}
-                  >
-                    <div className="bg-[#0D1B2A] rounded-lg px-2 py-1.5 md:px-3 md:py-2 border border-[#2E7D32] shadow-lg">
-                      <div className="text-[8px] md:text-[10px] text-[#90CAF9] font-mono font-bold text-center">TOTAL RECEIVED</div>
-                      <div className="text-[10px] md:text-sm text-[#00E5FF] font-mono font-bold text-center mt-0.5">
-                        {totalConsumption.toLocaleString('en-IN')} m3
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Total Flow Display */}
-                  <div className="absolute bottom-4 left-4 bg-[#0D1B2A]/95 rounded-lg px-4 py-2 border-2 border-[#00ACC1] shadow-lg">
-                    <div className="text-[10px] text-[#90CAF9] font-mono font-bold">TOTAL FLOW</div>
-                    <div className="text-2xl font-bold text-[#00E5FF] font-mono">
-                      {totalFlow.toFixed(1)} <span className="text-sm text-[#4FC3F7]">m3/h</span>
-                    </div>
-                  </div>
 
                   {/* Online/Offline Status Summary */}
                   <div className="absolute bottom-4 right-4 bg-[#0D1B2A]/95 rounded-lg px-3 py-2 border-2 border-[#00ACC1] shadow-lg">
@@ -1256,15 +1213,6 @@ export default function CSTPSPipelinePage() {
                       {totalFlow.toFixed(1)}
                     </text>
                     <text y="14" textAnchor="middle" fill="#4FC3F7" fontSize="9" fontFamily="monospace">m3/h IN</text>
-                  </g>
-
-                  {/* Total Consumption Display - always visible */}
-                  <g transform="translate(45, 280)">
-                    <rect x="-42" y="-14" width="84" height="36" fill="#0D1B2A" stroke="#2E7D32" strokeWidth="1.5" rx="4"/>
-                    <text y="-2" textAnchor="middle" fill="#90CAF9" fontSize="8" fontFamily="monospace">TOTAL RECEIVED</text>
-                    <text y="12" textAnchor="middle" fill="#00E5FF" fontSize="11" fontFamily="monospace" fontWeight="bold">
-                      {totalConsumption.toLocaleString('en-IN')} m3
-                    </text>
                   </g>
 
                   {/* Reservoir label */}
@@ -1631,12 +1579,12 @@ export default function CSTPSPipelinePage() {
               </div>
               <div className="flex items-center space-x-1 md:space-x-2">
                 <span className="text-[#37474F] font-semibold">SCAN:</span>
-                <span className="text-[#1565C0]">{currentTime ? currentTime.toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata' }) : '--:--:--'}</span>
+                <span className="text-[#1565C0]">{currentTime ? currentTime.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }) : '--:--:--'}</span>
               </div>
               {lastDataUpdate && (
                 <div className="flex items-center space-x-1 md:space-x-2">
                   <span className="text-[#37474F] font-semibold">DATA:</span>
-                  <span className="text-[#4CAF50]">{lastDataUpdate.toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata' })}</span>
+                  <span className="text-[#4CAF50]">{lastDataUpdate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })}</span>
                 </div>
               )}
             </div>
@@ -1649,7 +1597,7 @@ export default function CSTPSPipelinePage() {
 
       {/* Version Footer */}
       <footer className="text-center py-2 text-[9px] md:text-[10px] text-[#90A4AE]">
-        Version 3.3-CLEAN | February 1, 2026 18:45 | NO MOCK DATA | github.com/chatgptnotes/flownexus
+        FlowNexus v1.7 | February 19, 2026 | flownexus
       </footer>
 
       {/* CSS Animations */}
