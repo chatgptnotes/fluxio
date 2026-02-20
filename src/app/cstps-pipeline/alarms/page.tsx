@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { cstpsPipes } from '@/lib/cstps-data'
 import { formatFullDateTimeIST, formatTimeIST } from '@/lib/timezone'
 
 // Alarm severity types
@@ -25,85 +24,23 @@ interface Alarm {
   clearedAt?: Date
 }
 
-// Generate sample alarm history data
-const generateAlarmHistory = (): Alarm[] => {
-  const alarmTypes = [
-    { type: 'COMM_FAIL', desc: 'Communication Failure', severity: 'critical' as AlarmSeverity },
-    { type: 'LOW_BATTERY', desc: 'Low Battery Warning', severity: 'warning' as AlarmSeverity },
-    { type: 'HIGH_FLOW', desc: 'High Flow Rate Detected', severity: 'warning' as AlarmSeverity },
-    { type: 'ZERO_FLOW', desc: 'Pipeline Flow Zero', severity: 'warning' as AlarmSeverity },
-    { type: 'SENSOR_FAULT', desc: 'Sensor Malfunction', severity: 'critical' as AlarmSeverity },
-    { type: 'TEMP_HIGH', desc: 'High Temperature', severity: 'warning' as AlarmSeverity },
-    { type: 'LEVEL_HIGH', desc: 'High Water Level', severity: 'info' as AlarmSeverity },
-    { type: 'LEVEL_LOW', desc: 'Low Water Level', severity: 'info' as AlarmSeverity },
-    { type: 'SIGNAL_WEAK', desc: 'Weak Signal Strength', severity: 'info' as AlarmSeverity },
-  ]
+// COMM_FAIL threshold: 4 hours in milliseconds
+const COMM_FAIL_THRESHOLD_MS = 4 * 60 * 60 * 1000
 
-  const alarms: Alarm[] = []
-  const now = new Date()
-
-  // First, add active alarms for pipes with zero flow (real-time detection)
-  cstpsPipes.forEach((pipe) => {
-    if (pipe.parameters.flowRate === 0) {
-      alarms.push({
-        id: `ALM-ZERO-${pipe.pipeNumber}`,
-        timestamp: new Date(),
-        deviceId: `Nivus-750-${pipe.pipeNumber}`,
-        pipeNumber: pipe.pipeNumber,
-        alarmType: 'ZERO_FLOW',
-        description: 'Pipeline Flow Zero',
-        severity: 'warning',
-        status: 'active',
-        value: 0,
-        threshold: 0,
-      })
-    }
-  })
-
-  // Generate 50 historical alarms
-  const historicalAlarmTypes = alarmTypes.filter(a => a.type !== 'ZERO_FLOW')
-  for (let i = 0; i < 50; i++) {
-    const alarmDef = historicalAlarmTypes[Math.floor(Math.random() * historicalAlarmTypes.length)]
-    const pipeNumber = Math.floor(Math.random() * 6) + 1
-    const hoursAgo = Math.floor(Math.random() * 168) + 1
-    const timestamp = new Date(now.getTime() - hoursAgo * 60 * 60 * 1000)
-
-    let status: AlarmStatus = 'active'
-    let acknowledgedAt: Date | undefined
-    let clearedAt: Date | undefined
-
-    if (hoursAgo > 24) {
-      status = 'cleared'
-      acknowledgedAt = new Date(timestamp.getTime() + Math.random() * 30 * 60 * 1000)
-      clearedAt = new Date(acknowledgedAt.getTime() + Math.random() * 2 * 60 * 60 * 1000)
-    } else if (hoursAgo > 2) {
-      status = 'acknowledged'
-      acknowledgedAt = new Date(timestamp.getTime() + Math.random() * 30 * 60 * 1000)
-    }
-
-    alarms.push({
-      id: `ALM-${String(1000 + i).padStart(5, '0')}`,
-      timestamp,
-      deviceId: `Nivus-750-${pipeNumber}`,
-      pipeNumber,
-      alarmType: alarmDef.type,
-      description: alarmDef.desc,
-      severity: alarmDef.severity,
-      status,
-      value: alarmDef.type.includes('FLOW') ? Math.random() * 100 : undefined,
-      threshold: alarmDef.type.includes('FLOW') ? 80 : undefined,
-      acknowledgedAt,
-      acknowledgedBy: acknowledgedAt ? 'Operator' : undefined,
-      clearedAt,
-    })
-  }
-
-  return alarms.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-}
+// Device to pipe mapping
+const DEVICES = [
+  { deviceId: 'NIVUS_750_001', displayName: 'FT-001', pipeNumber: 1 },
+  { deviceId: 'NIVUS_750_002', displayName: 'FT-002', pipeNumber: 2 },
+  { deviceId: 'NIVUS_750_003', displayName: 'FT-003', pipeNumber: 3 },
+  { deviceId: 'NIVUS_750_004', displayName: 'FT-004', pipeNumber: 4 },
+  { deviceId: 'NIVUS_750_005', displayName: 'FT-005', pipeNumber: 5 },
+  { deviceId: 'NIVUS_750_006', displayName: 'FT-006', pipeNumber: 6 },
+]
 
 export default function AlarmsPage() {
   const [currentTime, setCurrentTime] = useState<Date | null>(null)
   const [alarms, setAlarms] = useState<Alarm[]>([])
+  const [loading, setLoading] = useState(true)
   const [filterSeverity, setFilterSeverity] = useState<AlarmSeverity | 'all'>('all')
   const [filterStatus, setFilterStatus] = useState<AlarmStatus | 'all'>('all')
   const [filterDevice, setFilterDevice] = useState<string>('all')
@@ -112,12 +49,81 @@ export default function AlarmsPage() {
   const [sortField, setSortField] = useState<'timestamp' | 'severity' | 'device'>('timestamp')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
 
+  // Fetch latest data for each device and check for comm failures
+  const checkCommAlarms = useCallback(async () => {
+    try {
+      const response = await fetch('/api/flow-data?limit=100')
+      if (!response.ok) return
+
+      const result = await response.json()
+      if (!result.success || !result.data) return
+
+      const now = new Date()
+
+      // Find latest record per device
+      const latestByDevice: Record<string, Date> = {}
+      for (const record of result.data) {
+        if (!latestByDevice[record.device_id]) {
+          latestByDevice[record.device_id] = new Date(record.created_at)
+        }
+      }
+
+      // Check each device against the 4-hour threshold
+      const newAlarms: Alarm[] = []
+      for (const device of DEVICES) {
+        const lastSeen = latestByDevice[device.deviceId]
+        const silentMs = lastSeen ? now.getTime() - lastSeen.getTime() : Infinity
+        const silentHours = Math.floor(silentMs / (1000 * 60 * 60))
+
+        if (silentMs > COMM_FAIL_THRESHOLD_MS) {
+          newAlarms.push({
+            id: `ALM-COMM-${device.pipeNumber}`,
+            timestamp: lastSeen || now,
+            deviceId: device.displayName,
+            pipeNumber: device.pipeNumber,
+            alarmType: 'COMM_FAIL',
+            description: lastSeen
+              ? `No data received for ${silentHours}h. Last seen: ${formatFullDateTimeIST(lastSeen)}`
+              : 'Device has never reported data',
+            severity: 'critical',
+            status: 'active',
+          })
+        }
+      }
+
+      setAlarms(prev => {
+        // Keep acknowledged alarms from previous state
+        const acknowledgedMap = new Map<string, Alarm>()
+        for (const a of prev) {
+          if (a.status === 'acknowledged') {
+            acknowledgedMap.set(a.id, a)
+          }
+        }
+
+        // Merge: if a new alarm was previously acknowledged, keep that status
+        return newAlarms.map(alarm => {
+          const prevAlarm = acknowledgedMap.get(alarm.id)
+          if (prevAlarm) {
+            return { ...alarm, status: prevAlarm.status, acknowledgedAt: prevAlarm.acknowledgedAt, acknowledgedBy: prevAlarm.acknowledgedBy }
+          }
+          return alarm
+        })
+      })
+      setLoading(false)
+    } catch (err) {
+      console.warn('Failed to check comm alarms:', err)
+      setLoading(false)
+    }
+  }, [])
+
   useEffect(() => {
     setCurrentTime(new Date())
-    setAlarms(generateAlarmHistory())
+    checkCommAlarms()
     const timer = setInterval(() => setCurrentTime(new Date()), 1000)
-    return () => clearInterval(timer)
-  }, [])
+    // Re-check alarms every 60 seconds
+    const alarmCheck = setInterval(checkCommAlarms, 60000)
+    return () => { clearInterval(timer); clearInterval(alarmCheck) }
+  }, [checkCommAlarms])
 
   const filteredAlarms = alarms
     .filter(alarm => {
@@ -145,7 +151,6 @@ export default function AlarmsPage() {
   const activeCount = alarms.filter(a => a.status === 'active').length
   const acknowledgedCount = alarms.filter(a => a.status === 'acknowledged').length
   const criticalCount = alarms.filter(a => a.severity === 'critical' && a.status === 'active').length
-  const warningCount = alarms.filter(a => a.severity === 'warning' && a.status === 'active').length
 
   const handleAcknowledge = useCallback((alarmId: string) => {
     setAlarms(prev => prev.map(alarm =>
@@ -288,26 +293,6 @@ export default function AlarmsPage() {
                   </div>
                   <span className="font-mono font-bold text-lg text-red-500">{criticalCount}</span>
                 </div>
-                <div className="flex items-center justify-between p-2.5 rounded-lg bg-amber-50 border border-amber-100 hover:border-amber-200 transition-colors">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center">
-                      <span className="material-icons text-amber-500 text-base">warning</span>
-                    </div>
-                    <span className="text-sm text-gray-700 font-medium">Warning</span>
-                  </div>
-                  <span className="font-mono font-bold text-lg text-amber-500">{warningCount}</span>
-                </div>
-                <div className="flex items-center justify-between p-2.5 rounded-lg bg-blue-50 border border-blue-100 hover:border-blue-200 transition-colors">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center">
-                      <span className="material-icons text-blue-500 text-base">info</span>
-                    </div>
-                    <span className="text-sm text-gray-700 font-medium">Info</span>
-                  </div>
-                  <span className="font-mono font-bold text-lg text-blue-500">
-                    {alarms.filter(a => a.severity === 'info' && a.status === 'active').length}
-                  </span>
-                </div>
               </div>
             </div>
 
@@ -367,7 +352,10 @@ export default function AlarmsPage() {
                   <span className="material-icons text-base">done_all</span>
                   <span>Acknowledge All</span>
                 </button>
-                <button className="w-full flex items-center justify-center space-x-2 py-2.5 px-4 rounded-lg bg-gray-100 text-gray-700 font-medium text-sm hover:bg-gray-200 transition-all border border-gray-200">
+                <button
+                  onClick={checkCommAlarms}
+                  className="w-full flex items-center justify-center space-x-2 py-2.5 px-4 rounded-lg bg-gray-100 text-gray-700 font-medium text-sm hover:bg-gray-200 transition-all border border-gray-200"
+                >
                   <span className="material-icons text-base">refresh</span>
                   <span>Refresh Data</span>
                 </button>
@@ -406,8 +394,6 @@ export default function AlarmsPage() {
                     >
                       <option value="all">All Severities</option>
                       <option value="critical">Critical</option>
-                      <option value="warning">Warning</option>
-                      <option value="info">Info</option>
                     </select>
 
                     {/* Status Filter */}
@@ -429,8 +415,8 @@ export default function AlarmsPage() {
                       className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-blue-500 cursor-pointer hover:bg-gray-50 transition-all"
                     >
                       <option value="all">All Devices</option>
-                      {[1, 2, 3, 4, 5, 6].map(n => (
-                        <option key={n} value={`Nivus-750-${n}`}>Nivus-750-{n}</option>
+                      {DEVICES.map(d => (
+                        <option key={d.pipeNumber} value={d.displayName}>{d.displayName}</option>
                       ))}
                     </select>
                   </div>
@@ -560,11 +546,18 @@ export default function AlarmsPage() {
                   )
                 })}
 
-                {filteredAlarms.length === 0 && (
+                {loading && (
                   <div className="text-center py-12 text-gray-400">
-                    <span className="material-icons text-5xl mb-3 opacity-50">inbox</span>
-                    <p className="text-lg text-gray-500">No alarms match your filters</p>
-                    <p className="text-sm mt-1 text-gray-400">Try adjusting your search criteria</p>
+                    <span className="material-icons text-5xl mb-3 opacity-50 animate-spin">sync</span>
+                    <p className="text-lg text-gray-500">Checking device communication status...</p>
+                  </div>
+                )}
+
+                {!loading && filteredAlarms.length === 0 && (
+                  <div className="text-center py-12 text-gray-400">
+                    <span className="material-icons text-5xl mb-3 text-green-400">check_circle</span>
+                    <p className="text-lg text-green-600 font-semibold">All Clear</p>
+                    <p className="text-sm mt-1 text-gray-400">All devices are communicating normally. No alarms.</p>
                   </div>
                 )}
               </div>
@@ -748,7 +741,7 @@ export default function AlarmsPage() {
             </div>
           </div>
           <div className="text-xs text-gray-400">
-            FlowNexus SCADA v3.1 | CSTPS Water Supply | January 22, 2026
+            FlowNexus v1.7 | February 19, 2026 | flownexus
           </div>
         </div>
       </footer>

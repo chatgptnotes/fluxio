@@ -268,12 +268,35 @@ export async function POST(request: NextRequest) {
       dataArray.push(normalized as IngestData)
     }
 
+    // Filter out all-zero data points (ghost sender protection)
+    // The TRB246 built-in "Data to Server" sometimes sends all-zero readings
+    // when it fails to read Modbus registers. Our Lua sender already skips these,
+    // but this server-side check catches them from any source.
+    const filteredDataArray = dataArray.filter(data => {
+      const noFlow = data.flow_rate === 0 || data.flow_rate === undefined || data.flow_rate === null
+      const noTotal = data.totalizer === 0 || data.totalizer === undefined || data.totalizer === null
+      const noLevel = data.level === 0 || data.level === undefined || data.level === null
+      const noVelocity = data.velocity === 0 || data.velocity === undefined || data.velocity === null
+      // Skip data points with no flow measurements (flow, totalizer, level, velocity all zero/absent)
+      // Temperature alone is not a useful flow measurement
+      const noFlowData = noFlow && noTotal && noLevel && noVelocity
+      return !noFlowData
+    })
+
+    if (filteredDataArray.length === 0) {
+      return NextResponse.json({
+        success: true,
+        message: 'All data points were zero, skipped ingestion',
+        results: dataArray.map(d => ({ device_id: d.device_id, success: true, skipped: true })),
+      })
+    }
+
     // Create Supabase admin client
     const supabase = createAdminClient()
 
     // Process each data point
     const results = []
-    for (const data of dataArray) {
+    for (const data of filteredDataArray) {
       // Build metadata object with level and velocity (since they don't have dedicated columns)
       const metadata: Record<string, unknown> = {
         ...(data.metadata || {}),
