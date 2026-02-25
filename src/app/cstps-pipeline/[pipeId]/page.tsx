@@ -14,7 +14,6 @@ import {
   ArrowRightLeft,
   Clock,
   MapPin,
-  Calendar,
   Waves,
   AlertTriangle,
   TrendingUp,
@@ -26,6 +25,8 @@ import {
   getFlowDirectionLabel,
 } from '@/lib/cstps-data'
 import { createClient } from '@/lib/supabase/client'
+import { TrendChart as RechartsTrend } from '@/components/charts/TrendChart'
+import { DateRangePicker } from '@/components/ui/DateRangePicker'
 
 // Map pipe IDs to device IDs for API filtering
 const pipeToDeviceMap: Record<string, string> = {
@@ -139,7 +140,7 @@ function TrendChart({
   if (!hasData) {
     return (
       <div className="rounded-lg border border-cyan-900/50 bg-slate-100 overflow-hidden">
-        <div className="flex items-center justify-between border-b border-cyan-900/50 bg-cyan-900/20 px-3 py-2">
+        <div className="flex items-center justify-between border-b border-cyan-900/50 bg-[#0d1520] px-3 py-2">
           <div className="flex items-center space-x-2">
             <TrendingUp className="h-4 w-4 text-cyan-400" />
             <span className="text-xs font-bold tracking-wider text-cyan-400">{label}</span>
@@ -161,15 +162,21 @@ function TrendChart({
   return (
     <div className="rounded-lg border border-cyan-900/50 bg-slate-100 overflow-hidden">
       {/* Chart Header */}
-      <div className="flex items-center justify-between border-b border-cyan-900/50 bg-cyan-900/20 px-3 py-2">
+      <div className="flex items-center justify-between border-b border-cyan-900/50 bg-[#0d1520] px-3 py-2">
         <div className="flex items-center space-x-2">
           <TrendingUp className="h-4 w-4 text-cyan-400" />
           <span className="text-xs font-bold tracking-wider text-cyan-400">{label}</span>
         </div>
-        <div className="flex items-center space-x-3 text-[10px] text-white font-bold">
-          <span>{data.length} RECORDS</span>
-          <span>|</span>
-          <span>REAL DATA</span>
+        <div className="flex items-center space-x-3">
+          <div className="text-[10px] text-slate-300 font-bold">
+            {data.length} RECORDS | REAL DATA
+          </div>
+          <div className="border-l border-cyan-700/50 pl-3 flex items-baseline space-x-1">
+            <span className="font-mono text-lg font-bold leading-none" style={{ color }}>
+              {data[data.length - 1].value.toFixed(2)}
+            </span>
+            <span className="text-[10px] text-slate-300 font-bold">{unit}</span>
+          </div>
         </div>
       </div>
 
@@ -178,7 +185,7 @@ function TrendChart({
         {/* Y-axis labels */}
         <div className="absolute left-0 top-4 bottom-12 w-12 flex flex-col justify-between text-right pr-2">
           {yLabels.map((label, i) => (
-            <span key={i} className="text-[10px] font-mono text-white font-bold">
+            <span key={i} className="text-[10px] font-mono text-slate-700 font-bold">
               {label.toFixed(1)}
             </span>
           ))}
@@ -295,7 +302,7 @@ function TrendChart({
             {timeLabels.map((t, i) => (
               <span
                 key={i}
-                className="absolute text-[10px] font-mono text-white font-bold transform -translate-x-1/2"
+                className="absolute text-[10px] font-mono text-slate-700 font-bold transform -translate-x-1/2"
                 style={{ left: `${t.x}%` }}
               >
                 {t.label}
@@ -322,14 +329,6 @@ function TrendChart({
           </div>
         )}
 
-        {/* Current value display */}
-        <div className="absolute top-4 right-4 bg-[#0d1520] border border-cyan-800/50 rounded px-3 py-2">
-          <div className="text-[10px] text-white font-bold mb-1">CURRENT</div>
-          <div className="font-mono text-lg font-bold" style={{ color }}>
-            {data[data.length - 1].value.toFixed(2)}
-            <span className="text-xs text-white font-bold ml-1">{unit}</span>
-          </div>
-        </div>
       </div>
     </div>
   )
@@ -434,8 +433,29 @@ export default function PipeDetailPage() {
   const [levelHistory, setLevelHistory] = useState<HistoricalPoint[]>([])
   const [tempHistory, setTempHistory] = useState<HistoricalPoint[]>([])
 
+  // Recharts trend data (raw flow_data records for the TrendChart component)
+  const [trendRawData, setTrendRawData] = useState<{ created_at: string; flow_rate: number | null }[]>([])
+
   // Get device ID for this pipe
   const deviceId = pipeToDeviceMap[pipeId]
+
+  // Fetch data for Recharts trend with custom date range
+  const fetchTrendData = async (startDate: string, endDate: string) => {
+    if (!deviceId) return
+    try {
+      const response = await fetch(
+        `/api/flow-data?device_id=${deviceId}&limit=2000&start_time=${startDate}&end_time=${endDate}`
+      )
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success && result.data) {
+          setTrendRawData(result.data)
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to fetch trend data:', err)
+    }
+  }
 
   // Fetch live data from API and subscribe to real-time updates
   useEffect(() => {
@@ -504,7 +524,8 @@ export default function PipeDetailPage() {
     // Fetch latest flow data for this device (current + historical)
     async function fetchLatestData() {
       try {
-        const response = await fetch(`/api/flow-data?device_id=${deviceId}&limit=60`)
+        const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+        const response = await fetch(`/api/flow-data?device_id=${deviceId}&limit=1000&start_time=${since24h}`)
         if (!response.ok) {
           console.warn('Error fetching flow data:', response.statusText)
           return
@@ -525,6 +546,12 @@ export default function PipeDetailPage() {
 
         // Build historical trends from all records
         buildHistoricalTrends(records)
+
+        // Also populate Recharts trend data
+        setTrendRawData(records.map((r: FlowDataRecord) => ({
+          created_at: r.created_at,
+          flow_rate: r.flow_rate,
+        })))
       } catch (err) {
         console.warn('Failed to fetch flow data:', err)
       }
@@ -547,12 +574,12 @@ export default function PipeDetailPage() {
             setLiveData(convertToLiveData(newRecord))
             setLastUpdate(new Date())
 
-            // Append new point to trends (keep last 60)
+            // Append new point to trends (keep last 1440 = 24 hours at 1-min intervals)
             const ts = new Date(newRecord.created_at).getTime()
-            setFlowHistory(prev => [...prev.slice(-59), { timestamp: ts, value: (newRecord.flow_rate ?? 0) * 3600 }])
-            setVelocityHistory(prev => [...prev.slice(-59), { timestamp: ts, value: (newRecord.metadata?.velocity ?? 0) as number }])
-            setLevelHistory(prev => [...prev.slice(-59), { timestamp: ts, value: ((newRecord.metadata?.water_level ?? newRecord.metadata?.level ?? 0) as number) * 1000 }])
-            setTempHistory(prev => [...prev.slice(-59), { timestamp: ts, value: newRecord.temperature ?? 0 }])
+            setFlowHistory(prev => [...prev.slice(-1439), { timestamp: ts, value: (newRecord.flow_rate ?? 0) * 3600 }])
+            setVelocityHistory(prev => [...prev.slice(-1439), { timestamp: ts, value: (newRecord.metadata?.velocity ?? 0) as number }])
+            setLevelHistory(prev => [...prev.slice(-1439), { timestamp: ts, value: ((newRecord.metadata?.water_level ?? newRecord.metadata?.level ?? 0) as number) * 1000 }])
+            setTempHistory(prev => [...prev.slice(-1439), { timestamp: ts, value: newRecord.temperature ?? 0 }])
           }
         )
         .subscribe()
@@ -735,10 +762,6 @@ export default function PipeDetailPage() {
                   <div className="flex items-center space-x-2 text-white font-bold">
                     <MapPin className="h-3 w-3" />
                     <span>{pipe.location}</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-white font-bold">
-                    <Calendar className="h-3 w-3" />
-                    <span>Installed: {pipe.installationDate}</span>
                   </div>
                   <div className="flex items-center space-x-2 text-white font-bold">
                     <Clock className="h-3 w-3" />
@@ -924,7 +947,7 @@ export default function PipeDetailPage() {
             <div className="rounded-lg border border-cyan-900/50 bg-gradient-to-b from-[#0d1520] to-[#0a1018]">
               <div className="border-b border-cyan-900/50 bg-cyan-900/20 px-3 py-2">
                 <span className="text-xs font-bold tracking-wider text-cyan-400">
-                  STATISTICS (LAST 5 HOURS)
+                  STATISTICS (LAST 24 HOURS)
                 </span>
               </div>
               <div className="p-3 md:p-4 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
@@ -988,6 +1011,23 @@ export default function PipeDetailPage() {
                   )
                 })}
               </div>
+            </div>
+            {/* Recharts Interactive Trend + Date Range Picker */}
+            <div className="space-y-3">
+              <DateRangePicker
+                onApply={(start, end) => fetchTrendData(start, end)}
+                className="!bg-gradient-to-b !from-[#0d1520] !to-[#0a1018] !border-cyan-900/50 [&_label]:!text-cyan-400 [&_input]:!bg-[#060a10] [&_input]:!border-cyan-900/50 [&_input]:!text-white [&_button]:!bg-cyan-700 [&_button]:hover:!bg-cyan-600"
+              />
+              <RechartsTrend
+                data={trendRawData}
+                defaultRange="24h"
+                onRangeChange={(hours) => {
+                  const start = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString()
+                  const end = new Date().toISOString()
+                  fetchTrendData(start, end)
+                }}
+                className="!bg-gradient-to-b !from-[#0d1520] !to-[#0a1018] !border-cyan-900/50 [&_h3]:!text-cyan-400"
+              />
             </div>
           </div>
         </div>
