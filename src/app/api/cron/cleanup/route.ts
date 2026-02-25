@@ -4,6 +4,7 @@
 
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { logCronExecution } from '@/lib/cron/log-execution'
 
 const CRON_SECRET = process.env.CRON_SECRET
 const RETENTION_DAYS = 365
@@ -12,6 +13,8 @@ export const runtime = 'nodejs'
 export const maxDuration = 60
 
 export async function GET(request: Request) {
+  const startedAt = new Date()
+
   try {
     // Verify cron authorization
     const authHeader = request.headers.get('authorization')
@@ -38,6 +41,11 @@ export async function GET(request: Request) {
 
     if (error) {
       console.error('Cleanup error:', error)
+      await logCronExecution('cleanup', startedAt, {
+        success: false,
+        error: error.message,
+        details: { cutoff_date: cutoffDate.toISOString(), retention_days: RETENTION_DAYS },
+      })
       return NextResponse.json(
         { success: false, error: error.message },
         { status: 500 }
@@ -61,6 +69,15 @@ export async function GET(request: Request) {
       })
     }
 
+    await logCronExecution('cleanup', startedAt, {
+      success: true,
+      details: {
+        deleted_count: deletedCount,
+        retention_days: RETENTION_DAYS,
+        cutoff_date: cutoffDate.toISOString(),
+      },
+    })
+
     return NextResponse.json({
       success: true,
       deleted_count: deletedCount,
@@ -72,8 +89,13 @@ export async function GET(request: Request) {
     })
   } catch (error) {
     console.error('Cleanup cron error:', error)
+    const errMsg = error instanceof Error ? error.message : 'Unknown error'
+    await logCronExecution('cleanup', startedAt, {
+      success: false,
+      error: errMsg,
+    })
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : 'Unknown error' },
+      { success: false, error: errMsg },
       { status: 500 }
     )
   }

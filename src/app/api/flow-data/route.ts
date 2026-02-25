@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     const deviceId = searchParams.get('device_id')
     const startTime = searchParams.get('start_time')
     const endTime = searchParams.get('end_time')
-    const limit = Math.min(Math.max(parseInt(searchParams.get('limit') || '1000') || 1, 1), 10000)
+    const limit = Math.min(Math.max(parseInt(searchParams.get('limit') || '1000') || 1, 1), 100000)
 
     const supabase = createAdminClient()
 

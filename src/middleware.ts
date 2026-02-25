@@ -12,6 +12,20 @@ const _adminRoutes = ['/admin']
 // Public routes (no auth required)
 const _publicRoutes = ['/', '/login', '/signup', '/forgot-password', '/unauthorized']
 
+/**
+ * Validate redirect path to prevent open redirect attacks.
+ * Only allows relative paths starting with / that don't contain protocol markers.
+ */
+function sanitizeRedirectPath(path: string): string {
+  // Must start with / and must not contain protocol or double slashes
+  if (!path.startsWith('/') || path.startsWith('//') || path.includes('://')) {
+    return '/dashboard'
+  }
+  // Strip any control characters
+  const cleaned = path.replace(/[\x00-\x1f\x7f]/g, '')
+  return cleaned
+}
+
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
     request: {
@@ -28,7 +42,7 @@ export async function middleware(request: NextRequest) {
   if (pathname.startsWith('/admin')) {
     if (!sessionToken) {
       const redirectUrl = new URL('/login', request.url)
-      redirectUrl.searchParams.set('redirect', pathname)
+      redirectUrl.searchParams.set('redirect', sanitizeRedirectPath(pathname))
       return NextResponse.redirect(redirectUrl)
     }
     // Note: Role verification happens in the AuthGuard component
@@ -40,7 +54,7 @@ export async function middleware(request: NextRequest) {
   if (pathname === '/cstps-pipeline/readings') {
     if (!sessionToken) {
       const redirectUrl = new URL('/login', request.url)
-      redirectUrl.searchParams.set('redirect', pathname)
+      redirectUrl.searchParams.set('redirect', sanitizeRedirectPath(pathname))
       return NextResponse.redirect(redirectUrl)
     }
     // Permission verification happens client-side via useAuth
@@ -123,7 +137,7 @@ export async function middleware(request: NextRequest) {
       !pathname.startsWith('/dashboard/reports')) {
     if (!isAuthenticated) {
       const redirectUrl = new URL('/login', request.url)
-      redirectUrl.searchParams.set('redirect', pathname)
+      redirectUrl.searchParams.set('redirect', sanitizeRedirectPath(pathname))
       return NextResponse.redirect(redirectUrl)
     }
   }

@@ -5,7 +5,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { CompanySettings } from '@/types/database'
 import { sendDailyReportEmail } from '@/lib/email/resend'
 import { generateDailyReportSummaryHtml } from '@/lib/email/templates/daily-report'
-import { generateReportData, ReportDateRange, formatDate } from './report-data'
+import { generateReportDataFromSupabase, ReportDateRange, formatDate, formatISTDateStr } from './report-data'
 import { generatePDFBuffer } from './pdf-generator'
 
 interface Company {
@@ -156,7 +156,7 @@ export async function distributeCompanyReports(
 
   console.log(`Found ${enabledCompanies.length} companies with daily reports enabled`)
 
-  const reportDateStr = dateRange.startDate.toISOString().split('T')[0]
+  const reportDateStr = formatISTDateStr(dateRange.startDate)
   const reportDateFormatted = formatDate(dateRange.startDate)
 
   for (const company of enabledCompanies) {
@@ -215,9 +215,8 @@ export async function distributeCompanyReports(
 
       console.log(`Processing ${company.name}: ${emailRecipients.length} recipients`)
 
-      // Generate report data for this company (using global data for now)
-      // In a future enhancement, this could be company-specific
-      const reportData = generateReportData('daily', dateRange)
+      // Generate report data from real Supabase flow_data
+      const reportData = await generateReportDataFromSupabase('daily', dateRange)
 
       // Generate PDF buffer
       const pdfBuffer = generatePDFBuffer(reportData)

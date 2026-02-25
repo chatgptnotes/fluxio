@@ -59,5 +59,4 @@ client_id = ""
 secret = ""
 redirect_uri = ""
 
-[edge_functions]
-enabled = false
+# Edge functions disabled

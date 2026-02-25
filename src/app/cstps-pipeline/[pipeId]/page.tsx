@@ -441,18 +441,31 @@ export default function PipeDetailPage() {
   // Get device ID for this pipe
   const deviceId = pipeToDeviceMap[pipeId]
 
-  // Fetch data for Recharts trend with custom date range
+  // Fetch data for Recharts trend directly from Supabase (bypasses API limit)
   const fetchTrendData = async (startDate: string, endDate: string) => {
     if (!deviceId) return
     try {
-      const response = await fetch(
-        `/api/flow-data?device_id=${deviceId}&limit=2000&start_time=${startDate}&end_time=${endDate}`
-      )
-      if (response.ok) {
-        const result = await response.json()
-        if (result.success && result.data) {
-          setTrendRawData(result.data)
-        }
+      const supabase = createClient()
+      const rangeHours = Math.max(1, (new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60))
+      // For ranges > 24h, fetch all data and downsample client-side
+      // At 1 reading/min: rangeHours * 60
+      const limit = Math.min(Math.ceil(rangeHours * 60), 100000)
+
+      const { data, error } = await supabase
+        .from('flow_data')
+        .select('created_at, flow_rate')
+        .eq('device_id', deviceId)
+        .gte('created_at', startDate)
+        .lte('created_at', endDate)
+        .order('created_at', { ascending: true })
+        .limit(limit)
+
+      if (error) {
+        console.warn('Supabase trend query error:', error.message)
+        return
+      }
+      if (data && data.length > 0) {
+        setTrendRawData(data)
       }
     } catch (err) {
       console.warn('Failed to fetch trend data:', err)

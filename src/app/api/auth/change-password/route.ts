@@ -1,10 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { getCurrentUser } from '@/lib/auth/session';
-import { verifyPassword, hashPassword } from '@/lib/auth/password';
+import { verifyPassword, hashPassword, validatePasswordStrength } from '@/lib/auth/password';
+import { passwordChangeRateLimiter } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 5 attempts per IP per 15 minutes
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    const rateCheck = passwordChangeRateLimiter.check(ip);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { error: 'Too many password change attempts. Please try again later.' },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(Math.ceil(rateCheck.retryAfterMs / 1000)) },
+        }
+      );
+    }
+
     const user = await getCurrentUser();
 
     if (!user) {
@@ -24,9 +38,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (newPassword.length < 6) {
+    // Enforce full password strength rules
+    const passwordValidation = validatePasswordStrength(newPassword);
+    if (!passwordValidation.valid) {
       return NextResponse.json(
-        { error: 'New password must be at least 6 characters' },
+        { error: passwordValidation.errors.join(', ') },
         { status: 400 }
       );
     }

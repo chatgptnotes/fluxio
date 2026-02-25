@@ -15,6 +15,7 @@ const navItems = [
   { href: '/admin/audit', label: 'Audit Logs', icon: 'history' },
   { href: '/admin/infographics', label: 'Infographics', icon: 'auto_awesome' },
   { href: '/admin/device-health', label: 'Device Health', icon: 'monitor_heart' },
+  { href: '/admin/cron-health', label: 'Cron Health', icon: 'schedule' },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {

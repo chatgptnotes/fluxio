@@ -1,9 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { hashPassword } from '@/lib/auth/password';
+import { registrationRateLimiter } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
+    const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+
+    // Rate limit: 3 registrations per IP per hour
+    const rateCheck = registrationRateLimiter.check(clientIp);
+    if (!rateCheck.allowed) {
+      const retryAfterSec = Math.ceil(rateCheck.retryAfterMs / 1000);
+      return NextResponse.json(
+        { error: `Too many registration attempts. Try again in ${Math.ceil(retryAfterSec / 60)} minutes.` },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(retryAfterSec) },
+        }
+      );
+    }
+
     const body = await request.json();
     const { fullName, email, password, username } = body;
 

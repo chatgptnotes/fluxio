@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { generateReportData, getDateRangePreset } from '@/lib/reports/report-data'
+import { generateReportDataFromSupabase, getDateRangePreset } from '@/lib/reports/report-data'
 import { generatePDFReport } from '@/lib/reports/pdf-generator'
 
 export async function POST(request: NextRequest) {
@@ -43,8 +43,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Generate report data
-    const reportData = generateReportData(
+    // Generate report data from real Supabase flow_data
+    const reportData = await generateReportDataFromSupabase(
       report_type as 'daily' | 'monthly' | 'custom',
       dateRange,
       device_id

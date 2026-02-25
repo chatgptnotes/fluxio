@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { createClient } from '@/lib/supabase/client'
 import { cstpsPipes as staticCstpsPipes, NivusSensor } from '@/lib/cstps-data'
+import { ExportButton } from '@/components/ui/ExportButton'
 
 // Map device_id to pipe number and static data
 const deviceToPipeMap: Record<string, { pipeNumber: number; staticIndex: number }> = {
@@ -126,6 +127,7 @@ export default function CSTRSReadingsPage() {
   const [selectedRange, setSelectedRange] = useState<TimeRange>('tilldate')
   const [currentTime, setCurrentTime] = useState<Date | null>(null)
   const [loadingTotalizer, setLoadingTotalizer] = useState(false)
+  const [rawFlowData, setRawFlowData] = useState<FlowDataRecord[]>([])
 
   // Auth check
   useEffect(() => {
@@ -189,6 +191,7 @@ export default function CSTRSReadingsPage() {
           const flowDataRecords = (result.data as FlowDataRecord[]).filter(
             (record) => deviceIds.includes(record.device_id)
           )
+          setRawFlowData(flowDataRecords)
           for (const record of flowDataRecords) {
             if (!latestByDevice[record.device_id]) {
               latestByDevice[record.device_id] = record
@@ -261,7 +264,7 @@ export default function CSTRSReadingsPage() {
     return (
       <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 border-4 border-[#1565C0] border-t-transparent rounded-full animate-spin"></div>
+          <div className="h-12 w-12 border-4 border-[#0f766e] border-t-transparent rounded-full animate-spin"></div>
           <p className="text-[#424242] text-sm">Loading...</p>
         </div>
       </div>
@@ -296,7 +299,7 @@ export default function CSTRSReadingsPage() {
   return (
     <div className="min-h-screen bg-[#F5F5F5]">
       {/* Header */}
-      <header className="border-b-2 border-[#0288D1] bg-gradient-to-r from-[#1565C0] via-[#1976D2] to-[#1565C0]">
+      <header className="border-b-2 border-[#14b8a6] bg-gradient-to-r from-[#0f766e] via-[#0d9488] to-[#0f766e]">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center space-x-4">
             <Link
@@ -332,9 +335,12 @@ export default function CSTRSReadingsPage() {
       <main className="p-4 md:p-6 max-w-7xl mx-auto">
         {/* Time Range Selector */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-          <div>
-            <h2 className="text-lg font-bold text-[#263238]">CSTPS NIVUS Sensor Readings</h2>
-            <p className="text-sm text-[#757575]">Real-time data from 6 flow transmitters</p>
+          <div className="flex items-center gap-3">
+            <div>
+              <h2 className="text-lg font-bold text-[#263238]">CSTPS NIVUS Sensor Readings</h2>
+              <p className="text-sm text-[#757575]">Real-time data from 6 flow transmitters</p>
+            </div>
+            <ExportButton data={rawFlowData} filename="cstps_readings" />
           </div>
           <div className="flex items-center bg-white rounded-lg border border-[#BDBDBD] shadow-sm overflow-hidden">
             {TIME_RANGES.map((range) => (
@@ -343,8 +349,8 @@ export default function CSTRSReadingsPage() {
                 onClick={() => setSelectedRange(range.key)}
                 className={`px-4 py-2 text-sm font-medium transition-all border-r border-[#E0E0E0] last:border-r-0 ${
                   selectedRange === range.key
-                    ? 'bg-[#1565C0] text-white'
-                    : 'text-[#424242] hover:bg-[#E3F2FD]'
+                    ? 'bg-[#0f766e] text-white'
+                    : 'text-[#424242] hover:bg-[#E0F2F1]'
                 }`}
               >
                 {range.label}
@@ -368,7 +374,7 @@ export default function CSTRSReadingsPage() {
                 <div className="flex items-center justify-between px-4 py-3 bg-[#EEEEEE] border-b border-[#E0E0E0]">
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
-                      <span className="material-icons text-[#1565C0]">speed</span>
+                      <span className="material-icons text-[#0f766e]">speed</span>
                       <div>
                         <div className="text-sm font-bold text-[#263238] font-mono">
                           FT-{String(reading.pipeNumber).padStart(3, '0')}
@@ -408,7 +414,7 @@ export default function CSTRSReadingsPage() {
                 {/* Current Readings */}
                 <div className="p-4">
                   <div className="bg-[#0D1B2A] rounded-lg px-3 py-3 mb-4">
-                    <div className="text-[10px] text-[#90CAF9] font-mono mb-1">FLOW RATE</div>
+                    <div className="text-[10px] text-[#80CBC4] font-mono mb-1">FLOW RATE</div>
                     <div className={`text-2xl font-bold font-mono ${hasFlow ? 'text-[#00E5FF]' : isStale && reading.flowRate > 0 ? 'text-[#FFC107]' : 'text-[#546E7A]'}`}>
                       {reading.flowRate.toFixed(1)}
                       <span className="text-xs text-[#4FC3F7] font-normal ml-1">m3/h</span>
@@ -416,9 +422,9 @@ export default function CSTRSReadingsPage() {
                   </div>
 
                   {/* Totalizer Section */}
-                  <div className="bg-[#0D1B2A] rounded-lg px-3 py-3 border border-[#1565C0]">
+                  <div className="bg-[#0D1B2A] rounded-lg px-3 py-3 border border-[#0f766e]">
                     <div className="flex items-center justify-between mb-1">
-                      <div className="text-[10px] text-[#90CAF9] font-mono">{totalizerLabel.toUpperCase()}</div>
+                      <div className="text-[10px] text-[#80CBC4] font-mono">{totalizerLabel.toUpperCase()}</div>
                       {loadingTotalizer && (
                         <div className="h-3 w-3 border-2 border-[#00E5FF] border-t-transparent rounded-full animate-spin"></div>
                       )}

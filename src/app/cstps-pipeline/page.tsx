@@ -361,7 +361,7 @@ export default function CSTPSPipelinePage() {
   return (
     <div className="min-h-screen bg-[#F5F5F5]">
       {/* SCADA Header Bar */}
-      <header className="border-b-2 border-[#0288D1] bg-gradient-to-r from-[#1565C0] via-[#1976D2] to-[#1565C0]">
+      <header className="border-b-2 border-[#14b8a6] bg-gradient-to-r from-[#0f766e] via-[#0d9488] to-[#0f766e]">
         {/* Mobile Header - Top Row */}
         <div className="flex items-center justify-between px-2 py-2 md:px-4">
           <div className="flex items-center space-x-2 md:space-x-4">
@@ -433,7 +433,7 @@ export default function CSTPSPipelinePage() {
               onClick={() => setViewMode('pid')}
               className={`flex items-center space-x-1 px-3 py-1.5 text-xs font-medium transition-all ${
                 viewMode === 'pid'
-                  ? 'bg-white text-[#1565C0]'
+                  ? 'bg-white text-[#0f766e]'
                   : 'text-white hover:bg-white/20'
               }`}
             >
@@ -443,7 +443,7 @@ export default function CSTPSPipelinePage() {
               onClick={() => setViewMode('3d')}
               className={`flex items-center px-3 py-1.5 text-xs font-medium transition-all ${
                 viewMode === '3d'
-                  ? 'bg-white text-[#1565C0]'
+                  ? 'bg-white text-[#0f766e]'
                   : 'text-white hover:bg-white/20'
               }`}
             >
@@ -453,7 +453,7 @@ export default function CSTPSPipelinePage() {
               onClick={() => setViewMode('2d')}
               className={`flex items-center px-3 py-1.5 text-xs font-medium transition-all ${
                 viewMode === '2d'
-                  ? 'bg-white text-[#1565C0]'
+                  ? 'bg-white text-[#0f766e]'
                   : 'text-white hover:bg-white/20'
               }`}
             >
@@ -468,7 +468,7 @@ export default function CSTPSPipelinePage() {
               onClick={() => setViewMode('pid')}
               className={`flex items-center space-x-1 px-2 py-1 text-xs font-medium transition-all ${
                 viewMode === 'pid'
-                  ? 'bg-white text-[#1565C0]'
+                  ? 'bg-white text-[#0f766e]'
                   : 'text-white hover:bg-white/20'
               }`}
               title="P&ID Diagram"
@@ -479,7 +479,7 @@ export default function CSTPSPipelinePage() {
               onClick={() => setViewMode('3d')}
               className={`flex items-center px-2 py-1 text-xs font-medium transition-all ${
                 viewMode === '3d'
-                  ? 'bg-white text-[#1565C0]'
+                  ? 'bg-white text-[#0f766e]'
                   : 'text-white hover:bg-white/20'
               }`}
               title="3D Isometric View"
@@ -490,7 +490,7 @@ export default function CSTPSPipelinePage() {
               onClick={() => setViewMode('2d')}
               className={`flex items-center px-2 py-1 text-xs font-medium transition-all ${
                 viewMode === '2d'
-                  ? 'bg-white text-[#1565C0]'
+                  ? 'bg-white text-[#0f766e]'
                   : 'text-white hover:bg-white/20'
               }`}
               title="2D Aerial View"
@@ -552,7 +552,7 @@ export default function CSTPSPipelinePage() {
                 </span>
               </div>
               <div className="p-4 text-center">
-                <div className="rounded bg-[#1a1a2e] px-4 py-3 border border-[#0288D1]">
+                <div className="rounded bg-[#1a1a2e] px-4 py-3 border border-[#14b8a6]">
                   <div className="font-mono text-3xl font-bold text-[#00E5FF] drop-shadow-[0_0_10px_rgba(0,229,255,0.5)]">
                     {totalFlow.toFixed(1)}
                   </div>
@@ -560,7 +560,7 @@ export default function CSTPSPipelinePage() {
                 </div>
                 <div className="mt-3 h-2 w-full rounded-full bg-[#E0E0E0] overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-[#0288D1] to-[#00BCD4] rounded-full transition-all duration-500"
+                    className="h-full bg-gradient-to-r from-[#14b8a6] to-[#00BCD4] rounded-full transition-all duration-500"
                     style={{ width: `${Math.min((totalFlow / 500) * 100, 100)}%` }}
                   />
                 </div>
@@ -579,7 +579,7 @@ export default function CSTPSPipelinePage() {
                 </span>
               </div>
               <div className="p-4 text-center">
-                <div className="rounded bg-[#1a1a2e] px-4 py-3 border border-[#0288D1]">
+                <div className="rounded bg-[#1a1a2e] px-4 py-3 border border-[#14b8a6]">
                   <div className="font-mono text-2xl font-bold text-[#00E5FF] drop-shadow-[0_0_10px_rgba(0,229,255,0.5)]">
                     {totalConsumption.toLocaleString('en-IN')}
                   </div>
@@ -627,7 +627,7 @@ export default function CSTPSPipelinePage() {
               <div className="p-2 border-t border-[#E0E0E0]">
                 <Link
                   href="/cstps-pipeline/alarms"
-                  className="w-full flex items-center justify-center space-x-1 py-2 rounded bg-[#1565C0] text-white text-xs font-medium hover:bg-[#0D47A1] transition-colors"
+                  className="w-full flex items-center justify-center space-x-1 py-2 rounded bg-[#0f766e] text-white text-xs font-medium hover:bg-[#115e59] transition-colors"
                 >
                   <span className="material-icons text-sm">list_alt</span>
                   <span>View All Alarms</span>
@@ -716,6 +716,19 @@ export default function CSTPSPipelinePage() {
                     </div>
                   </div>
 
+                  {/* CSTPS Reservoir Total Consumption Display */}
+                  <div
+                    className="absolute z-20"
+                    style={{ left: `${totalizer3DPos.left}%`, top: `${totalizer3DPos.top}%`, transform: 'translateX(-50%)' }}
+                  >
+                    <div className="bg-[#0D1B2A] rounded-lg px-2 py-1.5 md:px-3 md:py-2 border border-[#2E7D32] shadow-lg">
+                      <div className="text-[8px] md:text-[10px] text-[#80CBC4] font-mono font-bold text-center">TOTAL RECEIVED</div>
+                      <div className="text-[10px] md:text-sm text-[#00E5FF] font-mono font-bold text-center mt-0.5">
+                        {totalConsumption.toLocaleString('en-IN')} m3
+                      </div>
+                    </div>
+                  </div>
+
                   {/* FT Value Overlays - Click to view details */}
                   {cstpsPipes.map((pipe, index) => {
                     const hasFlow = pipe.status === 'online' && pipe.parameters.flowRate > 0
@@ -739,7 +752,7 @@ export default function CSTPSPipelinePage() {
                         <div className={`relative bg-[#0D1B2A] rounded px-1 py-0.5 md:px-2 md:py-1 border ${
                           hoveredPipe === pipe.id
                             ? 'border-[#00E5FF] shadow-[0_0_10px_#00E5FF]'
-                            : isStale ? 'border-[#F57F17] border-dashed' : 'border-[#1565C0]'
+                            : isStale ? 'border-[#F57F17] border-dashed' : 'border-[#0f766e]'
                         } transition-all ${isStale ? 'opacity-80' : ''}`}>
                           {/* Status LED */}
                           <div
@@ -757,7 +770,7 @@ export default function CSTPSPipelinePage() {
                             </div>
                           )}
                           {/* FT Label */}
-                          <div className="text-[6px] md:text-[8px] text-[#90CAF9] font-mono">FT-{String(pipe.pipeNumber).padStart(3, '0')}</div>
+                          <div className="text-[6px] md:text-[8px] text-[#80CBC4] font-mono">FT-{String(pipe.pipeNumber).padStart(3, '0')}</div>
                           {/* Flow Value */}
                           <div className={`text-[10px] md:text-sm font-bold font-mono ${hasFlow ? 'text-[#00E5FF]' : isStale && pipe.parameters.flowRate > 0 ? 'text-[#FFC107]' : 'text-[#546E7A]'}`}>
                             {pipe.parameters.flowRate.toFixed(1)}
@@ -773,7 +786,7 @@ export default function CSTPSPipelinePage() {
                           <div
                             className="absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-white rounded shadow-lg border border-[#E0E0E0] p-2 z-20 whitespace-nowrap"
                           >
-                            <div className="text-xs font-bold text-[#1565C0]">{pipe.deviceId}</div>
+                            <div className="text-xs font-bold text-[#0f766e]">{pipe.deviceId}</div>
                             {isStale && (
                               <div className="text-[10px] text-[#F57F17] font-semibold flex items-center gap-1">
                                 <span className="material-icons" style={{ fontSize: '12px' }}>warning</span>
@@ -914,7 +927,7 @@ export default function CSTPSPipelinePage() {
                             }}
                           />
                           {/* FT Label - smaller */}
-                          <div className="text-[7px] text-[#90CAF9] font-mono font-bold leading-tight">FT-{String(pipe.pipeNumber).padStart(3, '0')}</div>
+                          <div className="text-[7px] text-[#80CBC4] font-mono font-bold leading-tight">FT-{String(pipe.pipeNumber).padStart(3, '0')}</div>
                           {/* Flow Value - compact */}
                           <div className={`text-[11px] font-bold font-mono leading-tight ${hasFlow ? 'text-[#00E5FF]' : isStale && pipe.parameters.flowRate > 0 ? 'text-[#FFC107]' : 'text-[#546E7A]'}`}>
                             {pipe.parameters.flowRate.toFixed(1)}<span className="text-[7px] text-[#4FC3F7]">m3/h</span>
@@ -928,7 +941,7 @@ export default function CSTPSPipelinePage() {
                           <div
                             className="absolute left-full ml-1 top-1/2 -translate-y-1/2 bg-white rounded shadow-lg border border-[#E0E0E0] p-1.5 z-20 whitespace-nowrap"
                           >
-                            <div className="text-[10px] font-bold text-[#1565C0]">{pipe.deviceId}</div>
+                            <div className="text-[10px] font-bold text-[#0f766e]">{pipe.deviceId}</div>
                             {isStale && (
                               <div className="text-[9px] text-[#F57F17] font-semibold flex items-center gap-0.5">
                                 <span className="material-icons" style={{ fontSize: '10px' }}>warning</span>
@@ -937,12 +950,25 @@ export default function CSTPSPipelinePage() {
                             )}
                             <div className="text-[8px] text-[#757575]">Vel: {pipe.parameters.velocity.toFixed(2)} m/s</div>
                             <div className="text-[8px] text-[#757575]">Level: {pipe.parameters.waterLevel.toFixed(1)} mm</div>
-                            <div className="text-[8px] text-[#1565C0] mt-0.5 font-medium">Click to view details</div>
+                            <div className="text-[8px] text-[#0f766e] mt-0.5 font-medium">Click to view details</div>
                           </div>
                         )}
                       </div>
                     )
                   })}
+
+                  {/* CSTPS Reservoir (2D) - Total Consumption Display */}
+                  <div
+                    className="absolute z-20"
+                    style={{ left: `${totalizer2DPos.left}%`, top: `${totalizer2DPos.top}%`, transform: 'translateX(-50%)' }}
+                  >
+                    <div className="bg-[#0D1B2A] rounded-lg px-2 py-1.5 md:px-3 md:py-2 border border-[#2E7D32] shadow-lg">
+                      <div className="text-[8px] md:text-[10px] text-[#80CBC4] font-mono font-bold text-center">TOTAL RECEIVED</div>
+                      <div className="text-[10px] md:text-sm text-[#00E5FF] font-mono font-bold text-center mt-0.5">
+                        {totalConsumption.toLocaleString('en-IN')} m3
+                      </div>
+                    </div>
+                  </div>
 
                   {/* Smoke Animation - Cooling Towers (4 towers on the right) */}
                   {[0, 1, 2, 3].map(i => {
@@ -1018,11 +1044,11 @@ export default function CSTPSPipelinePage() {
 
                   {/* Darker Pipe gradient - 3D effect with better visibility */}
                   <linearGradient id="pipeGradientBlue" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#0277BD" />
-                    <stop offset="25%" stopColor="#01579B" />
-                    <stop offset="50%" stopColor="#014377" />
-                    <stop offset="75%" stopColor="#01579B" />
-                    <stop offset="100%" stopColor="#0277BD" />
+                    <stop offset="0%" stopColor="#0f766e" />
+                    <stop offset="25%" stopColor="#134e4a" />
+                    <stop offset="50%" stopColor="#0a3d3a" />
+                    <stop offset="75%" stopColor="#134e4a" />
+                    <stop offset="100%" stopColor="#0f766e" />
                   </linearGradient>
 
                   {/* Inactive pipe gradient - darker gray */}
@@ -1036,8 +1062,8 @@ export default function CSTPSPipelinePage() {
 
                   {/* Water fill gradient */}
                   <linearGradient id="waterFill" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#29B6F6" stopOpacity="0.7" />
-                    <stop offset="100%" stopColor="#01579B" stopOpacity="0.9" />
+                    <stop offset="0%" stopColor="#2dd4bf" stopOpacity="0.7" />
+                    <stop offset="100%" stopColor="#134e4a" stopOpacity="0.9" />
                   </linearGradient>
 
                   {/* Glow filters */}
@@ -1082,9 +1108,9 @@ export default function CSTPSPipelinePage() {
                   {/* Gradients */}
                   <defs>
                     <linearGradient id="waterGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#0277BD" />
-                      <stop offset="40%" stopColor="#29B6F6" />
-                      <stop offset="100%" stopColor="#01579B" />
+                      <stop offset="0%" stopColor="#0f766e" />
+                      <stop offset="40%" stopColor="#2dd4bf" />
+                      <stop offset="100%" stopColor="#134e4a" />
                     </linearGradient>
                     <linearGradient id="damWallGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                       <stop offset="0%" stopColor="#546E7A" />
@@ -1100,7 +1126,7 @@ export default function CSTPSPipelinePage() {
                   </defs>
 
                   {/* Dam label */}
-                  <rect x="25" y="35" width="90" height="26" fill="#1565C0" stroke="#0D47A1" strokeWidth="1.5" rx="3" filter="url(#pipeShadow)"/>
+                  <rect x="25" y="35" width="90" height="26" fill="#0f766e" stroke="#115e59" strokeWidth="1.5" rx="3" filter="url(#pipeShadow)"/>
                   <text x="70" y="53" textAnchor="middle" fill="white" fontSize="12" fontFamily="Arial" fontWeight="bold">
                     IRAI DAM
                   </text>
@@ -1142,8 +1168,8 @@ export default function CSTPSPipelinePage() {
                         {/* Outlet flange */}
                         <rect x="134" y={portY - 10} width="8" height="20" fill="#455A64" stroke="#263238" strokeWidth="1" rx="2"/>
                         {/* Pipe opening */}
-                        <rect x="136" y={portY - 7} width="6" height="14" fill="#01579B" rx="1">
-                          <animate attributeName="fill" values="#01579B;#0288D1;#01579B" dur="2s" repeatCount="indefinite"/>
+                        <rect x="136" y={portY - 7} width="6" height="14" fill="#134e4a" rx="1">
+                          <animate attributeName="fill" values="#134e4a;#14b8a6;#134e4a" dur="2s" repeatCount="indefinite"/>
                         </rect>
                       </g>
                     )
@@ -1182,7 +1208,7 @@ export default function CSTPSPipelinePage() {
                   </rect>
 
                   {/* Water surface wave */}
-                  <path d="M 3 50 Q 22 45, 45 50 T 87 50" fill="none" stroke="#29B6F6" strokeWidth="2">
+                  <path d="M 3 50 Q 22 45, 45 50 T 87 50" fill="none" stroke="#2dd4bf" strokeWidth="2">
                     <animate
                       attributeName="d"
                       values="M 3 50 Q 22 45, 45 50 T 87 50;M 3 55 Q 22 60, 45 55 T 87 55;M 3 50 Q 22 45, 45 50 T 87 50"
@@ -1215,11 +1241,21 @@ export default function CSTPSPipelinePage() {
                     <text y="14" textAnchor="middle" fill="#4FC3F7" fontSize="9" fontFamily="monospace">m3/h IN</text>
                   </g>
 
+                  {/* Total Consumption Display - always visible */}
+                  <g transform="translate(45, 280)">
+                    <rect x="-42" y="-14" width="84" height="36" fill="#0D1B2A" stroke="#2E7D32" strokeWidth="1.5" rx="4"/>
+                    <text y="-2" textAnchor="middle" fill="#80CBC4" fontSize="8" fontFamily="monospace">TOTAL RECEIVED</text>
+                    <text y="12" textAnchor="middle" fill="#00E5FF" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                      {totalConsumption.toLocaleString('en-IN')} m3
+                    </text>
+                  </g>
+
                   {/* Reservoir label */}
                   <rect x="-10" y="-32" width="110" height="24" fill="#2E7D32" stroke="#1B5E20" strokeWidth="1" rx="3"/>
                   <text x="45" y="-15" textAnchor="middle" fill="white" fontSize="10" fontFamily="Arial" fontWeight="bold">
                     CSTPS RESERVOIR
                   </text>
+
                 </g>
 
                 {/* PIPE LINES - GRAVITY FED (NO PUMPS) */}
@@ -1325,11 +1361,11 @@ export default function CSTPSPipelinePage() {
                       >
                         {/* Hover highlight for FT block */}
                         {isHovered && (
-                          <rect x="-25" y="-25" width="155" height="50" fill="#E3F2FD" stroke="#1565C0" strokeWidth="2" strokeDasharray="4 2" rx="6" opacity="0.7"/>
+                          <rect x="-25" y="-25" width="155" height="50" fill="#E0F2F1" stroke="#0f766e" strokeWidth="2" strokeDasharray="4 2" rx="6" opacity="0.7"/>
                         )}
                         {/* Instrument circle */}
-                        <circle r="20" fill="white" stroke={isHovered ? '#0D47A1' : '#1565C0'} strokeWidth={isHovered ? 4 : 3}/>
-                        <text y="-5" textAnchor="middle" fill="#1565C0" fontSize="10" fontWeight="bold">FT</text>
+                        <circle r="20" fill="white" stroke={isHovered ? '#115e59' : '#0f766e'} strokeWidth={isHovered ? 4 : 3}/>
+                        <text y="-5" textAnchor="middle" fill="#0f766e" fontSize="10" fontWeight="bold">FT</text>
                         <text y="8" textAnchor="middle" fill="#37474F" fontSize="9" fontWeight="bold">{String(index + 1).padStart(3, '0')}</text>
 
                         {/* Status LED */}
@@ -1341,7 +1377,7 @@ export default function CSTPSPipelinePage() {
 
                         {/* Digital Display - positioned to the right of FT */}
                         <g transform="translate(55, 0)">
-                          <rect x="-5" y="-16" width="70" height={isStale && pipe.parameters.flowRate > 0 ? '42' : '32'} fill={isHovered ? '#0A1929' : '#0D1B2A'} stroke={isStale ? '#F57F17' : isHovered ? '#00E5FF' : '#1565C0'} strokeWidth={isHovered ? 2 : 1.5} rx="4" strokeDasharray={isStale ? '4 2' : 'none'}/>
+                          <rect x="-5" y="-16" width="70" height={isStale && pipe.parameters.flowRate > 0 ? '42' : '32'} fill={isHovered ? '#0A1929' : '#0D1B2A'} stroke={isStale ? '#F57F17' : isHovered ? '#00E5FF' : '#0f766e'} strokeWidth={isHovered ? 2 : 1.5} rx="4" strokeDasharray={isStale ? '4 2' : 'none'}/>
                           <text x="30" y="0" textAnchor="middle" fill={isStale && pipe.parameters.flowRate > 0 ? '#FFC107' : '#00E5FF'} fontSize="15" fontFamily="monospace" fontWeight="bold" filter={hasFlow ? 'url(#glowBlue)' : ''}>
                             {pipe.parameters.flowRate.toFixed(1)}
                           </text>
@@ -1364,7 +1400,7 @@ export default function CSTPSPipelinePage() {
                       {/* Velocity indicator - near CSTPS side */}
                       <g transform={`translate(750, ${yPos - 22})`}>
                         <rect x="-32" y="-11" width="64" height="22" fill="white" stroke="#455A64" strokeWidth="1.5" rx="3"/>
-                        <text y="5" textAnchor="middle" fill={hasFlow ? '#01579B' : '#757575'} fontSize="11" fontFamily="monospace" fontWeight="bold">
+                        <text y="5" textAnchor="middle" fill={hasFlow ? '#134e4a' : '#757575'} fontSize="11" fontFamily="monospace" fontWeight="bold">
                           {pipe.parameters.velocity.toFixed(2)} m/s
                         </text>
                       </g>
@@ -1390,8 +1426,8 @@ export default function CSTPSPipelinePage() {
 
                   {/* Gravity Flow indicator */}
                   <g transform="translate(95, 14)">
-                    <polygon points="0,-6 8,0 0,6" fill="#1565C0"/>
-                    <line x1="-15" y1="0" x2="0" y2="0" stroke="#01579B" strokeWidth="4"/>
+                    <polygon points="0,-6 8,0 0,6" fill="#0f766e"/>
+                    <line x1="-15" y1="0" x2="0" y2="0" stroke="#134e4a" strokeWidth="4"/>
                   </g>
                   <text x="115" y="18" fill="#37474F" fontSize="9" fontWeight="bold">GRAVITY FLOW</text>
 
@@ -1404,8 +1440,8 @@ export default function CSTPSPipelinePage() {
 
                   {/* Flow Transmitter */}
                   <g transform="translate(345, 14)">
-                    <circle r="9" fill="white" stroke="#1565C0" strokeWidth="2"/>
-                    <text y="3" textAnchor="middle" fill="#1565C0" fontSize="7" fontWeight="bold">FT</text>
+                    <circle r="9" fill="white" stroke="#0f766e" strokeWidth="2"/>
+                    <text y="3" textAnchor="middle" fill="#0f766e" fontSize="7" fontWeight="bold">FT</text>
                   </g>
                   <text x="365" y="18" fill="#37474F" fontSize="9">FLOW TRANSMITTER</text>
 
@@ -1420,7 +1456,7 @@ export default function CSTPSPipelinePage() {
                   <text x="662" y="18" fill="#37474F" fontSize="9">OFFLINE</text>
 
                   {/* Pipe indicator */}
-                  <line x1="720" y1="14" x2="760" y2="14" stroke="#01579B" strokeWidth="6"/>
+                  <line x1="720" y1="14" x2="760" y2="14" stroke="#134e4a" strokeWidth="6"/>
                   <line x1="720" y1="14" x2="760" y2="14" stroke="#263238" strokeWidth="8" strokeLinecap="round" opacity="0"/>
                   <text x="772" y="18" fill="#37474F" fontSize="9">WATER PIPE</text>
 
@@ -1463,12 +1499,12 @@ export default function CSTPSPipelinePage() {
                       onDragEnd={handleDragEnd}
                       className={`rounded-lg border p-2.5 transition-all cursor-grab active:cursor-grabbing ${
                         isDragging
-                          ? 'opacity-50 border-[#1565C0] bg-[#E3F2FD] shadow-lg scale-105'
+                          ? 'opacity-50 border-[#0f766e] bg-[#E0F2F1] shadow-lg scale-105'
                           : isDragOver
-                          ? 'border-[#1565C0] border-dashed bg-[#E3F2FD]/50'
+                          ? 'border-[#0f766e] border-dashed bg-[#E0F2F1]/50'
                           : hoveredPipe === pipe.id
-                          ? 'border-[#1565C0] bg-[#E3F2FD] shadow-md'
-                          : 'border-[#E0E0E0] bg-[#FAFAFA] hover:border-[#90CAF9] hover:bg-[#E3F2FD]'
+                          ? 'border-[#0f766e] bg-[#E0F2F1] shadow-md'
+                          : 'border-[#E0E0E0] bg-[#FAFAFA] hover:border-[#80CBC4] hover:bg-[#E0F2F1]'
                       }`}
                       onMouseEnter={() => setHoveredPipe(pipe.id)}
                       onMouseLeave={() => setHoveredPipe(null)}
@@ -1476,7 +1512,7 @@ export default function CSTPSPipelinePage() {
                       <div className="flex items-center justify-between mb-1">
                         <Link
                           href={`/cstps-pipeline/${pipe.id}`}
-                          className="text-xs font-bold text-[#263238] font-mono hover:text-[#1565C0]"
+                          className="text-xs font-bold text-[#263238] font-mono hover:text-[#0f766e]"
                           onClick={(e) => e.stopPropagation()}
                         >
                           FT-{String(pipe.pipeNumber).padStart(3, '0')}
@@ -1486,8 +1522,8 @@ export default function CSTPSPipelinePage() {
                             <span className="text-[8px] font-mono font-bold text-[#F57F17] bg-[#FFF8E1] px-1 rounded">LAST KNOWN</span>
                           )}
                           {hasFlow && (
-                            <div className="h-1.5 w-4 rounded-full bg-[#01579B] overflow-hidden">
-                              <div className="h-full w-1/2 bg-[#29B6F6] animate-pulse"></div>
+                            <div className="h-1.5 w-4 rounded-full bg-[#134e4a] overflow-hidden">
+                              <div className="h-full w-1/2 bg-[#2dd4bf] animate-pulse"></div>
                             </div>
                           )}
                           <div
@@ -1513,35 +1549,35 @@ export default function CSTPSPipelinePage() {
                       >
                         <div className="grid grid-cols-2 gap-2 text-[10px]">
                           <div className="bg-[#0D1B2A] rounded px-1.5 py-1">
-                            <span className="text-[#90CAF9] block">FLOW</span>
+                            <span className="text-[#80CBC4] block">FLOW</span>
                             <div className={`font-mono font-bold ${hasFlow ? 'text-[#00E5FF]' : isStale && pipe.parameters.flowRate > 0 ? 'text-[#FFC107]' : 'text-[#546E7A]'}`}>
                               {pipe.parameters.flowRate.toFixed(1)}
                               <span className="text-[#4FC3F7] font-normal ml-0.5">m3/h</span>
                             </div>
                           </div>
                           <div className="bg-[#0D1B2A] rounded px-1.5 py-1">
-                            <span className="text-[#90CAF9] block">VEL</span>
+                            <span className="text-[#80CBC4] block">VEL</span>
                             <div className={`font-mono font-bold ${hasFlow ? 'text-[#00E5FF]' : isStale && pipe.parameters.velocity > 0 ? 'text-[#FFC107]' : 'text-[#546E7A]'}`}>
                               {pipe.parameters.velocity.toFixed(2)}
                               <span className="text-[#4FC3F7] font-normal ml-0.5">m/s</span>
                             </div>
                           </div>
                           <div className="bg-[#0D1B2A] rounded px-1.5 py-1">
-                            <span className="text-[#90CAF9] block">LEVEL</span>
+                            <span className="text-[#80CBC4] block">LEVEL</span>
                             <div className="font-mono font-bold text-[#00E5FF]">
                               {pipe.parameters.waterLevel.toFixed(1)}
                               <span className="text-[#4FC3F7] font-normal ml-0.5">mm</span>
                             </div>
                           </div>
                           <div className="bg-[#0D1B2A] rounded px-1.5 py-1">
-                            <span className="text-[#90CAF9] block">TEMP</span>
+                            <span className="text-[#80CBC4] block">TEMP</span>
                             <div className="font-mono font-bold text-[#00E5FF]">
                               {pipe.parameters.temperature.toFixed(1)}
                               <span className="text-[#4FC3F7] font-normal ml-0.5">C</span>
                             </div>
                           </div>
                           <div className="bg-[#0D1B2A] rounded px-1.5 py-1 col-span-2">
-                            <span className="text-[#90CAF9] block">TOTAL</span>
+                            <span className="text-[#80CBC4] block">TOTAL</span>
                             <div className="font-mono font-bold text-[#00E5FF]">
                               {pipe.parameters.totalizer.toLocaleString('en-IN')}
                               <span className="text-[#4FC3F7] font-normal ml-0.5">m3</span>
@@ -1562,14 +1598,6 @@ export default function CSTPSPipelinePage() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-2 md:px-4 py-2 gap-2 sm:gap-0">
             <div className="flex flex-wrap items-center gap-2 sm:gap-4 md:space-x-6 text-[10px] md:text-xs font-mono">
               <div className="flex items-center space-x-1 md:space-x-2">
-                <span className="text-[#37474F] font-semibold">PLC:</span>
-                <span className="text-[#4CAF50] flex items-center">
-                  <span className="h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-[#4CAF50] mr-1 animate-pulse"></span>
-                  <span className="hidden xs:inline">CONNECTED</span>
-                  <span className="xs:hidden">OK</span>
-                </span>
-              </div>
-              <div className="flex items-center space-x-1 md:space-x-2">
                 <span className="text-[#37474F] font-semibold">MODBUS:</span>
                 <span className="text-[#4CAF50]">OK</span>
               </div>
@@ -1579,7 +1607,7 @@ export default function CSTPSPipelinePage() {
               </div>
               <div className="flex items-center space-x-1 md:space-x-2">
                 <span className="text-[#37474F] font-semibold">SCAN:</span>
-                <span className="text-[#1565C0]">{currentTime ? currentTime.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }) : '--:--:--'}</span>
+                <span className="text-[#0f766e]">{currentTime ? currentTime.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }) : '--:--:--'}</span>
               </div>
               {lastDataUpdate && (
                 <div className="flex items-center space-x-1 md:space-x-2">

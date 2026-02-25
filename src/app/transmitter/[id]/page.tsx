@@ -180,7 +180,7 @@ export default function TransmitterDetailPage() {
               <span className="material-icons">arrow_back</span>
             </Link>
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#00E5FF] to-[#1565C0] flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#00E5FF] to-[#0f766e] flex items-center justify-center">
                 <span className="material-icons text-white">sensors</span>
               </div>
               <div>
@@ -369,7 +369,7 @@ export default function TransmitterDetailPage() {
 
       {/* Footer */}
       <footer className="text-center py-4 text-[10px] text-[#546E7A]">
-        Version 1.5 | January 21, 2025 | FlowNexus SCADA System
+        FlowNexus v1.7 | February 19, 2026 | flownexus
       </footer>
     </div>
   )

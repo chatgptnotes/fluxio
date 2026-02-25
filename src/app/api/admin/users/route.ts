@@ -3,6 +3,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { getCurrentUser } from '@/lib/auth/session';
 import { canCreateUsers, canManagePermissions } from '@/lib/auth/permissions';
 import { hashPassword, validatePasswordStrength } from '@/lib/auth/password';
+import { adminUserCreationRateLimiter } from '@/lib/rate-limit';
 
 // GET /api/admin/users - List all users
 export async function GET(request: NextRequest) {
@@ -86,6 +87,19 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/users - Create a new user
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 10 user creations per IP per hour
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    const rateCheck = adminUserCreationRateLimiter.check(ip);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { error: 'Too many user creation attempts. Please try again later.' },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(Math.ceil(rateCheck.retryAfterMs / 1000)) },
+        }
+      );
+    }
+
     const currentUser = await getCurrentUser();
 
     if (!currentUser || !canCreateUsers(currentUser)) {

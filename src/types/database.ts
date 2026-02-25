@@ -457,6 +457,41 @@ export interface Database {
           created_at?: string
         }
       }
+      cron_logs: {
+        Row: {
+          id: number
+          job_name: string
+          status: 'success' | 'failure'
+          started_at: string
+          finished_at: string
+          duration_ms: number
+          details: Json
+          error_message: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: number
+          job_name: string
+          status: 'success' | 'failure'
+          started_at: string
+          finished_at?: string
+          duration_ms?: number
+          details?: Json
+          error_message?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: number
+          job_name?: string
+          status?: 'success' | 'failure'
+          started_at?: string
+          finished_at?: string
+          duration_ms?: number
+          details?: Json
+          error_message?: string | null
+          created_at?: string
+        }
+      }
       reports: {
         Row: {
           id: string

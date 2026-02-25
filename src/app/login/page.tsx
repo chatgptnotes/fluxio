@@ -14,7 +14,11 @@ function LoginContent() {
   const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirectTo = searchParams.get('redirect') || '/dashboard'
+  const rawRedirect = searchParams.get('redirect') || '/dashboard'
+  // Sanitize redirect to prevent open redirect attacks
+  const redirectTo = (rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') && !rawRedirect.includes('://'))
+    ? rawRedirect
+    : '/dashboard'
   const sessionExpired = searchParams.get('expired') === 'true'
   const isDev = process.env.NODE_ENV === 'development'
 

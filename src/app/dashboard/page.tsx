@@ -18,6 +18,8 @@ import { Card } from '@/components/ui/Card'
 import { LogoutButton } from '@/components/auth/LogoutButton'
 import { useAuth } from '@/hooks/useAuth'
 import { createClient } from '@/lib/supabase/client'
+import { FlowRateChart } from '@/components/charts/FlowRateChart'
+import { TotalizerChart } from '@/components/charts/TotalizerChart'
 import type { Database } from '@/types/database'
 
 type DashboardSummary = Database['public']['Views']['dashboard_summary']['Row']
@@ -32,10 +34,21 @@ interface Company {
   activeAlerts: number
 }
 
+interface FlowDataRecord {
+  device_id: string
+  flow_rate: number | null
+  totalizer: number | null
+  temperature: number | null
+  battery_level: number | null
+  signal_strength: number | null
+  created_at: string
+}
+
 export default function DashboardPage() {
   const [companies, setCompanies] = useState<Company[]>([])
   const [summary, setSummary] = useState<DashboardSummary | null>(null)
   const [loading, setLoading] = useState(true)
+  const [flowData, setFlowData] = useState<FlowDataRecord[]>([])
   const { user: authUser, isLoading: authLoading } = useAuth()
   const router = useRouter()
 
@@ -56,8 +69,23 @@ export default function DashboardPage() {
   }, [])
 
   async function fetchData() {
-    await Promise.all([fetchCompanies(), fetchSummary()])
+    await Promise.all([fetchCompanies(), fetchSummary(), fetchFlowData()])
     setLoading(false)
+  }
+
+  async function fetchFlowData() {
+    try {
+      const since = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString()
+      const response = await fetch(`/api/flow-data?limit=500&start_time=${since}`)
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success && result.data) {
+          setFlowData(result.data as FlowDataRecord[])
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to fetch flow data for charts:', err)
+    }
   }
 
   async function fetchCompanies() {
@@ -204,6 +232,12 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Flow Data Charts */}
+        <div className="mb-8 grid gap-6 lg:grid-cols-2">
+          <FlowRateChart data={flowData} />
+          <TotalizerChart data={flowData} />
         </div>
 
         {/* Companies Section */}

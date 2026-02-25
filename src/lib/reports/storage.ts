@@ -1,5 +1,6 @@
 // Supabase Storage Helper for Reports
 import { createClient } from '@supabase/supabase-js'
+import { formatISTDateStr } from '@/lib/reports/report-data'
 
 const BUCKET_NAME = 'reports'
 
@@ -20,11 +21,12 @@ function getStorageClient() {
   })
 }
 
-// Generate file path for report
+// Generate file path for report (uses IST date)
 export function getReportFilePath(reportType: 'daily' | 'monthly', reportDate: Date): string {
+  const istDateStr = formatISTDateStr(reportDate)
   const dateStr = reportType === 'monthly'
-    ? `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`
-    : reportDate.toISOString().split('T')[0]
+    ? istDateStr.substring(0, 7) // YYYY-MM
+    : istDateStr // YYYY-MM-DD
 
   return `${reportType}/${dateStr}.pdf`
 }

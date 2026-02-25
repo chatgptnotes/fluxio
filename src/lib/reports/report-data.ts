@@ -1,5 +1,6 @@
 // Report Data Aggregation Utilities
 import { cstpsPipes, NivusSensor } from '../cstps-data'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export interface ReportDateRange {
   startDate: Date
@@ -59,6 +60,7 @@ export interface ReportData {
   dailyData: DailyDataPoint[]
   isSingleDay: boolean
   alerts: AlertSummary[]
+  pipeHourlyData?: { pipeId: string; hourlyVolumes: number[] }[]
   deviceHealth: {
     pipeId: string
     deviceName: string
@@ -180,22 +182,20 @@ function generateDailyData(
 ): DailyDataPoint[] {
   const dailyTotals: Map<string, { fullDate: Date; totalFlow: number }> = new Map()
 
-  // Initialize all days in the range
+  // Initialize all days in the range (using IST date keys)
   const current = new Date(dateRange.startDate)
-  current.setHours(0, 0, 0, 0)
   const endDate = new Date(dateRange.endDate)
-  endDate.setHours(23, 59, 59, 999)
 
   while (current <= endDate) {
-    const dateKey = current.toISOString().split('T')[0]
+    const dateKey = formatISTDateStr(current)
     dailyTotals.set(dateKey, { fullDate: new Date(current), totalFlow: 0 })
-    current.setDate(current.getDate() + 1)
+    current.setTime(current.getTime() + 86400000) // advance 1 day
   }
 
-  // Aggregate flow data by day
+  // Aggregate flow data by day (using IST date keys)
   allPipesData.forEach((flowData) => {
     flowData.forEach((point) => {
-      const dateKey = point.timestamp.toISOString().split('T')[0]
+      const dateKey = formatISTDateStr(point.timestamp)
       const existing = dailyTotals.get(dateKey)
       if (existing) {
         // Add flow rate * interval (5 min = 5/60 hours) to get volume
@@ -268,62 +268,86 @@ function generateAlerts(
   return alerts.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
 }
 
-// Get date range presets
-export function getDateRangePreset(preset: string): ReportDateRange {
+// Get IST midnight as a UTC Date object.
+// IST 00:00 on a given date = UTC 18:30 on the previous day.
+function istMidnightAsUTC(year: number, month: number, day: number): Date {
+  // Date.UTC gives ms for that date at 00:00 UTC
+  // Subtract 5h30m offset to convert IST midnight to UTC
+  return new Date(Date.UTC(year, month, day) - 5.5 * 3600 * 1000)
+}
+
+// Get current IST date components (works on any server timezone)
+function getISTNow(): { now: Date; year: number; month: number; date: number; day: number } {
   const now = new Date()
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  // Shift to IST to get correct calendar date
+  const istMs = now.getTime() + 5.5 * 3600 * 1000
+  const istDate = new Date(istMs)
+  return {
+    now,
+    year: istDate.getUTCFullYear(),
+    month: istDate.getUTCMonth(),
+    date: istDate.getUTCDate(),
+    day: istDate.getUTCDay(),
+  }
+}
+
+// Get date range presets (all boundaries aligned to IST midnight)
+export function getDateRangePreset(preset: string): ReportDateRange {
+  const { now, year, month, date, day } = getISTNow()
+  const todayStart = istMidnightAsUTC(year, month, date)
 
   switch (preset) {
     case 'today':
       return {
-        startDate: today,
+        startDate: todayStart,
         endDate: now,
         label: 'Today',
       }
-    case 'yesterday':
-      const yesterday = new Date(today)
-      yesterday.setDate(yesterday.getDate() - 1)
+    case 'yesterday': {
+      const yesterdayStart = istMidnightAsUTC(year, month, date - 1)
       return {
-        startDate: yesterday,
-        endDate: today,
+        startDate: yesterdayStart,
+        endDate: todayStart,
         label: 'Yesterday',
       }
-    case 'thisWeek':
-      const weekStart = new Date(today)
-      weekStart.setDate(weekStart.getDate() - weekStart.getDay())
+    }
+    case 'thisWeek': {
+      const weekStart = istMidnightAsUTC(year, month, date - day)
       return {
         startDate: weekStart,
         endDate: now,
         label: 'This Week',
       }
-    case 'lastWeek':
-      const lastWeekEnd = new Date(today)
-      lastWeekEnd.setDate(lastWeekEnd.getDate() - lastWeekEnd.getDay())
-      const lastWeekStart = new Date(lastWeekEnd)
-      lastWeekStart.setDate(lastWeekStart.getDate() - 7)
+    }
+    case 'lastWeek': {
+      const lastWeekEnd = istMidnightAsUTC(year, month, date - day)
+      const lastWeekStart = istMidnightAsUTC(year, month, date - day - 7)
       return {
         startDate: lastWeekStart,
         endDate: lastWeekEnd,
         label: 'Last Week',
       }
-    case 'thisMonth':
-      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+    }
+    case 'thisMonth': {
+      const monthStart = istMidnightAsUTC(year, month, 1)
       return {
         startDate: monthStart,
         endDate: now,
         label: 'This Month',
       }
-    case 'lastMonth':
-      const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 1)
-      const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+    }
+    case 'lastMonth': {
+      const lastMonthEnd = istMidnightAsUTC(year, month, 1)
+      const lastMonthStart = istMidnightAsUTC(year, month - 1, 1)
       return {
         startDate: lastMonthStart,
         endDate: lastMonthEnd,
         label: 'Last Month',
       }
+    }
     default:
       return {
-        startDate: today,
+        startDate: todayStart,
         endDate: now,
         label: 'Custom',
       }
@@ -408,24 +432,388 @@ export function generateReportData(
   }
 }
 
+// Pipe ID to Supabase device_id mapping
+const PIPE_DEVICE_MAP: Record<string, string> = {
+  'pipe-1': 'NIVUS_750_001',
+  'pipe-2': 'NIVUS_750_002',
+  'pipe-3': 'NIVUS_750_003',
+  'pipe-4': 'NIVUS_750_004',
+  'pipe-5': 'NIVUS_750_005',
+  'pipe-6': 'NIVUS_750_006',
+}
+
+// Fetch real flow_data from Supabase for a device within a date range.
+// Uses pagination to fetch ALL rows (Supabase caps at 1000 per request).
+async function fetchFlowDataFromSupabase(
+  supabase: ReturnType<typeof createAdminClient>,
+  deviceId: string,
+  startDate: Date,
+  endDate: Date
+): Promise<FlowDataPoint[]> {
+  const allRows: FlowDataPoint[] = []
+  const pageSize = 1000
+  let offset = 0
+  let hasMore = true
+
+  while (hasMore) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase as any)
+      .from('flow_data')
+      .select('flow_rate, totalizer, temperature, created_at, metadata')
+      .eq('device_id', deviceId)
+      .gte('created_at', startDate.toISOString())
+      .lte('created_at', endDate.toISOString())
+      .order('created_at', { ascending: true })
+      .range(offset, offset + pageSize - 1)
+
+    if (error || !data) {
+      console.error(`Error fetching flow_data for ${deviceId} (offset ${offset}):`, error)
+      break
+    }
+
+    // Nivus 750 register units from TRB246 Modbus:
+    // - flow_rate (reg 30011): m3/s, convert to m3/h (* 3600)
+    // - velocity (reg 30015): m/s (no conversion needed)
+    // - water_level (reg 30013): m, convert to mm (* 1000)
+    // - temperature (reg 30017): C (no conversion needed)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const rows = data.map((row: any) => ({
+      timestamp: new Date(row.created_at),
+      flowRate: (row.flow_rate ?? 0) * 3600,       // m3/s -> m3/h
+      velocity: row.metadata?.velocity ?? 0,         // m/s
+      waterLevel: (row.metadata?.water_level ?? 0) * 1000, // m -> mm
+      temperature: row.temperature ?? 0,             // C
+    }))
+
+    allRows.push(...rows)
+    offset += pageSize
+    hasMore = data.length === pageSize // More pages if we got a full page
+  }
+
+  console.log(`Fetched ${allRows.length} rows for ${deviceId}`)
+  return allRows
+}
+
+// Fetch real alerts from Supabase for the date range
+async function fetchAlertsFromSupabase(
+  supabase: ReturnType<typeof createAdminClient>,
+  startDate: Date,
+  endDate: Date
+): Promise<AlertSummary[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase as any)
+    .from('alerts')
+    .select('alert_type, severity, message, created_at, device_id')
+    .gte('created_at', startDate.toISOString())
+    .lte('created_at', endDate.toISOString())
+    .order('created_at', { ascending: false })
+    .limit(50)
+
+  if (error || !data) {
+    console.error('Error fetching alerts:', error)
+    return []
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return data.map((row: any) => {
+    let type: 'critical' | 'warning' | 'info' = 'info'
+    if (row.severity === 'critical') type = 'critical'
+    else if (row.severity === 'warning') type = 'warning'
+
+    return {
+      type,
+      count: 1,
+      description: row.message || `${row.alert_type} on ${row.device_id}`,
+      timestamp: new Date(row.created_at),
+    }
+  })
+}
+
+// Calculate real pipe statistics from Supabase flow_data
+function calculateRealPipeStatistics(
+  pipe: NivusSensor,
+  flowData: FlowDataPoint[]
+): PipeStatistics {
+  const flowRates = flowData.map(d => d.flowRate).filter(f => f > 0)
+
+  const minFlowRate = flowRates.length > 0 ? Math.min(...flowRates) : 0
+  const maxFlowRate = flowRates.length > 0 ? Math.max(...flowRates) : 0
+  const avgFlowRate = flowRates.length > 0
+    ? flowRates.reduce((sum, f) => sum + f, 0) / flowRates.length
+    : 0
+
+  // Calculate total volume from flow_rate (m3/h) readings.
+  // Data comes in ~1 min intervals from TRB246.
+  // For each reading, volume = flow_rate * interval_hours.
+  let totalVolume = 0
+  for (let i = 0; i < flowData.length; i++) {
+    let intervalHours: number
+    if (i < flowData.length - 1) {
+      intervalHours = (flowData[i + 1].timestamp.getTime() - flowData[i].timestamp.getTime()) / (1000 * 3600)
+      // Cap interval to 5 minutes to avoid counting large gaps (device offline)
+      if (intervalHours > 5 / 60) intervalHours = 1 / 60
+    } else {
+      intervalHours = 1 / 60 // Assume 1 minute for last reading
+    }
+    totalVolume += flowData[i].flowRate * intervalHours
+  }
+
+  // Operating hours: count readings with flow > 0, each ~1 min apart
+  const operatingHours = flowRates.length / 60
+
+  return {
+    pipeId: pipe.id,
+    deviceName: `Nivus-750-${pipe.pipeNumber}`,
+    location: pipe.location,
+    status: flowData.length > 0 ? 'online' : 'offline',
+    minFlowRate: Math.round(minFlowRate * 100) / 100,
+    maxFlowRate: Math.round(maxFlowRate * 100) / 100,
+    avgFlowRate: Math.round(avgFlowRate * 100) / 100,
+    totalVolume: Math.round(totalVolume * 100) / 100,
+    operatingHours: Math.round(operatingHours * 10) / 10,
+    batteryLevel: pipe.parameters.batteryLevel,
+    signalStrength: pipe.parameters.signalStrength,
+  }
+}
+
+// Generate hourly data from real readings
+function generateRealHourlyData(
+  allPipesData: Map<string, FlowDataPoint[]>
+): { hour: number; totalFlow: number }[] {
+  const hourlyTotals: Record<number, number> = {}
+  for (let h = 0; h < 24; h++) hourlyTotals[h] = 0
+
+  allPipesData.forEach(flowData => {
+    for (let i = 0; i < flowData.length; i++) {
+      const point = flowData[i]
+      const hour = point.timestamp.getHours()
+      let intervalHours: number
+      if (i < flowData.length - 1) {
+        intervalHours = (flowData[i + 1].timestamp.getTime() - point.timestamp.getTime()) / (1000 * 3600)
+        if (intervalHours > 5 / 60) intervalHours = 1 / 60
+      } else {
+        intervalHours = 1 / 60
+      }
+      hourlyTotals[hour] += point.flowRate * intervalHours
+    }
+  })
+
+  return Object.entries(hourlyTotals).map(([hour, totalFlow]) => ({
+    hour: parseInt(hour),
+    totalFlow: Math.round(totalFlow * 100) / 100,
+  }))
+}
+
+// Generate daily data from real readings
+function generateRealDailyData(
+  allPipesData: Map<string, FlowDataPoint[]>,
+  dateRange: ReportDateRange
+): DailyDataPoint[] {
+  const dailyTotals: Map<string, { fullDate: Date; totalFlow: number }> = new Map()
+
+  const current = new Date(dateRange.startDate)
+  const endDate = new Date(dateRange.endDate)
+
+  while (current <= endDate) {
+    const dateKey = formatISTDateStr(current)
+    dailyTotals.set(dateKey, { fullDate: new Date(current), totalFlow: 0 })
+    current.setTime(current.getTime() + 86400000) // advance 1 day
+  }
+
+  allPipesData.forEach(flowData => {
+    for (let i = 0; i < flowData.length; i++) {
+      const point = flowData[i]
+      const dateKey = formatISTDateStr(point.timestamp)
+      const existing = dailyTotals.get(dateKey)
+      if (existing) {
+        let intervalHours: number
+        if (i < flowData.length - 1) {
+          intervalHours = (flowData[i + 1].timestamp.getTime() - point.timestamp.getTime()) / (1000 * 3600)
+          if (intervalHours > 5 / 60) intervalHours = 1 / 60
+        } else {
+          intervalHours = 1 / 60
+        }
+        existing.totalFlow += point.flowRate * intervalHours
+      }
+    }
+  })
+
+  return Array.from(dailyTotals.entries())
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([, data]) => ({
+      date: data.fullDate.toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'short',
+        timeZone: 'Asia/Kolkata',
+      }),
+      fullDate: data.fullDate,
+      totalFlow: Math.round(data.totalFlow * 100) / 100,
+    }))
+}
+
+// Generate per-pipe hourly volume breakdown from real readings (grouped by IST hour)
+function generatePerPipeHourlyData(
+  allPipesData: Map<string, FlowDataPoint[]>
+): { pipeId: string; hourlyVolumes: number[] }[] {
+  const result: { pipeId: string; hourlyVolumes: number[] }[] = []
+
+  allPipesData.forEach((flowData, pipeId) => {
+    const hourlyVolumes = new Array(24).fill(0)
+
+    for (let i = 0; i < flowData.length; i++) {
+      const point = flowData[i]
+      // Group by IST hour (UTC+5:30) so chart labels show clean IST times
+      const istMs = point.timestamp.getTime() + 5.5 * 3600 * 1000
+      const hour = new Date(istMs).getUTCHours()
+      let intervalHours: number
+      if (i < flowData.length - 1) {
+        intervalHours = (flowData[i + 1].timestamp.getTime() - point.timestamp.getTime()) / (1000 * 3600)
+        if (intervalHours > 5 / 60) intervalHours = 1 / 60
+      } else {
+        intervalHours = 1 / 60
+      }
+      hourlyVolumes[hour] += point.flowRate * intervalHours
+    }
+
+    result.push({
+      pipeId,
+      hourlyVolumes: hourlyVolumes.map(v => Math.round(v * 100) / 100),
+    })
+  })
+
+  return result
+}
+
+/**
+ * Generate report data from real Supabase flow_data.
+ * This is the production version that replaces the mock data generator.
+ */
+export async function generateReportDataFromSupabase(
+  reportType: 'daily' | 'monthly' | 'custom',
+  dateRange: ReportDateRange,
+  deviceId?: string
+): Promise<ReportData> {
+  const supabase = createAdminClient()
+
+  // Determine which pipes to include
+  const pipes = deviceId && deviceId !== 'all'
+    ? cstpsPipes.filter(p => p.id === deviceId)
+    : cstpsPipes
+
+  // Fetch real flow data for each pipe from Supabase
+  const allPipesData = new Map<string, FlowDataPoint[]>()
+  for (const pipe of pipes) {
+    const supabaseDeviceId = PIPE_DEVICE_MAP[pipe.id] || pipe.deviceId
+    const flowData = await fetchFlowDataFromSupabase(
+      supabase,
+      supabaseDeviceId,
+      dateRange.startDate,
+      dateRange.endDate
+    )
+    allPipesData.set(pipe.id, flowData)
+  }
+
+  // Calculate real statistics for each pipe
+  const pipeStatistics = pipes.map(pipe => {
+    const flowData = allPipesData.get(pipe.id) || []
+    return calculateRealPipeStatistics(pipe, flowData)
+  })
+
+  // Summary
+  const totalFlowVolume = pipeStatistics.reduce((sum, p) => sum + p.totalVolume, 0)
+  const activePipeStats = pipeStatistics.filter(p => p.avgFlowRate > 0)
+  const avgFlowRate = activePipeStats.length > 0
+    ? activePipeStats.reduce((sum, p) => sum + p.avgFlowRate, 0) / activePipeStats.length
+    : 0
+  const activeDevices = pipeStatistics.filter(p => p.status === 'online').length
+  const totalDevices = pipes.length
+  const offlineDevices = totalDevices - activeDevices
+
+  // Hourly and daily data from real readings
+  const hourlyData = generateRealHourlyData(allPipesData)
+  const dailyData = generateRealDailyData(allPipesData, dateRange)
+  const singleDay = isSingleDayReport(dateRange)
+
+  // Per-pipe hourly breakdown for segmented bar chart
+  const pipeHourlyData = generatePerPipeHourlyData(allPipesData)
+
+  // Fetch real alerts from Supabase
+  const alerts = await fetchAlertsFromSupabase(supabase, dateRange.startDate, dateRange.endDate)
+
+  // Device health: use last reading timestamp from real data
+  const deviceHealth = pipes.map(pipe => {
+    const flowData = allPipesData.get(pipe.id) || []
+    const lastReading = flowData.length > 0 ? flowData[flowData.length - 1].timestamp : new Date(pipe.lastUpdated)
+    const hasRecentData = flowData.length > 0
+
+    return {
+      pipeId: pipe.id,
+      deviceName: `Nivus-750-${pipe.pipeNumber}`,
+      batteryLevel: pipe.parameters.batteryLevel,
+      signalStrength: pipe.parameters.signalStrength,
+      status: hasRecentData ? 'online' : 'offline',
+      lastCommunication: lastReading,
+    }
+  })
+
+  return {
+    reportType,
+    dateRange,
+    generatedAt: new Date(),
+    summary: {
+      totalFlowVolume: Math.round(totalFlowVolume * 100) / 100,
+      avgFlowRate: Math.round(avgFlowRate * 100) / 100,
+      activeDevices,
+      totalDevices,
+      offlineDevices,
+      alertsTriggered: alerts.length,
+    },
+    pipeStatistics,
+    hourlyData,
+    dailyData,
+    isSingleDay: singleDay,
+    alerts,
+    pipeHourlyData,
+    deviceHealth,
+  }
+}
+
+// Convert any Date to IST by applying UTC+5:30 offset
+function toIST(date: Date): Date {
+  // Get UTC time, then add 5h30m to get IST
+  const utcMs = date.getTime() + date.getTimezoneOffset() * 60000
+  return new Date(utcMs + 5.5 * 3600 * 1000)
+}
+
+// Format date as YYYY-MM-DD in IST (for file paths, database records)
+export function formatISTDateStr(date: Date): string {
+  const ist = toIST(date)
+  const y = ist.getFullYear()
+  const m = String(ist.getMonth() + 1).padStart(2, '0')
+  const d = String(ist.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
 // Format date for display in IST (Indian Standard Time)
 export function formatDate(date: Date): string {
-  return date.toLocaleDateString('en-IN', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    timeZone: 'Asia/Kolkata'
-  })
+  const ist = toIST(date)
+  const day = ist.getDate()
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const month = months[ist.getMonth()]
+  const year = ist.getFullYear()
+  return `${day} ${month} ${year}`
 }
 
 // Format datetime for display in IST (Indian Standard Time)
 export function formatDateTime(date: Date): string {
-  return date.toLocaleString('en-IN', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Asia/Kolkata'
-  })
+  const ist = toIST(date)
+  const day = ist.getDate()
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const month = months[ist.getMonth()]
+  const year = ist.getFullYear()
+  let hours = ist.getHours()
+  const minutes = ist.getMinutes().toString().padStart(2, '0')
+  const ampm = hours >= 12 ? 'PM' : 'AM'
+  hours = hours % 12 || 12
+  return `${day} ${month} ${year}, ${hours}:${minutes} ${ampm} IST`
 }

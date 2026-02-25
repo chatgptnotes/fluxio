@@ -172,7 +172,7 @@ export default function AlarmsPage() {
     switch (severity) {
       case 'critical': return { bg: '#FFEBEE', border: '#F44336', text: '#C62828', icon: '#F44336' }
       case 'warning': return { bg: '#FFF8E1', border: '#FFC107', text: '#F57F17', icon: '#FFC107' }
-      case 'info': return { bg: '#E3F2FD', border: '#2196F3', text: '#1565C0', icon: '#2196F3' }
+      case 'info': return { bg: '#E0F2F1', border: '#14b8a6', text: '#0f766e', icon: '#14b8a6' }
     }
   }
 
@@ -202,7 +202,7 @@ export default function AlarmsPage() {
   return (
     <div className="min-h-screen bg-[#F5F5F5]">
       {/* Header */}
-      <header className="border-b-2 border-[#0288D1] bg-gradient-to-r from-[#1565C0] via-[#1976D2] to-[#1565C0] shadow-lg">
+      <header className="border-b-2 border-[#14b8a6] bg-gradient-to-r from-[#0f766e] via-[#0d9488] to-[#0f766e] shadow-lg">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center space-x-4">
             <Link
@@ -382,7 +382,7 @@ export default function AlarmsPage() {
                         placeholder="Search alarms..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-9 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 w-48 transition-all"
+                        className="pl-9 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 w-48 transition-all"
                       />
                     </div>
 
@@ -390,7 +390,7 @@ export default function AlarmsPage() {
                     <select
                       value={filterSeverity}
                       onChange={(e) => setFilterSeverity(e.target.value as AlarmSeverity | 'all')}
-                      className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-blue-500 cursor-pointer hover:bg-gray-50 transition-all"
+                      className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-teal-500 cursor-pointer hover:bg-gray-50 transition-all"
                     >
                       <option value="all">All Severities</option>
                       <option value="critical">Critical</option>
@@ -400,7 +400,7 @@ export default function AlarmsPage() {
                     <select
                       value={filterStatus}
                       onChange={(e) => setFilterStatus(e.target.value as AlarmStatus | 'all')}
-                      className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-blue-500 cursor-pointer hover:bg-gray-50 transition-all"
+                      className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-teal-500 cursor-pointer hover:bg-gray-50 transition-all"
                     >
                       <option value="all">All Statuses</option>
                       <option value="active">Active</option>
@@ -412,7 +412,7 @@ export default function AlarmsPage() {
                     <select
                       value={filterDevice}
                       onChange={(e) => setFilterDevice(e.target.value)}
-                      className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-blue-500 cursor-pointer hover:bg-gray-50 transition-all"
+                      className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-teal-500 cursor-pointer hover:bg-gray-50 transition-all"
                     >
                       <option value="all">All Devices</option>
                       {DEVICES.map(d => (
@@ -435,7 +435,7 @@ export default function AlarmsPage() {
                 >
                   <span>Time</span>
                   {sortField === 'timestamp' && (
-                    <span className="material-icons text-blue-500 text-sm">{sortDirection === 'desc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span>
+                    <span className="material-icons text-teal-500 text-sm">{sortDirection === 'desc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span>
                   )}
                 </div>
                 <div className="col-span-1">ID</div>
@@ -445,7 +445,7 @@ export default function AlarmsPage() {
                 >
                   <span>Device</span>
                   {sortField === 'device' && (
-                    <span className="material-icons text-blue-500 text-sm">{sortDirection === 'desc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span>
+                    <span className="material-icons text-teal-500 text-sm">{sortDirection === 'desc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span>
                   )}
                 </div>
                 <div
@@ -454,7 +454,7 @@ export default function AlarmsPage() {
                 >
                   <span>Severity</span>
                   {sortField === 'severity' && (
-                    <span className="material-icons text-blue-500 text-sm">{sortDirection === 'desc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span>
+                    <span className="material-icons text-teal-500 text-sm">{sortDirection === 'desc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span>
                   )}
                 </div>
                 <div className="col-span-3">Description</div>
@@ -475,7 +475,7 @@ export default function AlarmsPage() {
                       onClick={() => setSelectedAlarm(alarm)}
                       className={`grid grid-cols-14 gap-2 px-4 py-3 border-b border-gray-100 cursor-pointer transition-all ${
                         isSelected
-                          ? 'bg-blue-50 border-l-2 border-l-blue-500'
+                          ? 'bg-teal-50 border-l-2 border-l-teal-500'
                           : 'hover:bg-gray-50 border-l-2 border-l-transparent'
                       } ${alarm.status === 'active' && alarm.severity === 'critical' ? 'bg-red-50/50' : ''}`}
                     >
@@ -483,7 +483,7 @@ export default function AlarmsPage() {
                         <div className="font-mono text-xs text-gray-700">{formatTime(alarm.timestamp)}</div>
                         <div className="text-[10px] text-gray-400">{getTimeSince(alarm.timestamp)}</div>
                       </div>
-                      <div className="col-span-1 font-mono text-xs text-blue-600">
+                      <div className="col-span-1 font-mono text-xs text-teal-600">
                         {alarm.id.replace('ALM-', '')}
                       </div>
                       <div className="col-span-2">
@@ -598,7 +598,7 @@ export default function AlarmsPage() {
                   <div className="space-y-2">
                     <div className="flex justify-between items-center p-2.5 rounded-lg bg-gray-50">
                       <span className="text-sm text-gray-500">Alarm ID</span>
-                      <span className="font-mono text-sm text-blue-600">{selectedAlarm.id}</span>
+                      <span className="font-mono text-sm text-teal-600">{selectedAlarm.id}</span>
                     </div>
                     <div className="flex justify-between items-center p-2.5 rounded-lg bg-gray-50">
                       <span className="text-sm text-gray-500">Device</span>
@@ -733,7 +733,7 @@ export default function AlarmsPage() {
             </div>
             <div className="flex items-center space-x-2">
               <span className="text-gray-400">LAST UPDATE:</span>
-              <span className="text-blue-600">{currentTime ? formatTime(currentTime) : '--:--:--'}</span>
+              <span className="text-teal-600">{currentTime ? formatTime(currentTime) : '--:--:--'}</span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="text-gray-400">ACTIVE ALARMS:</span>

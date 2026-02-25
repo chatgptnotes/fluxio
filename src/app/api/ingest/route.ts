@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { timingSafeEqual } from 'crypto'
+import { ingestRateLimiter } from '@/lib/rate-limit'
 
 // Map TRB246 Modbus register addresses to field names
 // Based on Nivus 750 PDF Rev04 (Nov 2024) - IEEE754 float Input Registers (FC4)
@@ -220,14 +222,36 @@ async function checkAlertConditions(
 
 export async function POST(request: NextRequest) {
   try {
-    // Check API key authentication
+    // Check API key authentication (constant-time comparison to prevent timing attacks)
     const apiKey = request.headers.get('x-api-key')
     const expectedKey = process.env.API_SECRET_KEY
 
-    if (!apiKey || apiKey !== expectedKey) {
+    if (!apiKey || !expectedKey) {
       return NextResponse.json(
         { error: 'Unauthorized', message: 'Invalid API key' },
         { status: 401 }
+      )
+    }
+
+    // Pad to equal length then use timingSafeEqual to prevent timing side-channel
+    const keyBuffer = Buffer.from(apiKey.padEnd(256, '\0'))
+    const expectedBuffer = Buffer.from(expectedKey.padEnd(256, '\0'))
+    if (!timingSafeEqual(keyBuffer, expectedBuffer)) {
+      return NextResponse.json(
+        { error: 'Unauthorized', message: 'Invalid API key' },
+        { status: 401 }
+      )
+    }
+
+    // Rate limit: 120 requests per minute per API key
+    const rateCheck = ingestRateLimiter.check(apiKey.slice(0, 16))
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded', message: 'Too many requests. Slow down.' },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(Math.ceil(rateCheck.retryAfterMs / 1000)) },
+        }
       )
     }
 
@@ -294,12 +318,22 @@ export async function POST(request: NextRequest) {
     // Create Supabase admin client
     const supabase = createAdminClient()
 
+    // Allowed metadata keys (prevents arbitrary data injection and DB bloat)
+    const ALLOWED_METADATA_KEYS = new Set([
+      'velocity', 'water_level', 'level', 'signal_quality', 'error_code',
+    ])
+
     // Process each data point
     const results = []
     for (const data of filteredDataArray) {
       // Build metadata object with level and velocity (since they don't have dedicated columns)
-      const metadata: Record<string, unknown> = {
-        ...(data.metadata || {}),
+      // Strip any keys not in the whitelist
+      const rawMetadata = data.metadata || {}
+      const metadata: Record<string, unknown> = {}
+      for (const key of Object.keys(rawMetadata)) {
+        if (ALLOWED_METADATA_KEYS.has(key)) {
+          metadata[key] = rawMetadata[key]
+        }
       }
       if (data.level !== undefined) metadata.water_level = data.level
       if (data.velocity !== undefined) metadata.velocity = data.velocity

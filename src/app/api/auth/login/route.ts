@@ -2,9 +2,29 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { verifyPassword, hashPassword, SUPERADMIN_PASSWORD_HASH } from '@/lib/auth/password';
 import { createSession } from '@/lib/auth/session';
+import { loginRateLimiter } from '@/lib/rate-limit';
+
+/** Account lockout: 5 consecutive failures = 15 minute lockout */
+const LOCKOUT_THRESHOLD = 5;
+const LOCKOUT_DURATION_MS = 15 * 60 * 1000;
 
 export async function POST(request: NextRequest) {
   try {
+    const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+
+    // Rate limit by IP
+    const rateCheck = loginRateLimiter.check(clientIp);
+    if (!rateCheck.allowed) {
+      const retryAfterSec = Math.ceil(rateCheck.retryAfterMs / 1000);
+      return NextResponse.json(
+        { error: `Too many login attempts. Try again in ${Math.ceil(retryAfterSec / 60)} minutes.` },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(retryAfterSec) },
+        }
+      );
+    }
+
     const body = await request.json();
     const { username, password } = body;
 
@@ -62,6 +82,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check account lockout (consecutive failed attempts stored in DB)
+    // Columns may not exist yet if migration hasn't been applied - default to 0/null
+    if ((userData.failed_login_attempts || 0) >= LOCKOUT_THRESHOLD && userData.locked_until) {
+      const lockedUntil = new Date(userData.locked_until);
+      if (lockedUntil > new Date()) {
+        const minutesLeft = Math.ceil((lockedUntil.getTime() - Date.now()) / 60000);
+        return NextResponse.json(
+          { error: `Account locked due to too many failed attempts. Try again in ${minutesLeft} minutes.` },
+          { status: 423 }
+        );
+      }
+      // Lock expired, reset counters
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any)
+        .from('users')
+        .update({ failed_login_attempts: 0, locked_until: null })
+        .eq('id', userData.id);
+      userData.failed_login_attempts = 0;
+      userData.locked_until = null;
+    }
+
     // Check if user has a password hash set
     let isValidPassword = false;
 
@@ -85,12 +126,51 @@ export async function POST(request: NextRequest) {
     }
 
     if (!isValidPassword) {
-      console.log(`Failed login attempt for username: ${username} - invalid password`);
+      // Increment failed attempts
+      const newFailCount = (userData.failed_login_attempts || 0) + 1;
+      const updateData: Record<string, unknown> = { failed_login_attempts: newFailCount };
+
+      if (newFailCount >= LOCKOUT_THRESHOLD) {
+        updateData.locked_until = new Date(Date.now() + LOCKOUT_DURATION_MS).toISOString();
+        // Log lockout event
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (supabase as any).from('audit_logs').insert({
+          user_id: userData.id,
+          action: 'account_locked',
+          resource_type: 'security',
+          details: {
+            username: userData.username,
+            ip: clientIp,
+            failed_attempts: newFailCount,
+            locked_for_minutes: LOCKOUT_DURATION_MS / 60000,
+          },
+        });
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any)
+        .from('users')
+        .update(updateData)
+        .eq('id', userData.id);
+
+      console.log(`Failed login attempt for username: ${username} - invalid password (attempt ${newFailCount})`);
       return NextResponse.json(
         { error: 'Invalid username or password' },
         { status: 401 }
       );
     }
+
+    // Successful login: reset failed attempts
+    if (userData.failed_login_attempts > 0) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any)
+        .from('users')
+        .update({ failed_login_attempts: 0, locked_until: null })
+        .eq('id', userData.id);
+    }
+
+    // Reset IP rate limiter on successful login
+    loginRateLimiter.reset(clientIp);
 
     // Create session
     const session = await createSession(userData.id);
@@ -110,7 +190,7 @@ export async function POST(request: NextRequest) {
       resource_type: 'session',
       details: {
         username: userData.username,
-        ip: request.headers.get('x-forwarded-for') || 'unknown',
+        ip: clientIp,
       },
     });
 
