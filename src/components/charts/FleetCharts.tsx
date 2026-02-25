@@ -60,9 +60,8 @@ export function FleetCharts({ companies }: FleetChartsProps) {
               <Tooltip
                 cursor={{ fill: '#f9fafb' }}
                 contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                formatter={(value: number | string | (number | string)[]) => {
-                  const val = Array.isArray(value) ? value[0] : value;
-                  return [`${Number(val).toLocaleString()} m³`, 'Total Flow'];
+                formatter={(value: any) => {
+                  return [`${Number(value || 0).toLocaleString()} m³`, 'Total Flow'];
                 }}
               />
               <Bar dataKey="totalFlow" radius={[0, 4, 4, 0]} barSize={24}>
