@@ -225,7 +225,7 @@ export default function DashboardPage() {
         <FleetCharts
           companies={companies.map((c) => ({
             name: c.name,
-            totalFlow: summary?.total_flow_volume || 0, // Summary view gives aggregate
+            totalFlow: 0, // aggregate flow not currently in summary view
             alerts: c.activeAlerts,
             online: c.onlineDevices,
             total: c.deviceCount,
