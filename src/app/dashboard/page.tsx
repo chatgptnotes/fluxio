@@ -139,7 +139,7 @@ export default function DashboardPage() {
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">FlowNexus</h1>
+              <h1 className="text-3xl font-bold text-gray-900">FlowNexus Fleet</h1>
               <p className="mt-1 text-sm text-gray-500">
                 Industrial Flow Monitoring Platform
               </p>
