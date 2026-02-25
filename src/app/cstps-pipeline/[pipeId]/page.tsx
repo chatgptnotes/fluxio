@@ -403,18 +403,18 @@ function ParameterCard({
   }
 
   return (
-    <div className="rounded-lg border border-cyan-900/50 bg-[#0d1520] p-3 transition-all hover:border-cyan-800/50">
+    <div className="rounded-lg border border-cyan-900/50 bg-[#0d1520] p-3 transition-all hover:border-cyan-800/50 overflow-hidden">
       <div className="mb-1.5 flex items-center space-x-2">
         <Icon className="h-4 w-4 text-cyan-500" />
         <span className="text-[10px] text-white font-bold uppercase tracking-wider">{label}</span>
       </div>
-      <div className="flex items-baseline space-x-1">
+      <div className="flex items-baseline space-x-1 min-w-0">
         <span
-          className={`text-xl font-bold font-mono ${status ? statusColors[status] : 'text-white'}`}
+          className={`text-xl font-bold font-mono truncate ${status ? statusColors[status] : 'text-white'}`}
         >
           {value}
         </span>
-        {unit && <span className="text-xs text-white font-bold">{unit}</span>}
+        {unit && <span className="text-xs text-white font-bold flex-shrink-0">{unit}</span>}
       </div>
     </div>
   )
@@ -824,8 +824,8 @@ export default function PipeDetailPage() {
               <div className="p-2 grid grid-cols-2 gap-2">
                 <ParameterCard icon={Droplet} label="Flow" value={parameters.flowRate.toFixed(2)} unit="m³/h" />
                 <ParameterCard icon={Activity} label="Velocity" value={parameters.velocity.toFixed(2)} unit="m/s" />
-                <ParameterCard icon={Gauge} label="Level" value={parameters.waterLevel} unit="mm" />
-                <ParameterCard icon={Waves} label="Totalizer" value={parameters.totalizer.toLocaleString()} unit="m³" />
+                <ParameterCard icon={Gauge} label="Level" value={Number(parameters.waterLevel).toFixed(2)} unit="mm" />
+                <ParameterCard icon={Waves} label="Totalizer" value={Number(parameters.totalizer).toFixed(2)} unit="m³" />
                 <ParameterCard icon={Thermometer} label="Temp" value={parameters.temperature.toFixed(1)} unit="°C" />
                 <ParameterCard
                   icon={Battery}
