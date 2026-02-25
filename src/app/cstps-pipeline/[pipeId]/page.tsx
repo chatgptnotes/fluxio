@@ -111,9 +111,11 @@ function TrendChart({
       yLabels.push(yMax - i * yStep)
     }
 
-    // Generate time labels (every 15 minutes = 3 data points) in IST
+    // Generate max 6 evenly spaced time labels
     const timeLabels: { x: number; label: string }[] = []
-    for (let i = 0; i < data.length; i += 12) {
+    const maxLabels = 6
+    const step = Math.max(1, Math.floor(data.length / maxLabels))
+    for (let i = 0; i < data.length; i += step) {
       const date = new Date(data[i].timestamp)
       timeLabels.push({
         x: (i / (data.length - 1)) * 100,
