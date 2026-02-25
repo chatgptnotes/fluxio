@@ -18,8 +18,7 @@ import { Card } from '@/components/ui/Card'
 import { LogoutButton } from '@/components/auth/LogoutButton'
 import { useAuth } from '@/hooks/useAuth'
 import { createClient } from '@/lib/supabase/client'
-import { FlowRateChart } from '@/components/charts/FlowRateChart'
-import { TotalizerChart } from '@/components/charts/TotalizerChart'
+import { FleetCharts } from '@/components/charts/FleetCharts'
 import type { Database } from '@/types/database'
 
 type DashboardSummary = Database['public']['Views']['dashboard_summary']['Row']
@@ -69,24 +68,12 @@ export default function DashboardPage() {
   }, [])
 
   async function fetchData() {
-    await Promise.all([fetchCompanies(), fetchSummary(), fetchFlowData()])
+    await Promise.all([fetchCompanies(), fetchSummary()])
     setLoading(false)
   }
 
-  async function fetchFlowData() {
-    try {
-      const since = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString()
-      const response = await fetch(`/api/flow-data?limit=500&start_time=${since}`)
-      if (response.ok) {
-        const result = await response.json()
-        if (result.success && result.data) {
-          setFlowData(result.data as FlowDataRecord[])
-        }
-      }
-    } catch (err) {
-      console.warn('Failed to fetch flow data for charts:', err)
-    }
-  }
+  // No longer fetching global flow data for individual pipes here
+  // as the dashboard is now fleet-focused.
 
   async function fetchCompanies() {
     // For now, we'll create CSTPS as a hardcoded company with real device data
@@ -234,11 +221,16 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Flow Data Charts */}
-        <div className="mb-8 grid gap-6 lg:grid-cols-2">
-          <FlowRateChart data={flowData} />
-          <TotalizerChart data={flowData} />
-        </div>
+        {/* Fleet Data Charts (Superadmin View) */}
+        <FleetCharts
+          companies={companies.map((c) => ({
+            name: c.name,
+            totalFlow: summary?.total_flow_volume || 0, // Summary view gives aggregate
+            alerts: c.activeAlerts,
+            online: c.onlineDevices,
+            total: c.deviceCount,
+          }))}
+        />
 
         {/* Companies Section */}
         <div className="mb-6">

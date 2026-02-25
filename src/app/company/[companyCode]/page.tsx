@@ -18,6 +18,8 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { formatRelativeTime, isDeviceOnline } from '@/lib/utils'
+import { FlowRateChart } from '@/components/charts/FlowRateChart'
+import { TotalizerChart } from '@/components/charts/TotalizerChart'
 import type { Database } from '@/types/database'
 
 type Device = Database['public']['Tables']['devices']['Row'] & {
@@ -29,6 +31,16 @@ type Device = Database['public']['Tables']['devices']['Row'] & {
 }
 
 type Alert = Database['public']['Tables']['alerts']['Row']
+
+interface FlowDataRecord {
+  device_id: string
+  flow_rate: number | null
+  totalizer: number | null
+  temperature: number | null
+  battery_level: number | null
+  signal_strength: number | null
+  created_at: string
+}
 
 interface CompanyData {
   name: string
@@ -52,6 +64,7 @@ export default function CompanyDashboardPage() {
   const [devices, setDevices] = useState<Device[]>([])
   const [alerts, setAlerts] = useState<Alert[]>([])
   const [loading, setLoading] = useState(true)
+  const [flowData, setFlowData] = useState<FlowDataRecord[]>([])
   const [activeTab, setActiveTab] = useState<'overview' | 'pipeline' | 'alarms' | 'reports' | 'devices'>('overview')
 
   const supabase = createClient()
@@ -75,8 +88,23 @@ export default function CompanyDashboardPage() {
   }, [companyCode])
 
   async function fetchData() {
-    await Promise.all([fetchDevices(), fetchAlerts()])
+    await Promise.all([fetchDevices(), fetchAlerts(), fetchFlowData()])
     setLoading(false)
+  }
+
+  async function fetchFlowData() {
+    try {
+      const since = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString()
+      const response = await fetch(`/api/flow-data?limit=500&start_time=${since}`)
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success && result.data) {
+          setFlowData(result.data as FlowDataRecord[])
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to fetch flow data for charts:', err)
+    }
   }
 
   async function fetchDevices() {
@@ -269,6 +297,12 @@ export default function CompanyDashboardPage() {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Pipeline Detail Charts (Moved from global dashboard) */}
+            <div className="grid gap-6 lg:grid-cols-2">
+              <FlowRateChart data={flowData} />
+              <TotalizerChart data={flowData} />
             </div>
 
             {/* Quick Actions */}
