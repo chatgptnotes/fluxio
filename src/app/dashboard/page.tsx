@@ -155,7 +155,7 @@ export default function DashboardPage() {
                   className="inline-flex items-center space-x-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
                 >
                   <Settings className="h-4 w-4" />
-                  <span>Admin</span>
+                  <span>Admin Panel</span>
                 </Link>
               ) : null}
               <Link
